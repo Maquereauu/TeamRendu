@@ -1,4 +1,6 @@
 #include "PrimitiveFactory.h"
+#include "Global.h"
+#include "Render.h"
 
 PrimitiveFactory::PrimitiveFactory() {
 }
@@ -52,7 +54,7 @@ void PrimitiveFactory::BuildBoxGeometry()
 		4, 3, 7,
 	};
 
-	/*const UINT vbByteSize = (UINT)m_BoxGeometry.vertices.size() * sizeof(VertexTexture);
+	const UINT vbByteSize = (UINT)m_BoxGeometry.vertices.size() * sizeof(VertexTexture);
 	const UINT ibByteSize = (UINT)m_BoxGeometry.indices.size() * sizeof(std::uint16_t);
 	mBoxGeo = std::make_unique<MeshGeometry>();
 	mBoxGeo->Name = "boxGeo";
@@ -63,11 +65,11 @@ void PrimitiveFactory::BuildBoxGeometry()
 	ThrowIfFailed(D3DCreateBlob(ibByteSize, &mBoxGeo->IndexBufferCPU));
 	CopyMemory(mBoxGeo->IndexBufferCPU->GetBufferPointer(), m_BoxGeometry.indices.data(), ibByteSize);
 
-	mBoxGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(GetEngine()->Getmd3dDevice(),
-		GetEngine()->GetmCommandList(), m_BoxGeometry.vertices.data(), vbByteSize, mBoxGeo->VertexBufferUploader);
+	mBoxGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(GetRender()->Getmd3dDevice(),
+		GetRender()->m_CommandList, m_BoxGeometry.vertices.data(), vbByteSize, mBoxGeo->VertexBufferUploader);
 
-	mBoxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(GetEngine()->Getmd3dDevice(),
-		GetEngine()->GetmCommandList(), m_BoxGeometry.indices.data(), ibByteSize, mBoxGeo->IndexBufferUploader);
+	mBoxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(GetRender()->Getmd3dDevice(),
+		GetRender()->m_CommandList, m_BoxGeometry.indices.data(), ibByteSize, mBoxGeo->IndexBufferUploader);
 
 	mBoxGeo->VertexByteStride = sizeof(VertexTexture);
 	mBoxGeo->VertexBufferByteSize = vbByteSize;
@@ -77,5 +79,12 @@ void PrimitiveFactory::BuildBoxGeometry()
 	SubmeshGeometry submesh;
 	submesh.IndexCount = (UINT)m_BoxGeometry.indices.size();
 	submesh.StartIndexLocation = 0;
-	submesh.BaseVertexLocation = 0;*/
+	submesh.BaseVertexLocation = 0;
+
+	m_BoxGeometry.submesh = submesh;
+}
+
+Geometry PrimitiveFactory::GetBoxGeometry()
+{
+	return m_BoxGeometry;
 }
