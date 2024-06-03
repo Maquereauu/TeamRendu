@@ -130,6 +130,7 @@
     <ClCompile Include="ConsoleApplication1.cpp" />
     <ClCompile Include="d3dUtil.cpp" />
     <ClCompile Include="DDSTextureLoader.cpp" />
+    <ClCompile Include="Global.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -148,6 +149,7 @@
     <ClInclude Include="d3dUtil.h" />
     <ClInclude Include="d3dx12.h" />
     <ClInclude Include="DDSTextureLoader.h" />
+    <ClInclude Include="Global.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="header.h" />
     <ClInclude Include="MathHelper.h" />

@@ -3,13 +3,18 @@
 
 #include <iostream>
 #include "Window.h"
-
+#include "Render.h"
+#include "Global.h"
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	PSTR cmdLine, int showCmd)
 {
-	Window window(hInstance);
-	window.Initialize();
-	window.Run();
+	Window* window = new Window(hInstance);
+	SetWindow(window);
+	window->Initialize();
+	Render* render = new Render();
+	SetRender(render);
+	render->Initialize();
+	window->Run();
 
 }
 

@@ -1,5 +1,8 @@
 #pragma once
-class ShaderTexture
+#include "Shader.h"
+class ShaderTexture : public Shader
 {
+public:
+	virtual void CompileShader()override;
 };
 

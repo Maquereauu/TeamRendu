@@ -8,7 +8,7 @@
 #include "Timer.h"
 
 // Link necessary d3d12 libraries.
-
+class Render;
 class Window
 {
 
@@ -32,13 +32,12 @@ public:
 
     virtual bool Initialize();
     virtual LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    DXGI_FORMAT mDepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    DXGI_FORMAT mBackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
     bool      m4xMsaaState = false;    // 4X MSAA enabled
     UINT      m4xMsaaQuality = 0;      // quality level of 4X MSAA
+    int m_ClientWidth = 1920;
+    int m_ClientHeight = 1080;
+    HWND      m_hMainWnd = nullptr; // main window handle
 private:
-    void Update(const Timer& gt);
-    void Draw(const Timer& gt);
 
     virtual void OnResize() { }
 
@@ -48,16 +47,12 @@ private:
 
     void CalculateFrameStats();
 
-    void LogAdapters();
-    void LogAdapterOutputs(IDXGIAdapter* adapter);
-    void LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format);
 
 private:
 
     static Window* mApp;
 
     HINSTANCE mhAppInst = nullptr; // application instance handle
-    HWND      mhMainWnd = nullptr; // main window handle
     bool      mAppPaused = false;  // is the application paused?
     bool      mMinimized = false;  // is the application minimized?
     bool      mMaximized = false;  // is the application maximized?
@@ -71,6 +66,4 @@ private:
     IDXGIFactory4* mdxgiFactory;
     // Derived class should set these in derived constructor to customize starting values.
     std::wstring mMainWndCaption = L"Noeil";
-    int mClientWidth = 1920;
-    int mClientHeight = 1080;
 };

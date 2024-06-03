@@ -1,5 +1,6 @@
 #include "Window.h"
-
+#include "Global.h"
+#include "Render.h"
 using Microsoft::WRL::ComPtr;
 using namespace std;
 using namespace DirectX;
@@ -37,12 +38,12 @@ HINSTANCE Window::AppInst()const
 
 HWND Window::MainWnd()const
 {
-	return mhMainWnd;
+	return m_hMainWnd;
 }
 
 float Window::AspectRatio()const
 {
-	return static_cast<float>(mClientWidth) / mClientHeight;
+	return static_cast<float>(m_ClientWidth) / m_ClientHeight;
 }
 
 bool Window::Get4xMsaaState()const
@@ -58,14 +59,6 @@ void Window::Set4xMsaaState(bool value)
 
 		// Recreate the swapchain and buffers with new multisample settings.
 	}
-}
-
-void Window::Update(const Timer &mTimer) {
-
-}
-
-void Window::Draw(const Timer &mTimer) {
-
 }
 
 int Window::Run()
@@ -89,6 +82,7 @@ int Window::Run()
 			//if (!mAppPaused)
 			{
 				CalculateFrameStats();
+				GetRender()->Draw(mTimer);
 				//Update(mTimer);
 				//Draw(mTimer);
 			}
@@ -135,8 +129,8 @@ LRESULT Window::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		// WM_SIZE is sent when the user resizes the window.  
 	case WM_SIZE:
 		// Save the new client area dimensions.
-		mClientWidth = LOWORD(lParam);
-		mClientHeight = HIWORD(lParam);
+		m_ClientWidth = LOWORD(lParam);
+		m_ClientHeight = HIWORD(lParam);
 		if (wParam == SIZE_MINIMIZED)
 		{
 			mAppPaused = true;
@@ -263,21 +257,21 @@ bool Window::InitMainWindow()
 	}
 
 	// Compute window rectangle dimensions based on requested client area dimensions.
-	RECT R = { 0, 0, mClientWidth, mClientHeight };
+	RECT R = { 0, 0, m_ClientWidth, m_ClientHeight };
 	AdjustWindowRect(&R, WS_OVERLAPPEDWINDOW, false);
 	int width = R.right - R.left;
 	int height = R.bottom - R.top;
 
-	mhMainWnd = CreateWindow(L"MainWnd", mMainWndCaption.c_str(),
+	m_hMainWnd = CreateWindow(L"MainWnd", mMainWndCaption.c_str(),
 		WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height, 0, 0, mhAppInst, 0);
-	if (!mhMainWnd)
+	if (!m_hMainWnd)
 	{
 		MessageBox(0, L"CreateWindow Failed.", 0, 0);
 		return false;
 	}
 
-	ShowWindow(mhMainWnd, SW_SHOW);
-	UpdateWindow(mhMainWnd);
+	ShowWindow(m_hMainWnd, SW_SHOW);
+	UpdateWindow(m_hMainWnd);
 
 	return true;
 }
@@ -307,85 +301,10 @@ void Window::CalculateFrameStats()
 			L"    fps: " + fpsStr +
 			L"   mspf: " + mspfStr;
 
-		SetWindowText(mhMainWnd, windowText.c_str());
+		SetWindowText(m_hMainWnd, windowText.c_str());
 
 		// Reset for next average.
 		frameCnt = 0;
 		timeElapsed += 1.0f;
-	}
-}
-
-void Window::LogAdapters()
-{
-	UINT i = 0;
-	IDXGIAdapter* adapter = nullptr;
-	std::vector<IDXGIAdapter*> adapterList;
-	while (mdxgiFactory->EnumAdapters(i, &adapter) != DXGI_ERROR_NOT_FOUND)
-	{
-		DXGI_ADAPTER_DESC desc;
-		adapter->GetDesc(&desc);
-
-		std::wstring text = L"***Adapter: ";
-		text += desc.Description;
-		text += L"\n";
-
-		OutputDebugString(text.c_str());
-
-		adapterList.push_back(adapter);
-
-		++i;
-	}
-
-	for (size_t i = 0; i < adapterList.size(); ++i)
-	{
-		LogAdapterOutputs(adapterList[i]);
-		ReleaseCom(adapterList[i]);
-	}
-}
-
-void Window::LogAdapterOutputs(IDXGIAdapter* adapter)
-{
-	UINT i = 0;
-	IDXGIOutput* output = nullptr;
-	while (adapter->EnumOutputs(i, &output) != DXGI_ERROR_NOT_FOUND)
-	{
-		DXGI_OUTPUT_DESC desc;
-		output->GetDesc(&desc);
-
-		std::wstring text = L"***Output: ";
-		text += desc.DeviceName;
-		text += L"\n";
-		OutputDebugString(text.c_str());
-
-		LogOutputDisplayModes(output, mBackBufferFormat);
-
-		ReleaseCom(output);
-
-		++i;
-	}
-}
-
-void Window::LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format)
-{
-	UINT count = 0;
-	UINT flags = 0;
-
-	// Call with nullptr to get list count.
-	output->GetDisplayModeList(format, flags, &count, nullptr);
-
-	std::vector<DXGI_MODE_DESC> modeList(count);
-	output->GetDisplayModeList(format, flags, &count, &modeList[0]);
-
-	for (auto& x : modeList)
-	{
-		UINT n = x.RefreshRate.Numerator;
-		UINT d = x.RefreshRate.Denominator;
-		std::wstring text =
-			L"Width = " + std::to_wstring(x.Width) + L" " +
-			L"Height = " + std::to_wstring(x.Height) + L" " +
-			L"Refresh = " + std::to_wstring(n) + L"/" + std::to_wstring(d) +
-			L"\n";
-
-		::OutputDebugString(text.c_str());
 	}
 }
