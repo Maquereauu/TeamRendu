@@ -1,11 +1,9 @@
-#include "Window.h"
+#include "includes.h"
 
-using Microsoft::WRL::ComPtr;
+
 using namespace std;
-using namespace DirectX;
 
-LRESULT CALLBACK
-MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	// Forward hwnd on because we can get messages (e.g., WM_CREATE)
 	// before CreateWindow returns, and thus before mhMainWnd is valid.
@@ -107,7 +105,9 @@ bool Window::Initialize()
 	if (!InitMainWindow())
 		return false;
 	// Do the initial resize code.
-
+	mGraphics = new Graphics(mApp);
+	mGraphics->InitializeDirectX12Instances();
+	mGraphics->;
 	return true;
 }
 
@@ -339,7 +339,7 @@ void Window::LogAdapters()
 	for (size_t i = 0; i < adapterList.size(); ++i)
 	{
 		LogAdapterOutputs(adapterList[i]);
-		ReleaseCom(adapterList[i]);
+		/*ReleaseCom(adapterList[i]);*/
 	}
 }
 
@@ -359,7 +359,7 @@ void Window::LogAdapterOutputs(IDXGIAdapter* adapter)
 
 		LogOutputDisplayModes(output, mBackBufferFormat);
 
-		ReleaseCom(output);
+		/*ReleaseCom(output);*/
 
 		++i;
 	}

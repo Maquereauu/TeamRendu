@@ -1,11 +1,14 @@
 #pragma once
-//#include "header.h"
+
+#include "header.h"
+
 #if defined(DEBUG) || defined(_DEBUG)
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
 #endif
-#include "d3dUtil.h"
-#include "Timer.h"
+
+
+class Graphics;
 
 // Link necessary d3d12 libraries.
 
@@ -28,6 +31,20 @@ public:
     bool Get4xMsaaState()const;
     void Set4xMsaaState(bool value);
 
+    int GetWindowWidth() {
+        return mClientWidth;
+    }
+
+    int GetWindowHeight() {
+        return mClientHeight;
+    }
+
+    HWND GetWindowHwnd() {
+        return mhMainWnd;
+    }
+
+
+
     int Run();
 
     virtual bool Initialize();
@@ -42,8 +59,6 @@ private:
 
     virtual void OnResize() { }
 
-private:
-
     bool InitMainWindow();
 
     void CalculateFrameStats();
@@ -52,8 +67,7 @@ private:
     void LogAdapterOutputs(IDXGIAdapter* adapter);
     void LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format);
 
-private:
-
+    Graphics* mGraphics;
     static Window* mApp;
 
     HINSTANCE mhAppInst = nullptr; // application instance handle
