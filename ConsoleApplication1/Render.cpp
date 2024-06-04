@@ -518,7 +518,7 @@ void Render::Draw(const Timer& gt) {
 	pos1.x = 0.f;
 	pos1.y = 0.f;
 	pos1.z = 0.f;
-	DirectX::XMVECTOR pos = DirectX::XMVectorSet(5, 10, 10, 1.0f);
+	DirectX::XMVECTOR pos = DirectX::XMVectorSet(10, 10, 15, 1.0f);
 	DirectX::XMVECTOR target = DirectX::XMVectorZero();
 	DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 

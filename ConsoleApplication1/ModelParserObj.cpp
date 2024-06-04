@@ -78,20 +78,9 @@ void ModelParserObj::ParseObj()
             std::vector<std::string> strFace = split(line, " ");
 
             std::vector<std::vector<std::string>> strTrianglePoints;
-            /*for (int i = 0; i < strFace.size(); i++)
-            {
-                strTrianglePoints.push_back(split(strFace[i], "/"));
-            }*/
-				
-			std::vector<std::string> str1dPoints;
-			for (int i = 0; i < strTrianglePoints.size(); i++)
-			{
-				for (int j = 0; j < 3; j++)
-					str1dPoints.push_back(strTrianglePoints[i][j]);
-			}
 
-			for (int i = 0; i < str1dPoints.size(); i++)
-				m_ParsedObj.faces.push_back(static_cast<uint16_t>(std::stoi(str1dPoints[i])));
+			for (int i = 0; i < strFace.size(); i++)
+				m_ParsedObj.faces.push_back(static_cast<uint16_t>(std::stoi(strFace[i])));
 		}
 	}
 	
