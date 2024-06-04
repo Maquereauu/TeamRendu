@@ -1,9 +1,15 @@
 #pragma once
 #include "header.h"
+#include "UploadBuffer.h"
 class Window;
 class Shader;
 class ShaderColor;
 class ShaderTexture;
+class Mesh;
+struct ObjectConstants
+{
+	DirectX::XMFLOAT4X4 WorldViewProj = MathHelper::Identity4x4();
+};
 class Render
 {
 public:
@@ -67,5 +73,7 @@ private:
 	ID3D12DescriptorHeap* m_CbvHeap = nullptr;
 	ShaderTexture* shad1;
 	ShaderColor* shad2;
+	std::unique_ptr<UploadBuffer<ObjectConstants>> m_Buffer;
+	Mesh* mesh1;
 };
 

@@ -5,10 +5,12 @@
 #include "Shader.h"
 #include "Global.h"
 #include "Window.h"
+#include "Mesh.h"
 bool Render::Initialize() {
 	InitDirect3D();
 	shad1 = new ShaderTexture();
 	shad2 = new ShaderColor();
+	mesh1 = new Mesh();
 	ThrowIfFailed(m_CommandList->Reset(m_DirectCmdListAlloc, nullptr));
 	BuildDescriptorHeaps();
 	//BuildConstantBuffers();
@@ -256,6 +258,7 @@ void Render::BuildBoxGeometry()
 {
 	//for (int i = 0; i < graphicManager->GetMeshes().size(); i++)
 	//	graphicManager->GetMeshes()[i]->BuildGeo();
+	mesh1->CreateBoxGeometry();
 }
 
 
@@ -472,7 +475,7 @@ void Render::Draw(const Timer& gt) {
 	m_CommandList->ResourceBarrier(1, &ResBar);
 
 	// Clear the back buffer and depth buffer.
-	m_CommandList->ClearRenderTargetView(CurrentBackBufferView(), DirectX::Colors::LightGreen, 0, nullptr);
+	m_CommandList->ClearRenderTargetView(CurrentBackBufferView(), DirectX::Colors::LightBlue, 0, nullptr);
 	m_CommandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
 	// Specify the buffers we are going to render to.
@@ -489,6 +492,51 @@ void Render::Draw(const Timer& gt) {
 	{
 		entityManager->mEntities.at(i)->draw();
 	}*/
+
+	m_CommandList->SetPipelineState(shad2->GetPso());
+	m_CommandList->SetGraphicsRootSignature(shad2->GetRootSign());
+
+	m_CommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	D3D12_VERTEX_BUFFER_VIEW test = mesh1->m_boxGeometry->boxGeo->VertexBufferView();
+	m_CommandList->IASetVertexBuffers(0, 1, &test);
+	D3D12_INDEX_BUFFER_VIEW test2 = mesh1->m_boxGeometry->boxGeo->IndexBufferView();
+	m_CommandList->IASetIndexBuffer(&test2);
+
+	//if (mTexture != nullptr)
+	//{
+	//	//if (mIsCrosshair) {
+	//	m_CommandList->SetGraphicsRootDescriptorTable(0, mTexture->mHDescriptorGPU);
+	//	//}
+	//	//else {
+	//	//GetEngine()->mCommandList->SetGraphicsRootDescriptorTable(0, GetEngine()->graphicManager->mTextures[0]->mHDescriptorGPU);
+	//	//}
+	//}
+	DirectX::XMFLOAT3 pos1;
+	pos1.x = 0.f;
+	pos1.y = 0.f;
+	pos1.z = 0.f;
+	DirectX::XMVECTOR pos = DirectX::XMVectorSet(10, 10, 10, 1.0f);
+	DirectX::XMVECTOR target = DirectX::XMVectorZero();
+	DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
+	DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(pos, target, up);
+
+	DirectX::XMFLOAT4X4 MId = MathHelper::Identity4x4();
+
+	DirectX::XMMATRIX world = DirectX::XMLoadFloat4x4(&MId);
+	DirectX::XMMATRIX proj = DirectX::XMLoadFloat4x4(&mProj);
+	DirectX::XMMATRIX worldViewProj = world * view * proj;
+
+	m_Buffer = std::make_unique<UploadBuffer<ObjectConstants>>(Getmd3dDevice(), 1, true);
+	ObjectConstants objConstants;
+	XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
+	m_Buffer->CopyData(0, objConstants);
+	m_CommandList->SetGraphicsRootConstantBufferView(/*shad1->m_Type ? 1 : 0*/0, m_Buffer->Resource()->GetGPUVirtualAddress());
+
+	m_CommandList->DrawIndexedInstanced(
+		mesh1->m_boxGeometry->boxGeo->DrawArgs["box"].IndexCount,
+		1, 0, 0, 0);
+
 
 	CD3DX12_RESOURCE_BARRIER ResBar2(CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
