@@ -6,6 +6,6 @@ public:
 	Mesh();
 	~Mesh();
 	void CreateBoxGeometry();
-	Geometry* m_boxGeometry;
+	GCGEOMETRY* m_boxGeometry;
 };
 

@@ -2,24 +2,30 @@
 #include "header.h"
 #include "d3dUtil.h"
 
-struct Vertex
+struct GCVERTEX
 {
 	DirectX::XMFLOAT3 Pos;
 	DirectX::XMFLOAT4 Color;
+	DirectX::XMFLOAT2 Uv;
 };
+
+
 struct VertexTexture
 {
 	DirectX::XMFLOAT3 Pos;
-	DirectX::XMFLOAT2 TexC;
+	DirectX::XMFLOAT2 TexC; // Normal
 };
 
-struct Geometry
+
+
+struct GCGEOMETRY
 {
 	std::string name;
-	std::array<Vertex, 8> vertices;
-	std::array<std::uint16_t, 36> indices;
+	std::vector<GCVERTEX> vertices;
+	std::vector<std::uint16_t> indices;
 	SubmeshGeometry submesh;
 	std::unique_ptr<MeshGeometry> boxGeo;
+
 };
 
 class Render;
@@ -31,14 +37,14 @@ public :
 	PrimitiveFactory();
 	~PrimitiveFactory();
 	void Initialize(int type);
-	Geometry* BuildBoxGeometry();
-	Geometry* GetGeometry();
+	GCGEOMETRY* BuildBoxGeometry();
+	GCGEOMETRY* GetGeometry();
 	//void BuildSphereGeometry();
 
 protected:
 
 	int m_Type;
-	Geometry m_BoxGeometry;
+	GCGEOMETRY m_BoxGeometry;
 	//Geometry m_SphereGeometry;
 };
 

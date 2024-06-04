@@ -2,7 +2,7 @@
 
 #include "d3dUtil.h"
 
-class Render;
+class GCRender;
 
 
 class GCTexture
@@ -10,14 +10,17 @@ class GCTexture
 public:
 	GCTexture();
 	~GCTexture();
-	//void Initialize();
+
+	void Initialize(GCRender* pRender);
+
 	void Render();
 
 private:
 
-	// 
-	int m_offset;
 	std::string m_namePath;
+	// 
+	int SrvHeapIndex;
+
 
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> m_textureBuffer;
@@ -25,5 +28,5 @@ private:
 
 	// Texture offset for GPU ? 
 
-	CD3DX12_GPU_DESCRIPTOR_HANDLE* m_textureAdress;
+	CD3DX12_GPU_DESCRIPTOR_HANDLE m_textureAdress;
 };

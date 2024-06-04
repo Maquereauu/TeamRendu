@@ -3,19 +3,27 @@
 #include "ShaderTexture.h"
 #include "ShaderColor.h"
 #include "Shader.h"
+#include "Material.h"
 #include "Global.h"
 #include "Window.h"
+
+#include "Macros.h"
 
 
 
 #include "Mesh.h"
-bool Render::Initialize() {
+bool GCRender::Initialize() {
+
 	InitDirect3D();
 	shad1 = new ShaderTexture();
 	shad2 = new ShaderColor();
 	mesh1 = new Mesh();
+
+	material1 = new GCMaterial();
+	material1->Initialize();
+	material1->AddTexture("texture", this);
+
 	ThrowIfFailed(m_CommandList->Reset(m_DirectCmdListAlloc, nullptr));
-	BuildDescriptorHeaps();
 	//BuildConstantBuffers();
 	BuildShadersAndInputLayout();
 	BuildRootSignature();
@@ -51,16 +59,16 @@ bool Render::Initialize() {
 }
 
 
-bool Render::InitDirect3D()
+bool GCRender::InitDirect3D()
 {
-#if defined(DEBUG) || defined(_DEBUG) 
-		// Enable the D3D12 debug layer.
-		{
-			ID3D12Debug* debugController;
-			ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)));
-			debugController->EnableDebugLayer();
-		}
-#endif
+	#if defined(DEBUG) || defined(_DEBUG) 
+			// Enable the D3D12 debug layer.
+			{
+				ID3D12Debug* debugController;
+				ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)));
+				debugController->EnableDebugLayer();
+			}
+	#endif
 
 	ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&m_dxgiFactory)));
 
@@ -85,9 +93,9 @@ bool Render::InitDirect3D()
 	ThrowIfFailed(m_d3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE,
 		IID_PPV_ARGS(&m_Fence)));
 
-	m_RtvDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	m_DsvDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
-	m_CbvSrvUavDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	m_rtvDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	m_dsvDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+	m_cbvSrvUavDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	// Check 4X MSAA quality suppo
 	// vices support 4X MSAA for all render 
@@ -106,17 +114,18 @@ bool Render::InitDirect3D()
 	m_4xMsaaQuality = msQualityLevels.NumQualityLevels;
 	assert(m_4xMsaaQuality > 0 && "Unexpected MSAA quality level.");
 
-#ifdef _DEBUG
-	LogAdapters();
-#endif
+	#ifdef _DEBUG
+		LogAdapters();
+	#endif
 
 	CreateCommandObjects();
 	CreateSwapChain();
 	CreateRtvAndDsvDescriptorHeaps();
+	CreateCbvSrvUavDescriptorHeaps();
 	canResize = true;
 	return true;
 }
-void Render::LogAdapters()
+void GCRender::LogAdapters()
 {
 	UINT i = 0;
 	IDXGIAdapter* adapter = nullptr;
@@ -144,7 +153,7 @@ void Render::LogAdapters()
 	}
 }
 
-void Render::LogAdapterOutputs(IDXGIAdapter* adapter)
+void GCRender::LogAdapterOutputs(IDXGIAdapter* adapter)
 {
 	UINT i = 0;
 	IDXGIOutput* output = nullptr;
@@ -166,7 +175,7 @@ void Render::LogAdapterOutputs(IDXGIAdapter* adapter)
 	}
 }
 
-void Render::LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format)
+void GCRender::LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format)
 {
 	UINT count = 0;
 	UINT flags = 0;
@@ -191,7 +200,7 @@ void Render::LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format)
 	}
 }
 
-void Render::CreateCommandObjects()
+void GCRender::CreateCommandObjects()
 {
 	D3D12_COMMAND_QUEUE_DESC queueDesc = {};
 	queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
@@ -215,18 +224,8 @@ void Render::CreateCommandObjects()
 	m_CommandList->Close();
 }
 
-void Render::BuildDescriptorHeaps()
-{
-	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
-	cbvHeapDesc.NumDescriptors = 100;
-	cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-	cbvHeapDesc.NodeMask = 0;
-	ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_CbvHeap)));
-}
 
-
-void Render::BuildRootSignature()
+void GCRender::BuildRootSignature()
 {
 	// Root parameter can be a table, root descriptor or root constants.
 	//for (int i = 0; i < graphicManager->mShaders.size(); i++)
@@ -235,7 +234,7 @@ void Render::BuildRootSignature()
 	shad2->RootSign();
 }
 
-void Render::BuildShadersAndInputLayout()
+void GCRender::BuildShadersAndInputLayout()
 {
 	HRESULT hr = S_OK;
 	//for (int i = 0; i < graphicManager->mShaders.size(); i++)
@@ -249,7 +248,7 @@ void Render::BuildShadersAndInputLayout()
 
 }
 
-void Render::BuildPSO()
+void GCRender::BuildPSO()
 {
 	//for (int i = 0; i < graphicManager->mShaders.size(); i++)
 	//	graphicManager->mShaders[i]->Pso();
@@ -257,7 +256,7 @@ void Render::BuildPSO()
 	shad2->Pso();
 }
 
-void Render::BuildBoxGeometry()
+void GCRender::BuildBoxGeometry()
 {
 	//for (int i = 0; i < graphicManager->GetMeshes().size(); i++)
 	//	graphicManager->GetMeshes()[i]->BuildGeo();
@@ -265,7 +264,7 @@ void Render::BuildBoxGeometry()
 }
 
 
-void Render::CreateSwapChain()
+void GCRender::CreateSwapChain()
 {
 	// Release the previous swapchain we will be recreating.
 	if (m_SwapChain != nullptr) {
@@ -296,7 +295,7 @@ void Render::CreateSwapChain()
 		&m_SwapChain));
 }
 
-void Render::FlushCommandQueue()
+void GCRender::FlushCommandQueue()
 {
 	// Advance the fence value to mark commands up to this fence point.
 	m_CurrentFence++;
@@ -320,15 +319,27 @@ void Render::FlushCommandQueue()
 	}
 }
 
-void Render::CreateRtvAndDsvDescriptorHeaps()
+void GCRender::CreateCbvSrvUavDescriptorHeaps() {
+	// Create CBV / SRV / UAV descriptor heap
+	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc = {};
+	cbvHeapDesc.NumDescriptors = 100;
+	cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+
+	HRESULT hr = m_d3dDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_cbvSrvUavDescriptorHeap));
+	ASSERT_FAILED(hr);
+
+	m_cbvSrvUavDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+}
+
+void GCRender::CreateRtvAndDsvDescriptorHeaps()
 {
 	D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc;
 	rtvHeapDesc.NumDescriptors = SwapChainBufferCount;
 	rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 	rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 	rtvHeapDesc.NodeMask = 0;
-	ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(
-		&rtvHeapDesc, IID_PPV_ARGS(&m_RtvHeap)));
+	ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvHeap)));
 
 
 	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc;
@@ -336,16 +347,15 @@ void Render::CreateRtvAndDsvDescriptorHeaps()
 	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 	dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 	dsvHeapDesc.NodeMask = 0;
-	ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(
-		&dsvHeapDesc, IID_PPV_ARGS(&m_DsvHeap)));
+	ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&m_dsvHeap)));
 }
 
-ID3D12Device* Render::Getmd3dDevice()
+ID3D12Device* GCRender::Getmd3dDevice()
 {
 	return m_d3dDevice;
 }
 
-void Render::OnResize()
+void GCRender::OnResize()
 {
 	if (canResize == false)
 		return;
@@ -378,12 +388,12 @@ void Render::OnResize()
 
 	m_CurrBackBuffer = 0;
 
-	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHeapHandle(m_RtvHeap->GetCPUDescriptorHandleForHeapStart());
+	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHeapHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());
 	for (UINT i = 0; i < SwapChainBufferCount; i++)
 	{
 		ThrowIfFailed(m_SwapChain->GetBuffer(i, IID_PPV_ARGS(&m_SwapChainBuffer[i])));
 		m_d3dDevice->CreateRenderTargetView(m_SwapChainBuffer[i], nullptr, rtvHeapHandle);
-		rtvHeapHandle.Offset(1, m_RtvDescriptorSize);
+		rtvHeapHandle.Offset(1, m_rtvDescriptorSize);
 	}
 
 	// Create the depth/stencil buffer and view.
@@ -454,16 +464,16 @@ void Render::OnResize()
 	DirectX::XMMATRIX P = DirectX::XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, GetWindow()->AspectRatio(), 1.0f, 1000.0f);
 	XMStoreFloat4x4(&mProj, P);
 }
-D3D12_CPU_DESCRIPTOR_HANDLE Render::DepthStencilView()const
+D3D12_CPU_DESCRIPTOR_HANDLE GCRender::DepthStencilView()const
 {
-	return m_DsvHeap->GetCPUDescriptorHandleForHeapStart();
+	return m_dsvHeap->GetCPUDescriptorHandleForHeapStart();
 }
 
-void Render::Update(const Timer& gt) {
+void GCRender::Update(const Timer& gt) {
 
 }
 
-void Render::Draw(const Timer& gt) {
+void GCRender::Draw(const Timer& gt) {
 	ThrowIfFailed(m_DirectCmdListAlloc->Reset());
 	ThrowIfFailed(m_CommandList->Reset(m_DirectCmdListAlloc, nullptr));
 
@@ -487,7 +497,7 @@ void Render::Draw(const Timer& gt) {
 
 	m_CommandList->OMSetRenderTargets(1, &cbbv, true, &dsv);
 
-	ID3D12DescriptorHeap* descriptorHeaps[] = { m_CbvHeap };
+	ID3D12DescriptorHeap* descriptorHeaps[] = { m_cbvSrvUavDescriptorHeap };
 	m_CommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 	m_CommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -559,38 +569,38 @@ void Render::Draw(const Timer& gt) {
 	FlushCommandQueue();
 }
 
-ID3D12Resource* Render::CurrentBackBuffer()const
+ID3D12Resource* GCRender::CurrentBackBuffer()const
 {
 	return m_SwapChainBuffer[m_CurrBackBuffer];
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE Render::CurrentBackBufferView()const
+D3D12_CPU_DESCRIPTOR_HANDLE GCRender::CurrentBackBufferView()const
 {
 	return CD3DX12_CPU_DESCRIPTOR_HANDLE(
-		m_RtvHeap->GetCPUDescriptorHandleForHeapStart(),
+		m_rtvHeap->GetCPUDescriptorHandleForHeapStart(),
 		m_CurrBackBuffer,
-		m_RtvDescriptorSize);
+		m_rtvDescriptorSize);
 }
 
-DXGI_FORMAT Render::GetBackBufferFormat() {
+DXGI_FORMAT GCRender::GetBackBufferFormat() {
 	return m_BackBufferFormat;
 }
 
 
-bool Render::Get4xMsaaState() {
+bool GCRender::Get4xMsaaState() {
 	return m_4xMsaaState;
 }
 
 
-UINT Render::Get4xMsaaQuality() {
+UINT GCRender::Get4xMsaaQuality() {
 	return m_4xMsaaQuality;
 }
 
-DXGI_FORMAT Render::GetDepthStencilFormat() {
+DXGI_FORMAT GCRender::GetDepthStencilFormat() {
 	return m_DepthStencilFormat;
 }
 
 
-ID3D12GraphicsCommandList* Render::GetCommandList() {
+ID3D12GraphicsCommandList* GCRender::GetCommandList() {
 	return m_CommandList;
 }

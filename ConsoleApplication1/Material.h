@@ -3,17 +3,17 @@
 #include "d3dUtil.h"
 
 class GCTexture;
+class GCRender;
 
 class GCMaterial
 {
 public:
 	GCMaterial();
 	~GCMaterial();
-	void Initialize(Texture* pTexture);
+	void Initialize();
 
 	void SetColor(DirectX::XMFLOAT4 color);
-
-	void AddTexture(std::string name);
+	void AddTexture(std::string name, GCRender* pRender);
 
 
 

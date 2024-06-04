@@ -1,7 +1,7 @@
 #pragma once
 #include "d3dUtil.h"
-class Mesh;
-class Material;
+//class Mesh;
+
 class Shader
 {
 public:

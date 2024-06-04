@@ -24,7 +24,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, in
 	Window* window = new Window(hInstance);
 	SetWindow(window);
 	window->Initialize();
-	Render* render = new Render();
+	GCRender* render = new GCRender();
 	SetRender(render);
 	render->Initialize();
 	window->Run();

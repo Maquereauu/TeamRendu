@@ -13,20 +13,21 @@ void PrimitiveFactory::Initialize(int type)
 	m_Type = type;
 }
 
-Geometry* PrimitiveFactory::BuildBoxGeometry()
+GCGEOMETRY* PrimitiveFactory::BuildBoxGeometry()
 {
-	Geometry* boxGeometry = new Geometry();
-	boxGeometry->vertices =
-	{
-		Vertex({ DirectX::XMFLOAT3(-1.0f, -1.0f, -1.0f), DirectX::XMFLOAT4(DirectX::Colors::White) }),
-		Vertex({ DirectX::XMFLOAT3(-1.0f, +1.0f, -1.0f), DirectX::XMFLOAT4(DirectX::Colors::Black) }),
-		Vertex({ DirectX::XMFLOAT3(+1.0f, +1.0f, -1.0f), DirectX::XMFLOAT4(DirectX::Colors::Red) }),
-		Vertex({ DirectX::XMFLOAT3(+1.0f, -1.0f, -1.0f), DirectX::XMFLOAT4(DirectX::Colors::Green) }),
-		Vertex({ DirectX::XMFLOAT3(-1.0f, -1.0f, +1.0f), DirectX::XMFLOAT4(DirectX::Colors::Blue) }),
-		Vertex({ DirectX::XMFLOAT3(-1.0f, +1.0f, +1.0f), DirectX::XMFLOAT4(DirectX::Colors::Yellow) }),
-		Vertex({ DirectX::XMFLOAT3(+1.0f, +1.0f, +1.0f), DirectX::XMFLOAT4(DirectX::Colors::Cyan) }),
-		Vertex({ DirectX::XMFLOAT3(+1.0f, -1.0f, +1.0f), DirectX::XMFLOAT4(DirectX::Colors::Magenta) }),
+	GCGEOMETRY* boxGeometry = new GCGEOMETRY();
+
+	boxGeometry->vertices = {
+	{ DirectX::XMFLOAT3(-0.5f, -0.5f, -0.5f), DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), DirectX::XMFLOAT2(0.0f, 1.0f) }
+	{ DirectX::XMFLOAT3(-0.5f, -0.5f, 0.5f), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f), DirectX::XMFLOAT2(0.0f, 0.0f) },
+	{ DirectX::XMFLOAT3(-0.5f, 0.5f, -0.5f), DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f), DirectX::XMFLOAT2(1.0f, 1.0f) },
+	{ DirectX::XMFLOAT3(-0.5f, 0.5f, 0.5f), DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f), DirectX::XMFLOAT2(1.0f, 0.0f) },
+	{ DirectX::XMFLOAT3(0.5f, -0.5f, -0.5f), DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f), DirectX::XMFLOAT2(1.0f, 0.0) },
+	{ DirectX::XMFLOAT3(0.5f, -0.5f, 0.5f), DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f), DirectX::XMFLOAT2(0.0f, 0.0f) },
+	{ DirectX::XMFLOAT3(0.5f, 0.5f, -0.5f), DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f), DirectX::XMFLOAT2(1.0f, 1.0f) },
+	{ DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f), DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f), DirectX::XMFLOAT2(1.0f, 0.0f) }
 	};
+
 
 	boxGeometry->indices =
 	{
@@ -55,7 +56,7 @@ Geometry* PrimitiveFactory::BuildBoxGeometry()
 		4, 3, 7,
 	};
 
-	const UINT vbByteSize = (UINT)boxGeometry->vertices.size() * sizeof(Vertex);
+	const UINT vbByteSize = (UINT)boxGeometry->vertices.size() * sizeof(GCVERTEX);
 	const UINT ibByteSize = (UINT)boxGeometry->indices.size() * sizeof(std::uint16_t);
 	boxGeometry->boxGeo = std::make_unique<MeshGeometry>();
 	boxGeometry->boxGeo->Name = "boxGeo";
@@ -72,7 +73,7 @@ Geometry* PrimitiveFactory::BuildBoxGeometry()
 	boxGeometry->boxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(GetRender()->Getmd3dDevice(),
 		GetRender()->GetCommandList(), boxGeometry->indices.data(), ibByteSize, boxGeometry->boxGeo->IndexBufferUploader);
 
-	boxGeometry->boxGeo->VertexByteStride = sizeof(Vertex);
+	boxGeometry->boxGeo->VertexByteStride = sizeof(GCVERTEX);
 	boxGeometry->boxGeo->VertexBufferByteSize = vbByteSize;
 	boxGeometry->boxGeo->IndexFormat = DXGI_FORMAT_R16_UINT;
 	boxGeometry->boxGeo->IndexBufferByteSize = ibByteSize;
@@ -87,11 +88,11 @@ Geometry* PrimitiveFactory::BuildBoxGeometry()
 	return boxGeometry;
 }
 
-Geometry* PrimitiveFactory::GetGeometry()
+GCGEOMETRY* PrimitiveFactory::GetGeometry()
 {
 	switch (m_Type) {
 		case 0:
-			Geometry* primitiveGeometry = BuildBoxGeometry();
+			GCGEOMETRY * primitiveGeometry = BuildBoxGeometry();
 			return primitiveGeometry;
 			break;
 	}

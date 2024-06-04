@@ -5,22 +5,26 @@ class Window;
 class Shader;
 class ShaderColor;
 class ShaderTexture;
-
-
+class GCMaterial;
 class Mesh;
+
 struct ObjectConstants
 {
 	DirectX::XMFLOAT4X4 WorldViewProj = MathHelper::Identity4x4();
 };
-class Render
+
+
+
+class GCRender
 {
 public:
+	GCRender(){}
+
 	bool Initialize();
 	bool InitDirect3D();
 
-	// Build
-	void BuildDescriptorHeaps();
-	void BuildConstantBuffers();
+
+	//void BuildConstantBuffers();
 	void BuildRootSignature();
 	void BuildShadersAndInputLayout();
 	void BuildBoxGeometry();
@@ -32,6 +36,7 @@ public:
 
 	void CreateCommandObjects();
 	void CreateRtvAndDsvDescriptorHeaps();
+	void CreateCbvSrvUavDescriptorHeaps();
 	void CreateSwapChain();
 
 	// Draw Part
@@ -45,13 +50,28 @@ public:
 	// Getter
 	bool Get4xMsaaState();
 	ID3D12Device* Getmd3dDevice();
-	ID3D12Resource* CurrentBackBuffer()const;
+	ID3D12Resource* CurrentBackBuffer() const;
 	D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView() const;
 	D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView() const;
 	UINT Get4xMsaaQuality();
 	DXGI_FORMAT GetBackBufferFormat();
 	DXGI_FORMAT GetDepthStencilFormat();
+
 	ID3D12GraphicsCommandList* GetCommandList();
+
+	// Add getter by william 
+	ID3D12CommandQueue* GetCommandQueue() const { return m_CommandQueue; }
+	ID3D12CommandAllocator* GetCommandAllocator() const { return m_DirectCmdListAlloc; }
+
+	ID3D12Fence* GetFence() { return m_Fence; }
+
+
+	ID3D12DescriptorHeap* GetRtvHeap() { return m_rtvHeap; }
+	ID3D12DescriptorHeap* GetDsvHeap() { return m_dsvHeap; }
+	ID3D12DescriptorHeap* GetCbvSrvUavSrvDescriptorHeap() { return m_cbvSrvUavDescriptorHeap; }
+	UINT GetRtvDescriptorSize() const { return m_rtvDescriptorSize; }
+	UINT GetDsvDescriptorSize() const { return m_dsvDescriptorSize; }
+	UINT GetCbvSrvUavDescriptorSize() const { return m_cbvSrvUavDescriptorSize; }
 
 private:
 	// Swap chain size
@@ -71,15 +91,17 @@ private:
 	ID3D12Fence* m_Fence;
 	UINT64 m_CurrentFence = 0;
 	// Descriptor heaps
-	ID3D12DescriptorHeap* m_RtvHeap;
-	ID3D12DescriptorHeap* m_DsvHeap;
-	ID3D12DescriptorHeap* m_SrvDescriptorHeap;
-	ID3D12DescriptorHeap* m_CbvHeap = nullptr;
+
+
+	ID3D12DescriptorHeap* m_rtvHeap;
+	ID3D12DescriptorHeap* m_dsvHeap;
+	ID3D12DescriptorHeap* m_cbvSrvUavDescriptorHeap;
 
 	// Descriptors size
-	UINT m_RtvDescriptorSize = 0;
-	UINT m_DsvDescriptorSize = 0;
-	UINT m_CbvSrvUavDescriptorSize = 0;
+	UINT m_rtvDescriptorSize = 0;
+	UINT m_dsvDescriptorSize = 0;
+
+	UINT m_cbvSrvUavDescriptorSize = 0;
 
 
 	// State var
@@ -112,5 +134,7 @@ private:
 	ShaderColor* shad2;
 	std::unique_ptr<UploadBuffer<ObjectConstants>> m_Buffer;
 	Mesh* mesh1;
+
+	GCMaterial* material1;
 };
 
