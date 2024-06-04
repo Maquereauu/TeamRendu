@@ -116,7 +116,7 @@ bool Render::InitDirect3D()
 	CreateCommandObjects();
 	CreateSwapChain();
 	CreateRtvAndDsvDescriptorHeaps();
-	canResize = true;
+	m_canResize = true;
 	return true;
 }
 void Render::LogAdapters()
@@ -232,10 +232,10 @@ void Render::BuildDescriptorHeaps()
 void Render::BuildRootSignature()
 {
 	// Root parameter can be a table, root descriptor or root constants.
-	//for (int i = 0; i < graphicManager->mShaders.size(); i++)
-	//	graphicManager->mShaders[i]->RootSign();
-	shad1->RootSign();
-	shad2->RootSign();
+	for (int i = 0; i < graphicsManager->GetShaders().size(); i++)
+		graphicsManager->GetShaders()[i]->RootSign();
+	//shad1->RootSign();
+	//shad2->RootSign();
 }
 
 void Render::BuildShadersAndInputLayout()
@@ -350,7 +350,7 @@ ID3D12Device* Render::Getmd3dDevice()
 
 void Render::OnResize()
 {
-	if (canResize == false)
+	if (m_canResize == false)
 		return;
 	assert(m_d3dDevice);
 	assert(m_SwapChain);
@@ -499,13 +499,13 @@ void Render::Draw(const Timer& gt) {
 		entityManager->mEntities.at(i)->draw();
 	}*/
 
-	m_CommandList->SetPipelineState(shad2->GetPso());
-	m_CommandList->SetGraphicsRootSignature(shad2->GetRootSign());
+	m_CommandList->SetPipelineState(graphicsManager->GetShaders()[0]->GetPso());
+	m_CommandList->SetGraphicsRootSignature(graphicsManager->GetShaders()[0]->GetRootSign());
 
 	m_CommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	D3D12_VERTEX_BUFFER_VIEW test = mesh1->m_boxGeometry->boxGeo->VertexBufferView();
+	D3D12_VERTEX_BUFFER_VIEW test = graphicsManager->GetMeshes()[0]->m_boxGeometry->boxGeo->VertexBufferView();
 	m_CommandList->IASetVertexBuffers(0, 1, &test);
-	D3D12_INDEX_BUFFER_VIEW test2 = mesh1->m_boxGeometry->boxGeo->IndexBufferView();
+	D3D12_INDEX_BUFFER_VIEW test2 = graphicsManager->GetMeshes()[0]->m_boxGeometry->boxGeo->IndexBufferView();
 	m_CommandList->IASetIndexBuffer(&test2);
 
 	//if (mTexture != nullptr)
@@ -540,7 +540,7 @@ void Render::Draw(const Timer& gt) {
 	m_CommandList->SetGraphicsRootConstantBufferView(/*shad1->m_Type ? 1 : 0*/0, m_Buffer->Resource()->GetGPUVirtualAddress());
 
 	m_CommandList->DrawIndexedInstanced(
-		mesh1->m_boxGeometry->boxGeo->DrawArgs["box"].IndexCount,
+		graphicsManager->GetMeshes()[0]->m_boxGeometry->boxGeo->DrawArgs["box"].IndexCount,
 		1, 0, 0, 0);
 
 

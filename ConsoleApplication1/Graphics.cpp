@@ -35,23 +35,24 @@ Mesh* Graphics::CreateMesh() {
 
 
 Shader* Graphics::CreateShader(int type) {
+	Shader* shader;
 	switch (type) {
 	case 0:
 	{
-		ShaderColor* shader = new ShaderColor();
+		shader = new ShaderColor();
 		m_vShader.push_back(shader);
 		return shader;
 		break;
 	}
 	case 1:
 	{
-		ShaderTexture* shader = new ShaderTexture();
+		shader = new ShaderTexture();
 		m_vShader.push_back(shader);
 		return shader;
 		break;
 	}
 	}
-	Shader* shader = new Shader();
+	shader = new Shader();
 	m_vShader.push_back(shader);
 	return shader;
 }

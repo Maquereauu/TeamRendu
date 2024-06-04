@@ -83,7 +83,7 @@ private:
 
 
 	// State var
-	bool canResize;
+	bool m_canResize;
 	int m_CurrBackBuffer = 0;
 
 	// Format

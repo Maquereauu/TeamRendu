@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include <windows.h>
@@ -27,7 +28,7 @@
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3dcompiler.lib")
-extern const int gNumFrameResources;
+//extern const int gNumFrameResources;
 
 inline void d3dSetDebugName(IDXGIObject* obj, const char* name)
 {
@@ -254,7 +255,7 @@ struct Material
     // Because we have a material constant buffer for each FrameResource, we have to apply the
     // update to each FrameResource.  Thus, when we modify a material we should set 
     // NumFramesDirty = gNumFrameResources so that each frame resource gets the update.
-    int NumFramesDirty = gNumFrameResources;
+    int NumFramesDirty = 1;// gNumFrameResources;
 
     // Material constant buffer data used for shading.
     DirectX::XMFLOAT4 DiffuseAlbedo = { 1.0f, 1.0f, 1.0f, 1.0f };
