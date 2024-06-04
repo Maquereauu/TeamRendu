@@ -29,6 +29,7 @@ Geometry* PrimitiveFactory::BuildBoxGeometry()
 	};
 
 	boxGeometry->indices =
+    
 	{
 		//front face
 		0, 1, 2,
