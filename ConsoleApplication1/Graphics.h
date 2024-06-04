@@ -10,7 +10,7 @@ private:
 public:
 	Graphics();
 	void CreateMesh(int type);
-	void CreateShader();
+	Shader* CreateShader();
 	//void CreateTexture();
 	//std::vector<Mesh*> GetMeshes();
 public:

@@ -1,6 +1,7 @@
 #include "Shader.h"
 #include "Global.h"
 #include "Render.h"
+#include "Mesh.h"
 ID3DBlob* Shader::GetmvsByteCode()
 {
 	return m_vsByteCode;
@@ -121,14 +122,18 @@ void Shader::Pso() {
 	psoDesc.SampleMask = UINT_MAX;
 	psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	psoDesc.NumRenderTargets = 1;
-	psoDesc.RTVFormats[0] = GetRender()->m_BackBufferFormat;
-	psoDesc.SampleDesc.Count = GetRender()->m_4xMsaaState ? 4 : 1;
-	psoDesc.SampleDesc.Quality = GetRender()->m_4xMsaaState ? (GetRender()->m_4xMsaaQuality - 1) : 0;
-	psoDesc.DSVFormat = GetRender()->m_DepthStencilFormat;
+	psoDesc.RTVFormats[0] = GetRender()->GetBackBufferFormat();
+	psoDesc.SampleDesc.Count = GetRender()->Get4xMsaaState() ? 4 : 1;
+	psoDesc.SampleDesc.Quality = GetRender()->Get4xMsaaState() ? (GetRender()->Get4xMsaaQuality() - 1) : 0;
+	psoDesc.DSVFormat = GetRender()->GetDepthStencilFormat();
 
 	// Create the graphics pipeline state
 	ThrowIfFailed(GetRender()->Getmd3dDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_PSO)));
 }
+
+//void Shader::Render() {
+//
+//}
 
 
 Shader::~Shader()

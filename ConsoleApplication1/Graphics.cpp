@@ -15,9 +15,9 @@ void Graphics::CreateMesh(int type) {
 }
 
 
-void Graphics::CreateShader() {
-	/*mShaders.push_back(new Shader());*/
-}
+//Shader* Graphics::CreateShader() {
+//	/*mShaders.push_back(new Shader());*/
+//}
 
 //void Graphics::CreateTexture() {
 //	mTextures.push_back(new Texture2());
