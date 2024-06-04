@@ -267,8 +267,8 @@ void Render::CreateSwapChain()
 	}
 
 	DXGI_SWAP_CHAIN_DESC sd;
-	sd.BufferDesc.Width = GetWindow()->m_ClientWidth;
-	sd.BufferDesc.Height = GetWindow()->m_ClientHeight;
+	sd.BufferDesc.Width = GetWindow()->GetClientWidth();
+	sd.BufferDesc.Height = GetWindow()->GetClientHeight();
 	sd.BufferDesc.RefreshRate.Numerator = 60;
 	sd.BufferDesc.RefreshRate.Denominator = 1;
 	sd.BufferDesc.Format = m_BackBufferFormat;
@@ -278,7 +278,7 @@ void Render::CreateSwapChain()
 	sd.SampleDesc.Quality = m_4xMsaaState ? (m_4xMsaaQuality - 1) : 0;
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	sd.BufferCount = SwapChainBufferCount;
-	sd.OutputWindow = GetWindow()->m_hMainWnd;
+	sd.OutputWindow = GetWindow()->GetHMainWnd();
 	sd.Windowed = true;
 	sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
@@ -366,7 +366,7 @@ void Render::OnResize()
 	// Resize the swap chain.
 	ThrowIfFailed(m_SwapChain->ResizeBuffers(
 		SwapChainBufferCount,
-		GetWindow()->m_ClientWidth, GetWindow()->m_ClientHeight,
+		GetWindow()->GetClientWidth(), GetWindow()->GetClientHeight(),
 		m_BackBufferFormat,
 		DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH));
 
@@ -384,8 +384,8 @@ void Render::OnResize()
 	D3D12_RESOURCE_DESC depthStencilDesc;
 	depthStencilDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	depthStencilDesc.Alignment = 0;
-	depthStencilDesc.Width = GetWindow()->m_ClientWidth;
-	depthStencilDesc.Height = GetWindow()->m_ClientHeight;
+	depthStencilDesc.Width = GetWindow()->GetClientWidth();
+	depthStencilDesc.Height = GetWindow()->GetClientHeight();
 	depthStencilDesc.DepthOrArraySize = 1;
 	depthStencilDesc.MipLevels = 1;
 
@@ -438,12 +438,12 @@ void Render::OnResize()
 	// Update the viewport transform to cover the client area.
 	m_ScreenViewport.TopLeftX = 0;
 	m_ScreenViewport.TopLeftY = 0;
-	m_ScreenViewport.Width = static_cast<float>(GetWindow()->m_ClientWidth);
-	m_ScreenViewport.Height = static_cast<float>(GetWindow()->m_ClientHeight);
+	m_ScreenViewport.Width = static_cast<float>(GetWindow()->GetClientWidth());
+	m_ScreenViewport.Height = static_cast<float>(GetWindow()->GetClientHeight());
 	m_ScreenViewport.MinDepth = 0.0f;
 	m_ScreenViewport.MaxDepth = 1.0f;
 
-	m_ScissorRect = { 0, 0, GetWindow()->m_ClientWidth, GetWindow()->m_ClientHeight };
+	m_ScissorRect = { 0, 0, GetWindow()->GetClientWidth(), GetWindow()->GetClientHeight() };
 
 	DirectX::XMMATRIX P = DirectX::XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, GetWindow()->AspectRatio(), 1.0f, 1000.0f);
 	XMStoreFloat4x4(&mProj, P);
@@ -519,4 +519,22 @@ D3D12_CPU_DESCRIPTOR_HANDLE Render::CurrentBackBufferView()const
 		m_RtvHeap->GetCPUDescriptorHandleForHeapStart(),
 		m_CurrBackBuffer,
 		m_RtvDescriptorSize);
+}
+
+DXGI_FORMAT Render::GetBackBufferFormat() {
+	return m_BackBufferFormat;
+}
+
+
+bool Render::Get4xMsaaState() {
+	return m_4xMsaaState;
+}
+
+
+UINT Render::Get4xMsaaQuality() {
+	return m_4xMsaaQuality;
+}
+
+DXGI_FORMAT Render::GetDepthStencilFormat() {
+	return m_DepthStencilFormat;
 }

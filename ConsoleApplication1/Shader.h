@@ -1,5 +1,7 @@
 #pragma once
 #include "d3dUtil.h"
+class Mesh;
+class Material;
 class Shader
 {
 public:
@@ -11,7 +13,9 @@ public:
 	void RootSign();
 	void Pso();
 
-public:
+	//void Render(Mesh* mesh, Material* material, matrix);
+
+private:
 	ID3D12RootSignature* m_RootSignature = nullptr;
 	ID3D12PipelineState* m_PSO = nullptr;
 	int m_Type;
