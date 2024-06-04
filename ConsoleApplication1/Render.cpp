@@ -475,7 +475,7 @@ void Render::Draw(const Timer& gt) {
 	m_CommandList->ResourceBarrier(1, &ResBar);
 
 	// Clear the back buffer and depth buffer.
-	m_CommandList->ClearRenderTargetView(CurrentBackBufferView(), DirectX::Colors::LightGreen, 0, nullptr);
+	m_CommandList->ClearRenderTargetView(CurrentBackBufferView(), DirectX::Colors::LightBlue, 0, nullptr);
 	m_CommandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
 	// Specify the buffers we are going to render to.
@@ -516,16 +516,15 @@ void Render::Draw(const Timer& gt) {
 	pos1.y = 0.f;
 	pos1.z = 0.f;
 	DirectX::XMVECTOR pos = DirectX::XMVectorSet(10, 10, 10, 1.0f);
-	DirectX::XMVECTOR target = DirectX::XMLoadFloat3(&pos1);
+	DirectX::XMVECTOR target = DirectX::XMVectorZero();
 	DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
 	DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(pos, target, up);
 
 	DirectX::XMFLOAT4X4 MId = MathHelper::Identity4x4();
-	DirectX::XMFLOAT4X4 MId2 = MathHelper::Identity4x4();
 
 	DirectX::XMMATRIX world = DirectX::XMLoadFloat4x4(&MId);
-	DirectX::XMMATRIX proj = DirectX::XMLoadFloat4x4(&MId2);
+	DirectX::XMMATRIX proj = DirectX::XMLoadFloat4x4(&mProj);
 	DirectX::XMMATRIX worldViewProj = world * view * proj;
 
 	m_Buffer = std::make_unique<UploadBuffer<ObjectConstants>>(Getmd3dDevice(), 1, true);
