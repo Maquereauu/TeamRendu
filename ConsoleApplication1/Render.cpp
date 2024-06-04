@@ -5,6 +5,9 @@
 #include "Shader.h"
 #include "Global.h"
 #include "Window.h"
+
+
+
 bool Render::Initialize() {
 	InitDirect3D();
 	shad1 = new ShaderTexture();

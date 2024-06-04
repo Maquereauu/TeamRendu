@@ -152,6 +152,7 @@
     <ClInclude Include="Global.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="header.h" />
+    <ClInclude Include="Macros.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ModelParser.h" />

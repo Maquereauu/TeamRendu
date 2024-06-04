@@ -4,6 +4,8 @@ class Window;
 class Shader;
 class ShaderColor;
 class ShaderTexture;
+
+
 class Render
 {
 public:
