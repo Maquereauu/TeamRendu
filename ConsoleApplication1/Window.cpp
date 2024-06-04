@@ -308,3 +308,16 @@ void Window::CalculateFrameStats()
 		timeElapsed += 1.0f;
 	}
 }
+
+int Window::GetClientWidth() {
+	return m_ClientWidth;
+}
+
+
+int Window::GetClientHeight() {
+	return m_ClientHeight;
+}
+
+HWND Window::GetHMainWnd() {
+	return m_hMainWnd;
+}

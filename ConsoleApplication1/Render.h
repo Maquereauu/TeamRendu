@@ -26,11 +26,17 @@ public:
 	void BuildPSO();
 	void Update(const Timer& gt);
 	void Draw(const Timer& gt);
-	ID3D12Device* Getmd3dDevice();
 	void OnResize();
+	bool Get4xMsaaState();
+	ID3D12Device* Getmd3dDevice();
 	ID3D12Resource* CurrentBackBuffer()const;
 	D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView()const;
 	D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView()const;
+	UINT Get4xMsaaQuality();
+	DXGI_FORMAT GetBackBufferFormat();
+	DXGI_FORMAT GetDepthStencilFormat();
+	ID3D12GraphicsCommandList* GetCommandList();
+private:
 	IDXGIFactory4* m_dxgiFactory;
 	ID3D12Device* m_d3dDevice;
 	ID3D12Fence* m_Fence;

@@ -32,16 +32,13 @@ public:
 
     virtual bool Initialize();
     virtual LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    bool      m4xMsaaState = false;    // 4X MSAA enabled
-    UINT      m4xMsaaQuality = 0;      // quality level of 4X MSAA
-    int m_ClientWidth = 1920;
-    int m_ClientHeight = 1080;
-    HWND      m_hMainWnd = nullptr; // main window handle
+    int GetClientWidth();
+    int GetClientHeight();
+    HWND GetHMainWnd();
+
 private:
 
     virtual void OnResize() { }
-
-private:
 
     bool InitMainWindow();
 
@@ -51,7 +48,11 @@ private:
 private:
 
     static Window* mApp;
-
+    bool      m4xMsaaState = false;    // 4X MSAA enabled
+    UINT      m4xMsaaQuality = 0;      // quality level of 4X MSAA
+    int m_ClientWidth = 1920;
+    int m_ClientHeight = 1080;
+    HWND      m_hMainWnd = nullptr; // main window handle
     HINSTANCE mhAppInst = nullptr; // application instance handle
     bool      mAppPaused = false;  // is the application paused?
     bool      mMinimized = false;  // is the application minimized?
@@ -65,5 +66,5 @@ private:
     Timer mTimer;
     IDXGIFactory4* mdxgiFactory;
     // Derived class should set these in derived constructor to customize starting values.
-    std::wstring mMainWndCaption = L"Noeil";
+    std::wstring mMainWndCaption = L"Rendu";
 };
