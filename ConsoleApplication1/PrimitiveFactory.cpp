@@ -1,4 +1,6 @@
 #include "PrimitiveFactory.h"
+#include "Global.h"
+#include "Render.h"
 
 PrimitiveFactory::PrimitiveFactory() {
 }
@@ -11,9 +13,10 @@ void PrimitiveFactory::Initialize(int type)
 	m_Type = type;
 }
 
-void PrimitiveFactory::BuildBoxGeometry()
+Geometry PrimitiveFactory::BuildBoxGeometry()
 {
-	m_BoxGeometry.vertices =
+	Geometry boxGeometry;
+	boxGeometry.vertices =
 	{
 		Vertex({ DirectX::XMFLOAT3(-1.0f, -1.0f, -1.0f), DirectX::XMFLOAT4(DirectX::Colors::White) }),
 		Vertex({ DirectX::XMFLOAT3(-1.0f, +1.0f, -1.0f), DirectX::XMFLOAT4(DirectX::Colors::Black) }),
@@ -25,7 +28,7 @@ void PrimitiveFactory::BuildBoxGeometry()
 		Vertex({ DirectX::XMFLOAT3(+1.0f, -1.0f, +1.0f), DirectX::XMFLOAT4(DirectX::Colors::Magenta) }),
 	};
 
-	m_BoxGeometry.indices =
+	boxGeometry.indices =
 	{
 		//front face
 		0, 1, 2,
@@ -52,30 +55,44 @@ void PrimitiveFactory::BuildBoxGeometry()
 		4, 3, 7,
 	};
 
-	/*const UINT vbByteSize = (UINT)m_BoxGeometry.vertices.size() * sizeof(VertexTexture);
-	const UINT ibByteSize = (UINT)m_BoxGeometry.indices.size() * sizeof(std::uint16_t);
-	mBoxGeo = std::make_unique<MeshGeometry>();
-	mBoxGeo->Name = "boxGeo";
+	const UINT vbByteSize = (UINT)boxGeometry.vertices.size() * sizeof(VertexTexture);
+	const UINT ibByteSize = (UINT)boxGeometry.indices.size() * sizeof(std::uint16_t);
+	boxGeometry.boxGeo = std::make_unique<MeshGeometry>();
+	boxGeometry.boxGeo->Name = "boxGeo";
 
-	ThrowIfFailed(D3DCreateBlob(vbByteSize, &mBoxGeo->VertexBufferCPU));
-	CopyMemory(mBoxGeo->VertexBufferCPU->GetBufferPointer(), m_BoxGeometry.vertices.data(), vbByteSize);
+	ThrowIfFailed(D3DCreateBlob(vbByteSize, &boxGeometry.boxGeo->VertexBufferCPU));
+	CopyMemory(boxGeometry.boxGeo->VertexBufferCPU->GetBufferPointer(), boxGeometry.vertices.data(), vbByteSize);
 
-	ThrowIfFailed(D3DCreateBlob(ibByteSize, &mBoxGeo->IndexBufferCPU));
-	CopyMemory(mBoxGeo->IndexBufferCPU->GetBufferPointer(), m_BoxGeometry.indices.data(), ibByteSize);
+	ThrowIfFailed(D3DCreateBlob(ibByteSize, &boxGeometry.boxGeo->IndexBufferCPU));
+	CopyMemory(boxGeometry.boxGeo->IndexBufferCPU->GetBufferPointer(), boxGeometry.indices.data(), ibByteSize);
 
-	mBoxGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(GetEngine()->Getmd3dDevice(),
-		GetEngine()->GetmCommandList(), m_BoxGeometry.vertices.data(), vbByteSize, mBoxGeo->VertexBufferUploader);
+	boxGeometry.boxGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(GetRender()->Getmd3dDevice(),
+		GetRender()->m_CommandList, boxGeometry.vertices.data(), vbByteSize, boxGeometry.boxGeo->VertexBufferUploader);
 
-	mBoxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(GetEngine()->Getmd3dDevice(),
-		GetEngine()->GetmCommandList(), m_BoxGeometry.indices.data(), ibByteSize, mBoxGeo->IndexBufferUploader);
+	boxGeometry.boxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(GetRender()->Getmd3dDevice(),
+		GetRender()->m_CommandList, boxGeometry.indices.data(), ibByteSize, boxGeometry.boxGeo->IndexBufferUploader);
 
-	mBoxGeo->VertexByteStride = sizeof(VertexTexture);
-	mBoxGeo->VertexBufferByteSize = vbByteSize;
-	mBoxGeo->IndexFormat = DXGI_FORMAT_R16_UINT;
-	mBoxGeo->IndexBufferByteSize = ibByteSize;
+	boxGeometry.boxGeo->VertexByteStride = sizeof(VertexTexture);
+	boxGeometry.boxGeo->VertexBufferByteSize = vbByteSize;
+	boxGeometry.boxGeo->IndexFormat = DXGI_FORMAT_R16_UINT;
+	boxGeometry.boxGeo->IndexBufferByteSize = ibByteSize;
 
 	SubmeshGeometry submesh;
-	submesh.IndexCount = (UINT)m_BoxGeometry.indices.size();
+	submesh.IndexCount = (UINT)boxGeometry.indices.size();
 	submesh.StartIndexLocation = 0;
-	submesh.BaseVertexLocation = 0;*/
+	submesh.BaseVertexLocation = 0;
+
+	boxGeometry.submesh = submesh;
+
+	return boxGeometry;
+}
+
+Geometry PrimitiveFactory::GetGeometry()
+{
+	switch (m_Type) {
+
+	case 0:
+		Geometry primitiveGeometry = BuildBoxGeometry();
+	}
+
 }

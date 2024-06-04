@@ -15,24 +15,30 @@ struct VertexTexture
 
 struct Geometry
 {
+	std::string name;
 	std::array<Vertex, 8> vertices;
 	std::array<std::uint16_t, 36> indices;
+	SubmeshGeometry submesh;
+	std::unique_ptr<MeshGeometry> boxGeo;
 };
+
+class Render;
 
 class PrimitiveFactory
 {
 public : 
-	int m_Type;
-	Geometry m_BoxGeometry;
-	//Geometry m_SphereGeometry;
-	std::unique_ptr<MeshGeometry> mBoxGeo = nullptr;
 
 	PrimitiveFactory();
 	~PrimitiveFactory();
 	void Initialize(int type);
-	void BuildBoxGeometry();
+	Geometry BuildBoxGeometry();
+	Geometry GetGeometry();
 	//void BuildSphereGeometry();
 
-	
+protected:
+
+	int m_Type;
+	Geometry m_BoxGeometry;
+	//Geometry m_SphereGeometry;
 };
 
