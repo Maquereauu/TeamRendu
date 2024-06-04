@@ -5,15 +5,18 @@
 #include "Shader.h"
 #include "Global.h"
 #include "Window.h"
-
-
-
+#include "Graphics.h"
 #include "Mesh.h"
+
 bool Render::Initialize() {
 	InitDirect3D();
-	shad1 = new ShaderTexture();
-	shad2 = new ShaderColor();
-	mesh1 = new Mesh();
+	graphicsManager = new Graphics();
+	//shad1 = new ShaderTexture();
+	//shad2 = new ShaderColor();
+	//mesh1 = new Mesh();
+	graphicsManager->CreateMesh();
+	graphicsManager->CreateShader(0);
+	graphicsManager->CreateShader(1);
 	ThrowIfFailed(m_CommandList->Reset(m_DirectCmdListAlloc, nullptr));
 	BuildDescriptorHeaps();
 	//BuildConstantBuffers();
@@ -238,12 +241,12 @@ void Render::BuildRootSignature()
 void Render::BuildShadersAndInputLayout()
 {
 	HRESULT hr = S_OK;
-	//for (int i = 0; i < graphicManager->mShaders.size(); i++)
-	//{
-	//	graphicManager->mShaders[i]->CompileShader(i);
-	//}
-	shad1->CompileShader();
-	shad2->CompileShader();
+	for (int i = 0; i < graphicsManager->GetShaders().size(); i++)
+	{
+		graphicsManager->GetShaders()[i]->CompileShader();
+	}
+	//shad1->CompileShader();
+	//shad2->CompileShader();
 	//mvsByteCode = d3dUtil::CompileShader(L"Shaders\\color.hlsl", nullptr, "VS", "vs_5_0");
 	//mpsByteCode = d3dUtil::CompileShader(L"Shaders\\color.hlsl", nullptr, "PS", "ps_5_0");
 
@@ -251,17 +254,17 @@ void Render::BuildShadersAndInputLayout()
 
 void Render::BuildPSO()
 {
-	//for (int i = 0; i < graphicManager->mShaders.size(); i++)
-	//	graphicManager->mShaders[i]->Pso();
-	shad1->Pso();
-	shad2->Pso();
+	for (int i = 0; i < graphicsManager->GetShaders().size(); i++)
+		graphicsManager->GetShaders()[i]->Pso();
+	//shad1->Pso();
+	//shad2->Pso();
 }
 
 void Render::BuildBoxGeometry()
 {
-	//for (int i = 0; i < graphicManager->GetMeshes().size(); i++)
-	//	graphicManager->GetMeshes()[i]->BuildGeo();
-	mesh1->CreateBoxGeometry();
+	for (int i = 0; i < graphicsManager->GetMeshes().size(); i++)
+		graphicsManager->GetMeshes()[i]->CreateBoxGeometry();
+	//mesh1->CreateBoxGeometry();
 }
 
 

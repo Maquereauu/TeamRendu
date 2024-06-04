@@ -5,9 +5,9 @@ class Window;
 class Shader;
 class ShaderColor;
 class ShaderTexture;
-
-
+class Graphics;
 class Mesh;
+
 struct ObjectConstants
 {
 	DirectX::XMFLOAT4X4 WorldViewProj = MathHelper::Identity4x4();
@@ -110,6 +110,7 @@ private:
 	// Instance (Temporary)
 	ShaderTexture* shad1;
 	ShaderColor* shad2;
+	Graphics* graphicsManager;
 	std::unique_ptr<UploadBuffer<ObjectConstants>> m_Buffer;
 	Mesh* mesh1;
 };
