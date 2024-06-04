@@ -31,8 +31,8 @@ public :
 	PrimitiveFactory();
 	~PrimitiveFactory();
 	void Initialize(int type);
-	Geometry BuildBoxGeometry();
-	Geometry GetGeometry();
+	Geometry* BuildBoxGeometry();
+	Geometry* GetGeometry();
 	//void BuildSphereGeometry();
 
 protected:
