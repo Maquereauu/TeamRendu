@@ -55,7 +55,7 @@ Geometry* PrimitiveFactory::BuildBoxGeometry()
 		4, 3, 7,
 	};
 
-	const UINT vbByteSize = (UINT)boxGeometry->vertices.size() * sizeof(VertexTexture);
+	const UINT vbByteSize = (UINT)boxGeometry->vertices.size() * sizeof(Vertex);
 	const UINT ibByteSize = (UINT)boxGeometry->indices.size() * sizeof(std::uint16_t);
 	boxGeometry->boxGeo = std::make_unique<MeshGeometry>();
 	boxGeometry->boxGeo->Name = "boxGeo";
@@ -72,7 +72,7 @@ Geometry* PrimitiveFactory::BuildBoxGeometry()
 	boxGeometry->boxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(GetRender()->Getmd3dDevice(),
 		GetRender()->GetCommandList(), boxGeometry->indices.data(), ibByteSize, boxGeometry->boxGeo->IndexBufferUploader);
 
-	boxGeometry->boxGeo->VertexByteStride = sizeof(VertexTexture);
+	boxGeometry->boxGeo->VertexByteStride = sizeof(Vertex);
 	boxGeometry->boxGeo->VertexBufferByteSize = vbByteSize;
 	boxGeometry->boxGeo->IndexFormat = DXGI_FORMAT_R16_UINT;
 	boxGeometry->boxGeo->IndexBufferByteSize = ibByteSize;
