@@ -15,8 +15,8 @@ class ModelParserObj
 public:
 	ModelParserObj();
 	~ModelParserObj();
-	ObjInfo ParseObj();
-	Geometry BuildObj();
+	void ParseObj();
+	Geometry* BuildObj();
 
 protected:
 	ObjInfo m_ParsedObj;

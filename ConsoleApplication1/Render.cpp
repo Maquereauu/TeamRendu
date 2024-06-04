@@ -261,7 +261,7 @@ void Render::BuildBoxGeometry()
 {
 	//for (int i = 0; i < graphicManager->GetMeshes().size(); i++)
 	//	graphicManager->GetMeshes()[i]->BuildGeo();
-	mesh1->CreateBoxGeometry();
+	mesh1->CreateObjGeometry();
 }
 
 
@@ -500,9 +500,9 @@ void Render::Draw(const Timer& gt) {
 	m_CommandList->SetGraphicsRootSignature(shad2->GetRootSign());
 
 	m_CommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	D3D12_VERTEX_BUFFER_VIEW test = mesh1->m_boxGeometry->boxGeo->VertexBufferView();
+	D3D12_VERTEX_BUFFER_VIEW test = mesh1->GetBoxGeometry()->boxGeo->VertexBufferView();
 	m_CommandList->IASetVertexBuffers(0, 1, &test);
-	D3D12_INDEX_BUFFER_VIEW test2 = mesh1->m_boxGeometry->boxGeo->IndexBufferView();
+	D3D12_INDEX_BUFFER_VIEW test2 = mesh1->GetBoxGeometry()->boxGeo->IndexBufferView();
 	m_CommandList->IASetIndexBuffer(&test2);
 
 	//if (mTexture != nullptr)
@@ -518,7 +518,7 @@ void Render::Draw(const Timer& gt) {
 	pos1.x = 0.f;
 	pos1.y = 0.f;
 	pos1.z = 0.f;
-	DirectX::XMVECTOR pos = DirectX::XMVectorSet(10, 10, 10, 1.0f);
+	DirectX::XMVECTOR pos = DirectX::XMVectorSet(5, 10, 10, 1.0f);
 	DirectX::XMVECTOR target = DirectX::XMVectorZero();
 	DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
@@ -537,7 +537,7 @@ void Render::Draw(const Timer& gt) {
 	m_CommandList->SetGraphicsRootConstantBufferView(/*shad1->m_Type ? 1 : 0*/0, m_Buffer->Resource()->GetGPUVirtualAddress());
 
 	m_CommandList->DrawIndexedInstanced(
-		mesh1->m_boxGeometry->boxGeo->DrawArgs["box"].IndexCount,
+		mesh1->GetBoxGeometry()->boxGeo->DrawArgs["box"].IndexCount,
 		1, 0, 0, 0);
 
 
