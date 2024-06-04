@@ -67,10 +67,10 @@ Geometry PrimitiveFactory::BuildBoxGeometry()
 	CopyMemory(boxGeometry.boxGeo->IndexBufferCPU->GetBufferPointer(), boxGeometry.indices.data(), ibByteSize);
 
 	boxGeometry.boxGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(GetRender()->Getmd3dDevice(),
-		GetRender()->m_CommandList, boxGeometry.vertices.data(), vbByteSize, boxGeometry.boxGeo->VertexBufferUploader);
+		GetRender()->GetCommandList(), boxGeometry.vertices.data(), vbByteSize, boxGeometry.boxGeo->VertexBufferUploader);
 
 	boxGeometry.boxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(GetRender()->Getmd3dDevice(),
-		GetRender()->m_CommandList, boxGeometry.indices.data(), ibByteSize, boxGeometry.boxGeo->IndexBufferUploader);
+		GetRender()->GetCommandList(), boxGeometry.indices.data(), ibByteSize, boxGeometry.boxGeo->IndexBufferUploader);
 
 	boxGeometry.boxGeo->VertexByteStride = sizeof(VertexTexture);
 	boxGeometry.boxGeo->VertexBufferByteSize = vbByteSize;

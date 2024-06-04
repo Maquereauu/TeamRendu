@@ -538,3 +538,8 @@ UINT Render::Get4xMsaaQuality() {
 DXGI_FORMAT Render::GetDepthStencilFormat() {
 	return m_DepthStencilFormat;
 }
+
+
+ID3D12GraphicsCommandList* Render::GetCommandList() {
+	return m_CommandList;
+}

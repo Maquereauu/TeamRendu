@@ -33,6 +33,7 @@ public:
 	UINT Get4xMsaaQuality();
 	DXGI_FORMAT GetBackBufferFormat();
 	DXGI_FORMAT GetDepthStencilFormat();
+	ID3D12GraphicsCommandList* GetCommandList();
 private:
 	IDXGIFactory4* m_dxgiFactory;
 	ID3D12Device* m_d3dDevice;
