@@ -1,12 +1,13 @@
 #pragma once
 #include "header.h"
 #include "PrimitiveFactory.h"
+#include "Render.h"
 
 struct Geometry;
 
 struct ObjInfo {
-	std::vector<std::vector<float>> vertices;
-	std::vector<std::vector<std::vector<int>>> indices;
+	std::vector<std::vector<float>> coords;
+	std::vector<uint16_t> faces;
 };
 
 class ModelParserObj
@@ -16,5 +17,8 @@ public:
 	~ModelParserObj();
 	ObjInfo ParseObj();
 	Geometry BuildObj();
+
+protected:
+	ObjInfo m_ParsedObj;
 };
 

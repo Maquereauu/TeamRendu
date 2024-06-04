@@ -28,6 +28,7 @@ Geometry PrimitiveFactory::BuildBoxGeometry()
 		Vertex({ DirectX::XMFLOAT3(+1.0f, -1.0f, +1.0f), DirectX::XMFLOAT4(DirectX::Colors::Magenta) }),
 	};
 
+
 	boxGeometry.indices =
 	{
 		//front face

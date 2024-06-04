@@ -1,4 +1,5 @@
 #include "ModelParserObj.h"
+#include "Global.h"
 
 std::vector<std::string> split(std::string str, std::string delimiter)
 {
@@ -36,17 +37,18 @@ std::vector<float> getFloatCoordinates(std::vector<std::string>* pStrCoord)
     return floatCoord;
 }
 
-std::vector<std::vector<int>> getIntPoints(std::vector<std::vector<std::string>>* pStrPoints)
+std::vector<uint16_t> getIntPoints(std::vector<std::string>* pStrPoints)
 {
-    std::vector<std::vector<int>> intPoints;
+    std::vector<uint16_t> intPoints;
 
     for (int i = 0; i < pStrPoints->size(); i++)
     {
-        std::vector<int> tempVect;
-        for (int j = 0; j < pStrPoints->at(i).size(); i++)
+        int tempVect;
+        for (int j = 0; j < pStrPoints->size(); i++)
         {
             
-            tempVect.push_back(stoi(pStrPoints->at(i).at(j));
+            tempVect = static_cast<uint16_t>(stoi(pStrPoints->at(i)));
+
         }
 
         intPoints.push_back(tempVect);
@@ -63,7 +65,6 @@ ModelParserObj::~ModelParserObj() {
 
 ObjInfo ModelParserObj::ParseObj()
 {
-	ObjInfo parsedObj;
 
 	std::ifstream objFile ("untitled.obj");
 	std::string line;
@@ -80,7 +81,7 @@ ObjInfo ModelParserObj::ParseObj()
 
 				std::vector<float> coordinates = getFloatCoordinates(&strCoord);
 
-				parsedObj.vertices.push_back(coordinates);
+				m_ParsedObj.coords.push_back(coordinates);
 			}
 
             else if (line[0] == 'f') //face triangles
@@ -93,9 +94,16 @@ ObjInfo ModelParserObj::ParseObj()
                 {
                     strTrianglePoints.push_back(split(strFace[i], "/"));
                 }
+				
+				std::vector<std::string> str1dPoints;
+				for (int i = 0; i < strTrianglePoints.size(); i++)
+				{
+					for (int j = 0; j < strTrianglePoints[i].size(); i++)
+						str1dPoints.push_back(strTrianglePoints[i][j]);
+				}
 
-                parsedObj.indices.push_back(getIntPoints(&strTrianglePoints));
-            }
+                m_ParsedObj.faces = getIntPoints(&str1dPoints);
+			}
 		}
 	}
 
@@ -103,5 +111,45 @@ ObjInfo ModelParserObj::ParseObj()
 
 Geometry ModelParserObj::BuildObj() 
 {
-    /*TODO*/
+	Geometry objGeometry;
+
+	for (int i = 0; i < m_ParsedObj.coords.size(); i++)
+	{
+		objGeometry.vertices.push_back(
+			Vertex({ DirectX::XMFLOAT3(m_ParsedObj.coords[i][0], m_ParsedObj.coords[i][1], m_ParsedObj.coords[i][2]), DirectX::XMFLOAT4(DirectX::Colors::White)})
+		);
+	}
+
+	objGeometry.indices = m_ParsedObj.faces;
+
+	const UINT vbByteSize = (UINT)objGeometry.vertices.size() * sizeof(Vertex);
+	const UINT ibByteSize = (UINT)objGeometry.indices.size() * sizeof(std::uint16_t);
+	objGeometry.boxGeo = std::make_unique<MeshGeometry>();
+	objGeometry.boxGeo->Name = "boxGeo";
+
+	ThrowIfFailed(D3DCreateBlob(vbByteSize, &objGeometry.boxGeo->VertexBufferCPU));
+	CopyMemory(objGeometry.boxGeo->VertexBufferCPU->GetBufferPointer(), objGeometry.vertices.data(), vbByteSize);
+
+	ThrowIfFailed(D3DCreateBlob(ibByteSize, &objGeometry.boxGeo->IndexBufferCPU));
+	CopyMemory(objGeometry.boxGeo->IndexBufferCPU->GetBufferPointer(), objGeometry.indices.data(), ibByteSize);
+
+	objGeometry.boxGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(GetRender()->Getmd3dDevice(),
+		GetRender()->GetCommandList(), objGeometry.vertices.data(), vbByteSize, objGeometry.boxGeo->VertexBufferUploader);
+
+	objGeometry.boxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(GetRender()->Getmd3dDevice(),
+		GetRender()->GetCommandList(), objGeometry.indices.data(), ibByteSize, objGeometry.boxGeo->IndexBufferUploader);
+
+	objGeometry.boxGeo->VertexByteStride = sizeof(Vertex);
+	objGeometry.boxGeo->VertexBufferByteSize = vbByteSize;
+	objGeometry.boxGeo->IndexFormat = DXGI_FORMAT_R16_UINT;
+	objGeometry.boxGeo->IndexBufferByteSize = ibByteSize;
+
+	SubmeshGeometry submesh;
+	submesh.IndexCount = (UINT)objGeometry.indices.size();
+	submesh.StartIndexLocation = 0;
+	submesh.BaseVertexLocation = 0;
+
+	objGeometry.submesh = submesh;
+
+	return objGeometry;
 }
