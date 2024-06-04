@@ -11,4 +11,6 @@ void Mesh::CreateBoxGeometry()
 	factory->Initialize(0);
 	m_boxGeometry = factory->GetGeometry();
 	m_boxGeometry->boxGeo->DrawArgs["box"] = m_boxGeometry->submesh;
+
+
 }
