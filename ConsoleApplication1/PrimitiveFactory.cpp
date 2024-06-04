@@ -93,6 +93,7 @@ Geometry PrimitiveFactory::GetGeometry()
 
 	case 0:
 		Geometry primitiveGeometry = BuildBoxGeometry();
+		return primitiveGeometry;
 	}
 
 }
