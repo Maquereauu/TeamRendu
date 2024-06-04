@@ -10,7 +10,7 @@ class GCTexture
 public:
 	GCTexture();
 	~GCTexture();
-	void Initialize();
+	//void Initialize();
 	void Render();
 
 private:
