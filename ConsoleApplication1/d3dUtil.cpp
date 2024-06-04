@@ -81,7 +81,9 @@ ID3D12Resource* d3dUtil::CreateDefaultBuffer(
         D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST));
     cmdList->ResourceBarrier(1, &ResBarrier);
     UpdateSubresources<1>(cmdList, defaultBuffer, uploadBuffer, 0, 0, 1, &subResourceData);
-    cmdList->ResourceBarrier(1, &ResBarrier);
+    CD3DX12_RESOURCE_BARRIER ResBarrier2(CD3DX12_RESOURCE_BARRIER::Transition(defaultBuffer,
+        D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ));
+    cmdList->ResourceBarrier(1, &ResBarrier2);
 
     // Note: uploadBuffer has to be kept alive after the above function calls because
     // the command list has not been executed yet that performs the actual copy.

@@ -12,12 +12,14 @@ public:
 	ID3DBlob* GetmpsByteCode();
 	void RootSign();
 	void Pso();
-
+	ID3D12RootSignature* GetRootSign();
+	ID3D12PipelineState* GetPso();
 	//void Render(Mesh* mesh, Material* material, matrix);
 
 private:
 	ID3D12RootSignature* m_RootSignature = nullptr;
 	ID3D12PipelineState* m_PSO = nullptr;
+public:
 	int m_Type;
 
 protected:

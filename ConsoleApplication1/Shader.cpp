@@ -135,6 +135,14 @@ void Shader::Pso() {
 //
 //}
 
+ID3D12RootSignature* Shader::GetRootSign() {
+	return m_RootSignature;
+}
+
+ID3D12PipelineState* Shader::GetPso() {
+	return m_PSO;
+}
+
 
 Shader::~Shader()
 {
