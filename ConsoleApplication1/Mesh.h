@@ -12,8 +12,20 @@ class GCMesh;
 
 #include "Render.h"
 
+struct GCOBJECTCONSTANTS {
+	DirectX::XMFLOAT4X4 WorldViewProj;
+};
 
+struct GCMESHDATA {
 
+	// Vertex buffer
+	ID3D12Resource* m_vertexBuffer;
+	D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView;
+
+	// Index buffer
+	ID3D12Resource* m_indexBuffer;
+	D3D12_INDEX_BUFFER_VIEW m_indexBufferView;
+};
 
 class GCMesh
 {
@@ -26,22 +38,29 @@ public:
 
 	void UploadWorldViewProjData();
 
+	GCOBJECTCONSTANTS* m_pWorldViewProjData;
 
-	DirectX::XMFLOAT4X4 mWorld = MathHelper::Identity4x4();
-	DirectX::XMFLOAT4X4 mView = MathHelper::Identity4x4();
-	DirectX::XMFLOAT4X4 mProj = MathHelper::Identity4x4();
-	std::unique_ptr<UploadBuffer<ObjectConstants>> m_Buffer;
 
-	void CreateBoxGeometry();
-	void CreateObjGeometry();
-	GCGEOMETRY* GetBoxGeometry();
-	GCGEOMETRYTEXTURE* GetGeometryTexture();
+	void CreateGeometry();
+	//void CreateObjGeometry();
+	//GCGEOMETRY* GetBoxGeometry();
+	//GCGEOMETRYTEXTURE* GetGeometryTexture();
+
+	GCGEOMETRY* GetGeometry() const { return m_pGeometry; }
+	GCMESHDATA* GetMeshData() const { return m_pMeshData; }
+
+	// Constant buffer
+	ID3D12Resource* m_pConstantBuffer; 
+	UINT8* m_pMappedConstantBuffer;
 
 private:
 
-	GCGEOMETRYTEXTURE* m_GeoTextures;
-	GCGEOMETRY* m_boxGeometry;
+	//GCGEOMETRYTEXTURE* m_GeoTextures;
+	GCGEOMETRY* m_pGeometry;
+	GCMESHDATA* m_pMeshData;
 
 	GCRender* m_pRender;
+
+
 };
 

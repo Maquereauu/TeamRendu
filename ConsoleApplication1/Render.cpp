@@ -428,32 +428,47 @@ void GCRender::DrawOneObject(GCMesh* pMesh, GCShader* pShader) {
 
 
 	// Mesh
-	//m_pGraphicsManager->GetMeshes()[0]->Render();
+	m_pGraphicsManager->GetMeshes()[0]->Render();
 
-	m_CommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = m_pGraphicsManager->GetMeshes()[0]->GetBoxGeometry()->boxGeo->VertexBufferView();
-	m_CommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
-	D3D12_INDEX_BUFFER_VIEW indexBufferView = m_pGraphicsManager->GetMeshes()[0]->GetBoxGeometry()->boxGeo->IndexBufferView();
-	m_CommandList->IASetIndexBuffer(&indexBufferView);
+	//m_CommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//D3D12_VERTEX_BUFFER_VIEW vertexBufferView = m_pGraphicsManager->GetMeshes()[0]->GetMeshData()->m_vertexBufferView;
+	//m_CommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+	//D3D12_INDEX_BUFFER_VIEW indexBufferView = m_pGraphicsManager->GetMeshes()[0]->GetMeshData()->m_indexBufferView;
+	//m_CommandList->IASetIndexBuffer(&indexBufferView);
 
-	DirectX::XMFLOAT3 pos1 = { 0.f, 0.f, 0.f };
-	DirectX::XMVECTOR pos = DirectX::XMVectorSet(10, 10, 10, 1.0f);
-	DirectX::XMVECTOR target = DirectX::XMVectorZero();
-	DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	//DirectX::XMFLOAT3 pos1 = { 0.f, 0.f, 0.f };
+	//DirectX::XMVECTOR pos = DirectX::XMVectorSet(10, 10, 10, 1.0f);
+	//DirectX::XMVECTOR target = DirectX::XMVectorZero();
+	//DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
-	DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(pos, target, up);
-	DirectX::XMFLOAT4X4 MId = MathHelper::Identity4x4();
-	DirectX::XMMATRIX world = DirectX::XMLoadFloat4x4(&MId);
-	DirectX::XMMATRIX proj = DirectX::XMLoadFloat4x4(&mProj);
-	DirectX::XMMATRIX worldViewProj = world * view * proj;
+	//DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(pos, target, up);
+	//DirectX::XMFLOAT4X4 MId = MathHelper::Identity4x4();
+	//DirectX::XMMATRIX world = DirectX::XMLoadFloat4x4(&MId);
+	//DirectX::XMMATRIX proj = DirectX::XMLoadFloat4x4(&mProj);
+	//DirectX::XMMATRIX worldViewProj = world * view * proj;
 
-	m_Buffer = std::make_unique<UploadBuffer<ObjectConstants>>(Getmd3dDevice(), 1, true);
-	ObjectConstants objConstants;
-	XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
-	m_Buffer->CopyData(0, objConstants);
-	m_CommandList->SetGraphicsRootConstantBufferView(0, m_Buffer->Resource()->GetGPUVirtualAddress());
+	//m_Buffer = std::make_unique<UploadBuffer<ObjectConstants>>(Getmd3dDevice(), 1, true);
+	//ObjectConstants objConstants;
+	//XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
+	//m_Buffer->CopyData(0, objConstants);
 
-	m_CommandList->DrawIndexedInstanced(m_pGraphicsManager->GetMeshes()[0]->GetBoxGeometry()->boxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
+	// Assurez-vous que le tampon de constantes est correctement mappé
+	//HRESULT hr = m_pGraphicsManager->GetMeshes()[0]->m_pMappedConstantBuffer->Map(0, nullptr, reinterpret_cast<void**>(&m_pGraphicsManager->GetMeshes()[0]->m_pMappedConstantBuffer));
+	//ASSERT_FAILED(hr);
+
+	//// Copie des données des constantes dans le tampon mappé
+	//GCOBJECTCONSTANTS* pConstData;
+	//pConstData = reinterpret_cast<GCOBJECTCONSTANTS*>(m_pGraphicsManager->GetMeshes()[0]->m_pMappedConstantBuffer);
+
+	//*pConstData = m_pGraphicsManager->GetMeshes()[0]->m_pWorldViewProjData->WorldViewProj;
+
+	//// Démappez le tampon
+	//m_pGraphicsManager->GetMeshes()[0]->m_pMappedConstantBuffer->Unmap(0, nullptr);
+
+
+	//m_CommandList->SetGraphicsRootConstantBufferView(0, m_Buffer->Resource()->GetGPUVirtualAddress());
+
+	//m_CommandList->DrawIndexedInstanced(m_pGraphicsManager->GetMeshes()[0]->GetGeometry()->vertexNumber, 1, 0, 0, 0);
 }
 
 

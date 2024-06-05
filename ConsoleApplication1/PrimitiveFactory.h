@@ -21,11 +21,16 @@ struct GCVERTEXTEXTURE
 
 struct GCGEOMETRY
 {
-	std::string name;
+	//std::string name;
 	std::vector<GCVERTEX> vertices;
-	std::vector<std::uint16_t> indices;
-	SubmeshGeometry submesh;
-	std::unique_ptr<MeshGeometry> boxGeo;
+	std::vector<UINT> indices;
+
+	std::size_t vertexNumber;
+	std::size_t indiceNumber;
+
+
+	//SubmeshGeometry submesh;
+	//std::unique_ptr<MeshGeometry> boxGeo;
 };
 
 struct GCGEOMETRYTEXTURE
@@ -48,8 +53,8 @@ public :
 	~PrimitiveFactory();
 	void Initialize(int type, GCRender* pRender);
 	GCGEOMETRY* BuildBoxGeometry();
-	GCGEOMETRY* GetGeometry();
-	GCGEOMETRY* BuildBoxGeometryTexture();
+	//GCGEOMETRY* GetGeometry();
+	//GCGEOMETRY* BuildBoxGeometryTexture();
 	//void BuildSphereGeometry();
 
 protected:
