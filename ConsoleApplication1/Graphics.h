@@ -8,8 +8,9 @@ class Mesh;
 class Shader;
 class ShaderColor;
 class ShaderTexture;
-class Material;
-
+//class Material;
+class GCTexture;
+class GCMaterial;
 
 class Graphics
 {
@@ -22,13 +23,15 @@ public:
 
 	// Principal Object Creation
 	Shader* CreateShader(int type);
-	Material* CreateMaterial();
+	GCMaterial* CreateMaterial();
 	Mesh* CreateMesh();
+	GCTexture* CreateTexture();
 
 	// Resources Manager
 	std::vector<Shader*> GetShaders();
-	std::vector<Material*> GetMaterials();
+	std::vector<GCMaterial*> GetMaterials();
 	std::vector<Mesh*> GetMeshes();
+	std::vector<GCTexture*> GetTextures();
 	// *
 	
 	// Render instance contain Window
@@ -38,7 +41,8 @@ public:
 	//std::vector<Mesh*> GetMeshes();
 private:
 	std::vector<Shader*> m_vShader;
-	std::vector<Material*> m_vMaterial;
+	std::vector<GCMaterial*> m_vMaterial;
 	std::vector<Mesh*> m_vMesh;
+	std::vector<GCTexture*> m_vTexture;
 };
 

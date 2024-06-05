@@ -23,7 +23,7 @@ void GCMaterial::SetColor(DirectX::XMFLOAT4 color) {
 
 void GCMaterial::AddTexture(std::string name, GCRender* pRender) {
 	m_pTexture = new GCTexture();
-	m_pTexture->Initialize(pRender);
+	m_pTexture->Initialize(pRender,name);
 }
 
 
