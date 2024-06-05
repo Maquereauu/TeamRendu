@@ -35,7 +35,7 @@ bool GCRender::Initialize(GCGraphics* graphicsManager) {
 	m_pGraphicsManager->CreateShader(1);
 
 	//BuildConstantBuffers();
-
+	
 
 
 	ThrowIfFailed(m_CommandList->Close());
