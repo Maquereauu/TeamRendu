@@ -3,11 +3,11 @@
 
 class GCRender;
 
-class Shader
+class GCShader
 {
 public:
-	Shader();
-	~Shader();
+	GCShader();
+	~GCShader();
 
 	virtual void CompileShader();
 
@@ -20,7 +20,7 @@ public:
 	ID3D12RootSignature* GetRootSign();
 	ID3D12PipelineState* GetPso();
 
-	void Initialize(GCRender* pRender);
+	virtual void Initialize(GCRender* pRender);
 	void Render();
 
 	//void Render(Mesh* mesh, Material* material, matrix);

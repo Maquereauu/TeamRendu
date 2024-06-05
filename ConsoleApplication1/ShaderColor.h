@@ -1,8 +1,15 @@
 #pragma once
 #include "Shader.h"
-class ShaderColor : public Shader
+class GCShaderColor : public GCShader
 {
 public:
-	virtual void CompileShader()override;
+
+	virtual void Initialize(GCRender* pRender) override;
+
+
+	virtual void CompileShader() override;
+
+
+
 };
 

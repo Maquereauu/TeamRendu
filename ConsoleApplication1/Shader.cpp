@@ -4,35 +4,34 @@
 #include "Mesh.h"
 
 
-ID3DBlob* Shader::GetmvsByteCode()
-{
-	return m_vsByteCode;
-};
 
-ID3DBlob* Shader::GetmpsByteCode()
-{
-	return m_psByteCode;
-};
 
-Shader::Shader() {
+GCShader::GCShader() {
 
 }
 
-void Shader::Initialize(GCRender* pRender) {
-	m_pRender = pRender;
-}
 
-void Shader::Render() {
+GCShader::~GCShader()
+{
+
+};
+
+
+
+void GCShader::Render() {
 	m_pRender->GetCommandList()->SetPipelineState(GetPso());
 	m_pRender->GetCommandList()->SetGraphicsRootSignature(GetRootSign());
 }
 
+void GCShader::Initialize(GCRender* pRender) {
+	
+}
 
-void Shader::CompileShader() {
+void GCShader::CompileShader() {
 
 }
 
-void Shader::RootSign() {
+void GCShader::RootSign() {
 	CD3DX12_ROOT_PARAMETER slotRootParameter[2];
 
 	//int count = 0;
@@ -97,7 +96,7 @@ void Shader::RootSign() {
 		IID_PPV_ARGS(&m_RootSignature)));
 }
 
-void Shader::Pso() {
+void GCShader::Pso() {
 	// Initialize the graphics pipeline state description
 	ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
 	psoDesc.InputLayout = { m_InputLayout.data(), (UINT)m_InputLayout.size() };
@@ -145,17 +144,21 @@ void Shader::Pso() {
 
 
 
-ID3D12RootSignature* Shader::GetRootSign() {
+ID3D12RootSignature* GCShader::GetRootSign() {
 	return m_RootSignature;
 }
 
-ID3D12PipelineState* Shader::GetPso() {
+ID3D12PipelineState* GCShader::GetPso() {
 	return m_PSO;
 }
 
 
-
-Shader::~Shader()
+ID3DBlob* GCShader::GetmvsByteCode()
 {
+	return m_vsByteCode;
+};
 
+ID3DBlob* GCShader::GetmpsByteCode()
+{
+	return m_psByteCode;
 };
