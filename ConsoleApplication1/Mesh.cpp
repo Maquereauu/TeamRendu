@@ -18,10 +18,15 @@ void Mesh::CreateObjGeometry()
 	ModelParserObj* objParser = new ModelParserObj();
 	objParser->ParseObj();
 	m_GeoTextures = objParser->BuildObj();
-	m_GeoTextures->boxGeo->DrawArgs["box"] = m_boxGeometry->submesh;
+	m_GeoTextures->boxGeo->DrawArgs["box"] = m_GeoTextures->submesh;
 }
 
 Geometry* Mesh::GetBoxGeometry()
 {
 	return m_boxGeometry;
+}
+
+GeometryTexture* Mesh::GetGeometryTexture()
+{
+	return m_GeoTextures;
 }

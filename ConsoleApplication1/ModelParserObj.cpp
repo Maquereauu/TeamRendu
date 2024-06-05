@@ -46,7 +46,7 @@ ModelParserObj::~ModelParserObj() {
 void ModelParserObj::ParseObj()
 {
 
-	std::ifstream objFile ("monkey.obj");
+	std::ifstream objFile ("cube.obj");
 	std::string line;
 
 	while (!objFile.eof()) {
@@ -56,10 +56,14 @@ void ModelParserObj::ParseObj()
 		if (line[0] == 'v' && line[1] == ' ') //vertex coordinates
 		{
 
-			for (int i = 0; i < line.size()-2; i++)
+			std::string templine;
+
+			for (int i = 2; i < line.size(); i++)
 			{
-				line[i] = line[i + 2];
+				templine.push_back(line[i]);
 			}
+
+			line = templine;
 
             std::vector<std::string> strCoord = split(line, " ");
 
@@ -109,6 +113,8 @@ void ModelParserObj::ParseObj()
 				templine.push_back(line[i]);
 			}
 
+			line = templine;
+
 			std::vector<std::string> strUv = split(line, " ");
 
 			std::vector<float> uv = getFloatCoordinates(&strUv);
@@ -130,9 +136,9 @@ GeometryTexture* ModelParserObj::BuildObj()
 			VertexTexture({ 
 				DirectX::XMFLOAT3(m_ParsedObj.coords[m_ParsedObj.facesInfos[i][0]][0], m_ParsedObj.coords[m_ParsedObj.facesInfos[i][0]][1], m_ParsedObj.coords[m_ParsedObj.facesInfos[i][0]][2]),
 				DirectX::XMFLOAT2(m_ParsedObj.uvs[m_ParsedObj.facesInfos[i][1]][0], m_ParsedObj.uvs[m_ParsedObj.facesInfos[i][1]][1])}));
-	}
 
-	/* TODO : objGeometry->indices = m_ParsedObj.facesInfos;*/
+		objGeometry->indices.push_back(m_ParsedObj.facesInfos[i][0]);
+	}
 
 	const UINT vbByteSize = (UINT)objGeometry->vertices.size() * sizeof(VertexTexture);
 	const UINT ibByteSize = (UINT)objGeometry->indices.size() * sizeof(std::uint16_t);

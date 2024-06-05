@@ -14,6 +14,7 @@ public:
 	void CreateBoxGeometry();
 	void CreateObjGeometry();
 	Geometry* GetBoxGeometry();
+	GeometryTexture* GetGeometryTexture();
 
 protected :
 	Geometry* m_boxGeometry;
