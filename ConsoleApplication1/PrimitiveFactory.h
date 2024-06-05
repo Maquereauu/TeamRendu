@@ -6,11 +6,10 @@ struct GCVERTEX
 {
 	DirectX::XMFLOAT3 Pos;
 	DirectX::XMFLOAT4 Color;
-	DirectX::XMFLOAT2 Uv;
 };
 
 
-struct VertexTexture
+struct GCVERTEXTEXTURE
 {
 	DirectX::XMFLOAT3 Pos;
 	DirectX::XMFLOAT2 TexC; // Normal
@@ -39,6 +38,7 @@ public :
 	void Initialize(int type);
 	GCGEOMETRY* BuildBoxGeometry();
 	GCGEOMETRY* GetGeometry();
+	GCGEOMETRY* BuildBoxGeometryTexture();
 	//void BuildSphereGeometry();
 
 protected:

@@ -11,22 +11,22 @@
 
 
 
-#include "Mesh.h"
-bool GCRender::Initialize() {
-
-	InitDirect3D();
-	shad1 = new ShaderTexture();
-	shad2 = new ShaderColor();
-	mesh1 = new Mesh();
-
-	material1 = new GCMaterial();
-	material1->Initialize();
-	material1->AddTexture("texture", this);
+//#include "Mesh.h"
+//bool GCRender::Initialize() {
+//
+//	InitDirect3D();
+//	shad1 = new ShaderTexture();
+//	shad2 = new ShaderColor();
+//	mesh1 = new Mesh();
+//
+//	material1 = new GCMaterial();
+//	material1->Initialize();
+//	material1->AddTexture("texture", this);
 
 #include "Graphics.h"
 #include "Mesh.h"
 
-bool Render::Initialize() {
+bool GCRender::Initialize() {
 	InitDirect3D();
 	graphicsManager = new Graphics();
 	//shad1 = new ShaderTexture();
@@ -134,7 +134,6 @@ bool GCRender::InitDirect3D()
 	CreateSwapChain();
 	CreateRtvAndDsvDescriptorHeaps();
 	CreateCbvSrvUavDescriptorHeaps();
-	canResize = true;
 	m_canResize = true;
 	return true;
 }
