@@ -8,7 +8,7 @@ class PrimitiveFactory;
 
 class ModelParserObj;
 
-class GCMesh
+class GCMesh;
 
 #include "Render.h"
 
@@ -34,14 +34,14 @@ public:
 
 	void CreateBoxGeometry();
 	void CreateObjGeometry();
-	Geometry* GetBoxGeometry();
-	GeometryTexture* GetGeometryTexture();
-
-protected :
-	GeometryTexture* m_GeoTextures;
-	GCGEOMETRY* m_boxGeometry;
+	GCGEOMETRY* GetBoxGeometry();
+	GCGEOMETRYTEXTURE* GetGeometryTexture();
 
 private:
+
+	GCGEOMETRYTEXTURE* m_GeoTextures;
+	GCGEOMETRY* m_boxGeometry;
+
 	GCRender* m_pRender;
 };
 

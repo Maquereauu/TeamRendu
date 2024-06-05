@@ -22,17 +22,16 @@ struct GCVERTEXTEXTURE
 struct GCGEOMETRY
 {
 	std::string name;
-	std::vector<Vertex> vertices;
+	std::vector<GCVERTEX> vertices;
 	std::vector<std::uint16_t> indices;
 	SubmeshGeometry submesh;
 	std::unique_ptr<MeshGeometry> boxGeo;
 };
 
-struct GeometryTexture
+struct GCGEOMETRYTEXTURE
 {
 	std::string name;
-	std::vector<VertexTexture> vertices;
-	std::vector<GCVERTEX> vertices;
+	std::vector<GCVERTEXTEXTURE> vertices;
 	std::vector<std::uint16_t> indices;
 	SubmeshGeometry submesh;
 	std::unique_ptr<MeshGeometry> boxGeo;

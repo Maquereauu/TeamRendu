@@ -126,21 +126,21 @@ void ModelParserObj::ParseObj()
 
 }
 
-GeometryTexture* ModelParserObj::BuildObj() 
+GCGEOMETRYTEXTURE* ModelParserObj::BuildObj() 
 {
-	GeometryTexture* objGeometry = new GeometryTexture();
+	GCGEOMETRYTEXTURE* objGeometry = new GCGEOMETRYTEXTURE();
 
 	for (int i = 0; i < m_ParsedObj.facesInfos.size(); i++)
 	{
 		objGeometry->vertices.push_back(
-			VertexTexture({ 
+			GCVERTEXTEXTURE({ 
 				DirectX::XMFLOAT3(m_ParsedObj.coords[m_ParsedObj.facesInfos[i][0]][0], m_ParsedObj.coords[m_ParsedObj.facesInfos[i][0]][1], m_ParsedObj.coords[m_ParsedObj.facesInfos[i][0]][2]),
 				DirectX::XMFLOAT2(m_ParsedObj.uvs[m_ParsedObj.facesInfos[i][1]][0], m_ParsedObj.uvs[m_ParsedObj.facesInfos[i][1]][1])}));
 
 		objGeometry->indices.push_back(m_ParsedObj.facesInfos[i][0]);
 	}
 
-	const UINT vbByteSize = (UINT)objGeometry->vertices.size() * sizeof(VertexTexture);
+	const UINT vbByteSize = (UINT)objGeometry->vertices.size() * sizeof(GCVERTEXTEXTURE);
 	const UINT ibByteSize = (UINT)objGeometry->indices.size() * sizeof(std::uint16_t);
 	objGeometry->boxGeo = std::make_unique<MeshGeometry>();
 	objGeometry->boxGeo->Name = "boxGeo";
@@ -151,13 +151,13 @@ GeometryTexture* ModelParserObj::BuildObj()
 	ThrowIfFailed(D3DCreateBlob(ibByteSize, &objGeometry->boxGeo->IndexBufferCPU));
 	CopyMemory(objGeometry->boxGeo->IndexBufferCPU->GetBufferPointer(), objGeometry->indices.data(), ibByteSize);
 
-	objGeometry->boxGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(GetRender()->Getmd3dDevice(),
-		GetRender()->GetCommandList(), objGeometry->vertices.data(), vbByteSize, objGeometry->boxGeo->VertexBufferUploader);
+	objGeometry->boxGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(m_pRender->Getmd3dDevice(),
+		m_pRender->GetCommandList(), objGeometry->vertices.data(), vbByteSize, objGeometry->boxGeo->VertexBufferUploader);
 
-	objGeometry->boxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(GetRender()->Getmd3dDevice(),
-		GetRender()->GetCommandList(), objGeometry->indices.data(), ibByteSize, objGeometry->boxGeo->IndexBufferUploader);
+	objGeometry->boxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(m_pRender->Getmd3dDevice(),
+		m_pRender->GetCommandList(), objGeometry->indices.data(), ibByteSize, objGeometry->boxGeo->IndexBufferUploader);
 
-	objGeometry->boxGeo->VertexByteStride = sizeof(VertexTexture);
+	objGeometry->boxGeo->VertexByteStride = sizeof(GCVERTEXTEXTURE);
 	objGeometry->boxGeo->VertexBufferByteSize = vbByteSize;
 	objGeometry->boxGeo->IndexFormat = DXGI_FORMAT_R16_UINT;
 	objGeometry->boxGeo->IndexBufferByteSize = ibByteSize;

@@ -24,7 +24,7 @@ void GCMesh::CreateBoxGeometry()
 	m_boxGeometry->boxGeo->DrawArgs["box"] = m_boxGeometry->submesh;
 }
 
-void Mesh::CreateObjGeometry()
+void GCMesh::CreateObjGeometry()
 {
 	ModelParserObj* objParser = new ModelParserObj();
 	objParser->ParseObj();
@@ -32,12 +32,12 @@ void Mesh::CreateObjGeometry()
 	m_GeoTextures->boxGeo->DrawArgs["box"] = m_GeoTextures->submesh;
 }
 
-Geometry* Mesh::GetBoxGeometry()
+GCGEOMETRY* GCMesh::GetBoxGeometry()
 {
 	return m_boxGeometry;
 }
 
-GeometryTexture* Mesh::GetGeometryTexture()
+GCGEOMETRYTEXTURE* GCMesh::GetGeometryTexture()
 {
 	return m_GeoTextures;
 }

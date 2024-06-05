@@ -431,9 +431,9 @@ void GCRender::DrawOneObject(GCMesh* pMesh, GCShader* pShader) {
 	//m_pGraphicsManager->GetMeshes()[0]->Render();
 
 	m_CommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = m_pGraphicsManager->GetMeshes()[0]->m_boxGeometry->boxGeo->VertexBufferView();
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = m_pGraphicsManager->GetMeshes()[0]->GetBoxGeometry()->boxGeo->VertexBufferView();
 	m_CommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
-	D3D12_INDEX_BUFFER_VIEW indexBufferView = m_pGraphicsManager->GetMeshes()[0]->m_boxGeometry->boxGeo->IndexBufferView();
+	D3D12_INDEX_BUFFER_VIEW indexBufferView = m_pGraphicsManager->GetMeshes()[0]->GetBoxGeometry()->boxGeo->IndexBufferView();
 	m_CommandList->IASetIndexBuffer(&indexBufferView);
 
 	DirectX::XMFLOAT3 pos1 = { 0.f, 0.f, 0.f };
@@ -453,7 +453,7 @@ void GCRender::DrawOneObject(GCMesh* pMesh, GCShader* pShader) {
 	m_Buffer->CopyData(0, objConstants);
 	m_CommandList->SetGraphicsRootConstantBufferView(0, m_Buffer->Resource()->GetGPUVirtualAddress());
 
-	m_CommandList->DrawIndexedInstanced(m_pGraphicsManager->GetMeshes()[0]->m_boxGeometry->boxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
+	m_CommandList->DrawIndexedInstanced(m_pGraphicsManager->GetMeshes()[0]->GetBoxGeometry()->boxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
 }
 
 

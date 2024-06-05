@@ -3,7 +3,7 @@
 #include "PrimitiveFactory.h"
 #include "Render.h"
 
-struct Geometry;
+struct GCGEOMETRYTEXTURE;
 
 struct ObjInfo {
 	std::vector<std::vector<float>> coords;
@@ -17,9 +17,10 @@ public:
 	ModelParserObj();
 	~ModelParserObj();
 	void ParseObj();
-	GeometryTexture* BuildObj();
+	GCGEOMETRYTEXTURE* BuildObj();
 
 protected:
 	ObjInfo m_ParsedObj;
+	GCRender* m_pRender;
 };
 
