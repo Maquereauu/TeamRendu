@@ -13,7 +13,7 @@ GCMesh::~GCMesh() {
 
 void GCMesh::Initialize(GCRender* pRender) {
 	m_pRender = pRender;
-	CreateBoxGeometry();
+	CreateObjGeometry();
 }
 
 void GCMesh::CreateBoxGeometry() 
@@ -24,12 +24,22 @@ void GCMesh::CreateBoxGeometry()
 	m_boxGeometry->boxGeo->DrawArgs["box"] = m_boxGeometry->submesh;
 }
 
+void GCMesh::CreateObjGeometryWithTextures()
+{
+	ModelParserObj* objParser = new ModelParserObj();
+	objParser->Initialize(m_pRender, "cube.obj");
+	objParser->ParseObj();
+	m_GeoTextures = objParser->BuildObjWithTextures();
+	m_GeoTextures->boxGeo->DrawArgs["box"] = m_GeoTextures->submesh;
+}
+
 void GCMesh::CreateObjGeometry()
 {
 	ModelParserObj* objParser = new ModelParserObj();
+	objParser->Initialize(m_pRender, "cubeNoUv.obj");
 	objParser->ParseObj();
-	m_GeoTextures = objParser->BuildObj();
-	m_GeoTextures->boxGeo->DrawArgs["box"] = m_GeoTextures->submesh;
+	m_boxGeometry = objParser->BuildObj();
+	m_boxGeometry->boxGeo->DrawArgs["box"] = m_boxGeometry->submesh;
 }
 
 GCGEOMETRY* GCMesh::GetBoxGeometry()

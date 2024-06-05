@@ -34,6 +34,7 @@ public:
 
 	void CreateBoxGeometry();
 	void CreateObjGeometry();
+	void CreateObjGeometryWithTextures();
 	GCGEOMETRY* GetBoxGeometry();
 	GCGEOMETRYTEXTURE* GetGeometryTexture();
 

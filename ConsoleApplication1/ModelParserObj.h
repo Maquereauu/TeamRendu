@@ -16,11 +16,14 @@ class ModelParserObj
 public:
 	ModelParserObj();
 	~ModelParserObj();
+	void Initialize(GCRender* pRender, std::string fileName);
 	void ParseObj();
-	GCGEOMETRYTEXTURE* BuildObj();
+	GCGEOMETRYTEXTURE* BuildObjWithTextures();
+	GCGEOMETRY* BuildObj();
 
-protected:
+private:
 	ObjInfo m_ParsedObj;
 	GCRender* m_pRender;
+	std::string m_fileName;
 };
 
