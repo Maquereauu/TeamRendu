@@ -1,12 +1,14 @@
 #pragma once
 
-#include "d3dUtil.h"
+//#include "d3dUtil.h"
+#include <vector>
 
-class Texture2;
+//class Texture2;
 class Mesh;
 class Shader;
-class Render;
-
+class ShaderColor;
+class ShaderTexture;
+class Material;
 
 
 class Graphics
@@ -14,29 +16,29 @@ class Graphics
 public:
 	Graphics();
 
-	void Initialize();
+	/*void Initialize();*/
 
 	// Soon Mesh
-	void CreateMesh(int type);
 
 	// Principal Object Creation
-	Shader* CreateShader();
+	Shader* CreateShader(int type);
 	Material* CreateMaterial();
-	// Mesh* CreateMesh();
+	Mesh* CreateMesh();
 
 	// Resources Manager
-	std::vector<Shader*> GetAllShader();
-	std::vector<Material*> GetAllMaterial();
+	std::vector<Shader*> GetShaders();
+	std::vector<Material*> GetMaterials();
+	std::vector<Mesh*> GetMeshes();
 	// *
-
+	
 	// Render instance contain Window
-	Render* m_pRender;
+	/*Render* m_pRender;*/
 
 	//void CreateTexture();
 	//std::vector<Mesh*> GetMeshes();
 private:
 	std::vector<Shader*> m_vShader;
 	std::vector<Material*> m_vMaterial;
-	//	std::vector<Mesh*> m_vMesh;
+	std::vector<Mesh*> m_vMesh;
 };
 

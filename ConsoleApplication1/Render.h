@@ -6,6 +6,7 @@ class Shader;
 class ShaderColor;
 class ShaderTexture;
 class GCMaterial;
+class Graphics;
 class Mesh;
 
 struct ObjectConstants
@@ -105,7 +106,7 @@ private:
 
 
 	// State var
-	bool canResize;
+	bool m_canResize;
 	int m_CurrBackBuffer = 0;
 
 	// Format
@@ -132,6 +133,7 @@ private:
 	// Instance (Temporary)
 	ShaderTexture* shad1;
 	ShaderColor* shad2;
+	Graphics* graphicsManager;
 	std::unique_ptr<UploadBuffer<ObjectConstants>> m_Buffer;
 	Mesh* mesh1;
 

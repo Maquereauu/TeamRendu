@@ -23,6 +23,18 @@ bool GCRender::Initialize() {
 	material1->Initialize();
 	material1->AddTexture("texture", this);
 
+#include "Graphics.h"
+#include "Mesh.h"
+
+bool Render::Initialize() {
+	InitDirect3D();
+	graphicsManager = new Graphics();
+	//shad1 = new ShaderTexture();
+	//shad2 = new ShaderColor();
+	//mesh1 = new Mesh();
+	graphicsManager->CreateMesh();
+	graphicsManager->CreateShader(0);
+	graphicsManager->CreateShader(1);
 	ThrowIfFailed(m_CommandList->Reset(m_DirectCmdListAlloc, nullptr));
 	//BuildConstantBuffers();
 	BuildShadersAndInputLayout();
@@ -123,6 +135,7 @@ bool GCRender::InitDirect3D()
 	CreateRtvAndDsvDescriptorHeaps();
 	CreateCbvSrvUavDescriptorHeaps();
 	canResize = true;
+	m_canResize = true;
 	return true;
 }
 void GCRender::LogAdapters()
@@ -228,21 +241,21 @@ void GCRender::CreateCommandObjects()
 void GCRender::BuildRootSignature()
 {
 	// Root parameter can be a table, root descriptor or root constants.
-	//for (int i = 0; i < graphicManager->mShaders.size(); i++)
-	//	graphicManager->mShaders[i]->RootSign();
-	shad1->RootSign();
-	shad2->RootSign();
+	for (int i = 0; i < graphicsManager->GetShaders().size(); i++)
+		graphicsManager->GetShaders()[i]->RootSign();
+	//shad1->RootSign();
+	//shad2->RootSign();
 }
 
 void GCRender::BuildShadersAndInputLayout()
 {
 	HRESULT hr = S_OK;
-	//for (int i = 0; i < graphicManager->mShaders.size(); i++)
-	//{
-	//	graphicManager->mShaders[i]->CompileShader(i);
-	//}
-	shad1->CompileShader();
-	shad2->CompileShader();
+	for (int i = 0; i < graphicsManager->GetShaders().size(); i++)
+	{
+		graphicsManager->GetShaders()[i]->CompileShader();
+	}
+	//shad1->CompileShader();
+	//shad2->CompileShader();
 	//mvsByteCode = d3dUtil::CompileShader(L"Shaders\\color.hlsl", nullptr, "VS", "vs_5_0");
 	//mpsByteCode = d3dUtil::CompileShader(L"Shaders\\color.hlsl", nullptr, "PS", "ps_5_0");
 
@@ -250,17 +263,17 @@ void GCRender::BuildShadersAndInputLayout()
 
 void GCRender::BuildPSO()
 {
-	//for (int i = 0; i < graphicManager->mShaders.size(); i++)
-	//	graphicManager->mShaders[i]->Pso();
-	shad1->Pso();
-	shad2->Pso();
+	for (int i = 0; i < graphicsManager->GetShaders().size(); i++)
+		graphicsManager->GetShaders()[i]->Pso();
+	//shad1->Pso();
+	//shad2->Pso();
 }
 
 void GCRender::BuildBoxGeometry()
 {
-	//for (int i = 0; i < graphicManager->GetMeshes().size(); i++)
-	//	graphicManager->GetMeshes()[i]->BuildGeo();
-	mesh1->CreateBoxGeometry();
+	for (int i = 0; i < graphicsManager->GetMeshes().size(); i++)
+		graphicsManager->GetMeshes()[i]->CreateBoxGeometry();
+	//mesh1->CreateBoxGeometry();
 }
 
 
@@ -357,7 +370,7 @@ ID3D12Device* GCRender::Getmd3dDevice()
 
 void GCRender::OnResize()
 {
-	if (canResize == false)
+	if (m_canResize == false)
 		return;
 	assert(m_d3dDevice);
 	assert(m_SwapChain);
@@ -506,13 +519,13 @@ void GCRender::Draw(const Timer& gt) {
 		entityManager->mEntities.at(i)->draw();
 	}*/
 
-	m_CommandList->SetPipelineState(shad2->GetPso());
-	m_CommandList->SetGraphicsRootSignature(shad2->GetRootSign());
+	m_CommandList->SetPipelineState(graphicsManager->GetShaders()[0]->GetPso());
+	m_CommandList->SetGraphicsRootSignature(graphicsManager->GetShaders()[0]->GetRootSign());
 
 	m_CommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	D3D12_VERTEX_BUFFER_VIEW test = mesh1->m_boxGeometry->boxGeo->VertexBufferView();
+	D3D12_VERTEX_BUFFER_VIEW test = graphicsManager->GetMeshes()[0]->m_boxGeometry->boxGeo->VertexBufferView();
 	m_CommandList->IASetVertexBuffers(0, 1, &test);
-	D3D12_INDEX_BUFFER_VIEW test2 = mesh1->m_boxGeometry->boxGeo->IndexBufferView();
+	D3D12_INDEX_BUFFER_VIEW test2 = graphicsManager->GetMeshes()[0]->m_boxGeometry->boxGeo->IndexBufferView();
 	m_CommandList->IASetIndexBuffer(&test2);
 
 	//if (mTexture != nullptr)
@@ -547,7 +560,7 @@ void GCRender::Draw(const Timer& gt) {
 	m_CommandList->SetGraphicsRootConstantBufferView(/*shad1->m_Type ? 1 : 0*/0, m_Buffer->Resource()->GetGPUVirtualAddress());
 
 	m_CommandList->DrawIndexedInstanced(
-		mesh1->m_boxGeometry->boxGeo->DrawArgs["box"].IndexCount,
+		graphicsManager->GetMeshes()[0]->m_boxGeometry->boxGeo->DrawArgs["box"].IndexCount,
 		1, 0, 0, 0);
 
 
