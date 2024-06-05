@@ -7,7 +7,8 @@ struct Geometry;
 
 struct ObjInfo {
 	std::vector<std::vector<float>> coords;
-	std::vector<uint16_t> faces;
+	std::vector<std::vector<uint16_t>> facesInfos;
+	std::vector<std::vector<float>> uvs; 
 };
 
 class ModelParserObj
@@ -16,7 +17,7 @@ public:
 	ModelParserObj();
 	~ModelParserObj();
 	void ParseObj();
-	Geometry* BuildObj();
+	GeometryTexture* BuildObj();
 
 protected:
 	ObjInfo m_ParsedObj;

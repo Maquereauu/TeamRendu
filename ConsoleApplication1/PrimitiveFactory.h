@@ -22,6 +22,15 @@ struct Geometry
 	std::unique_ptr<MeshGeometry> boxGeo;
 };
 
+struct GeometryTexture
+{
+	std::string name;
+	std::vector<VertexTexture> vertices;
+	std::vector<std::uint16_t> indices;
+	SubmeshGeometry submesh;
+	std::unique_ptr<MeshGeometry> boxGeo;
+};
+
 class Render;
 
 class PrimitiveFactory

@@ -17,5 +17,6 @@ public:
 
 protected :
 	Geometry* m_boxGeometry;
+	GeometryTexture* m_GeoTextures;
 };
 

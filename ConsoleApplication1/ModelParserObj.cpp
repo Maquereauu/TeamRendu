@@ -81,35 +81,60 @@ void ModelParserObj::ParseObj()
 
             std::vector<std::string> strFace = split(line, " ");
 
-            std::vector<std::vector<std::string>> strTrianglePoints;
+            std::vector<std::vector<std::string>> strVertInfos;
 
 			for (int i = 0; i < strFace.size(); i++)
-				m_ParsedObj.faces.push_back(static_cast<uint16_t>(std::stoi(strFace[i])-1));
+			{
+				strVertInfos.push_back(split(strFace[i], "/"));
+			}
+
+			for (int i = 0; i < strVertInfos.size(); i++)
+			{
+				std::vector<std::uint16_t> tempInfos;
+
+				for (int j = 0; j < strVertInfos[i].size(); j++)
+					tempInfos.push_back(static_cast<uint16_t>(std::stoi(strVertInfos[i][j]) - 1));
+
+				m_ParsedObj.facesInfos.push_back(tempInfos);
+			}
+				
 		}
 
-		else if (line[0] == 'v' && line[1] == 'n')
+		else if (line[0] == 'v' && line[1] == 't') //UVs
 		{
+			std::string templine;
 
+			for (int i = 3; i < line.size(); i++)
+			{
+				templine.push_back(line[i]);
+			}
+
+			std::vector<std::string> strUv = split(line, " ");
+
+			std::vector<float> uv = getFloatCoordinates(&strUv);
+			 
+			m_ParsedObj.uvs.push_back(uv);
 		}
 	}
 	
 
 }
 
-Geometry* ModelParserObj::BuildObj() 
+GeometryTexture* ModelParserObj::BuildObj() 
 {
-	Geometry* objGeometry = new Geometry();
+	GeometryTexture* objGeometry = new GeometryTexture();
 
-	for (int i = 0; i < m_ParsedObj.coords.size(); i++)
+	for (int i = 0; i < m_ParsedObj.facesInfos.size(); i++)
 	{
 		objGeometry->vertices.push_back(
-			Vertex({ DirectX::XMFLOAT3(m_ParsedObj.coords[i][0], m_ParsedObj.coords[i][1], m_ParsedObj.coords[i][2]), DirectX::XMFLOAT4((rand() % 255) / 255.0f, rand() % 255 / 255.0f, rand() % 255 / 255.0f, 1.0f)
-				}));
+			VertexTexture({ 
+				DirectX::XMFLOAT3(m_ParsedObj.coords[m_ParsedObj.facesInfos[i][0]][0], m_ParsedObj.coords[m_ParsedObj.facesInfos[i][0]][1], m_ParsedObj.coords[m_ParsedObj.facesInfos[i][0]][2]),
+				DirectX::XMFLOAT2(m_ParsedObj.uvs[m_ParsedObj.facesInfos[i][1]][0], m_ParsedObj.uvs[m_ParsedObj.facesInfos[i][1]][1])}));
 	}
 
-	objGeometry->indices = m_ParsedObj.faces;
+	/* TODO : objGeometry->indices = m_ParsedObj.facesInfos;*/
 
-	const UINT vbByteSize = (UINT)objGeometry->vertices.size() * sizeof(Vertex);
+	const UINT vbByteSize = (UINT)objGeometry->vertices.size() * sizeof(VertexTexture);
 	const UINT ibByteSize = (UINT)objGeometry->indices.size() * sizeof(std::uint16_t);
 	objGeometry->boxGeo = std::make_unique<MeshGeometry>();
 	objGeometry->boxGeo->Name = "boxGeo";
@@ -126,7 +151,7 @@ Geometry* ModelParserObj::BuildObj()
 	objGeometry->boxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(GetRender()->Getmd3dDevice(),
 		GetRender()->GetCommandList(), objGeometry->indices.data(), ibByteSize, objGeometry->boxGeo->IndexBufferUploader);
 
-	objGeometry->boxGeo->VertexByteStride = sizeof(Vertex);
+	objGeometry->boxGeo->VertexByteStride = sizeof(VertexTexture);
 	objGeometry->boxGeo->VertexBufferByteSize = vbByteSize;
 	objGeometry->boxGeo->IndexFormat = DXGI_FORMAT_R16_UINT;
 	objGeometry->boxGeo->IndexBufferByteSize = ibByteSize;
