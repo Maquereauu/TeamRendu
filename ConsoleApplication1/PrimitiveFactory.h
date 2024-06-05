@@ -2,6 +2,8 @@
 #include "header.h"
 #include "d3dUtil.h"
 
+class GCRender;
+
 struct GCVERTEX
 {
 	DirectX::XMFLOAT3 Pos;
@@ -35,7 +37,7 @@ public :
 
 	PrimitiveFactory();
 	~PrimitiveFactory();
-	void Initialize(int type);
+	void Initialize(int type, GCRender* pRender);
 	GCGEOMETRY* BuildBoxGeometry();
 	GCGEOMETRY* GetGeometry();
 	GCGEOMETRY* BuildBoxGeometryTexture();
@@ -46,5 +48,7 @@ protected:
 	int m_Type;
 	GCGEOMETRY m_BoxGeometry;
 	//Geometry m_SphereGeometry;
+
+	GCRender* m_pRender;
 };
 

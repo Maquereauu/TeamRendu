@@ -1,19 +1,28 @@
 #pragma once
 #include "d3dUtil.h"
-//class Mesh;
+
+class GCRender;
 
 class Shader
 {
 public:
 	Shader();
 	~Shader();
+
 	virtual void CompileShader();
+
 	ID3DBlob* GetmvsByteCode();
 	ID3DBlob* GetmpsByteCode();
+
 	void RootSign();
 	void Pso();
+
 	ID3D12RootSignature* GetRootSign();
 	ID3D12PipelineState* GetPso();
+
+	void Initialize(GCRender* pRender);
+	void Render();
+
 	//void Render(Mesh* mesh, Material* material, matrix);
 
 private:
@@ -28,5 +37,8 @@ protected:
 	ID3DBlob* m_psByteCode = nullptr;
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
 	int m_count = 0;
+
+	// 
+	GCRender* m_pRender;
 };
 

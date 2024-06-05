@@ -2,6 +2,8 @@
 #include "Global.h"
 #include "Render.h"
 #include "Mesh.h"
+
+
 ID3DBlob* Shader::GetmvsByteCode()
 {
 	return m_vsByteCode;
@@ -15,6 +17,16 @@ ID3DBlob* Shader::GetmpsByteCode()
 Shader::Shader() {
 
 }
+
+void Shader::Initialize(GCRender* pRender) {
+	m_pRender = pRender;
+}
+
+void Shader::Render() {
+	m_pRender->GetCommandList()->SetPipelineState(GetPso());
+	m_pRender->GetCommandList()->SetGraphicsRootSignature(GetRootSign());
+}
+
 
 void Shader::CompileShader() {
 
@@ -78,7 +90,7 @@ void Shader::RootSign() {
 		::OutputDebugStringA((char*)errorBlob->GetBufferPointer());
 	}
 	ThrowIfFailed(hr);
-	ThrowIfFailed(GetRender()->Getmd3dDevice()->CreateRootSignature(
+	ThrowIfFailed(m_pRender->Getmd3dDevice()->CreateRootSignature(
 		0,
 		serializedRootSig->GetBufferPointer(),
 		serializedRootSig->GetBufferSize(),
@@ -122,18 +134,16 @@ void Shader::Pso() {
 	psoDesc.SampleMask = UINT_MAX;
 	psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	psoDesc.NumRenderTargets = 1;
-	psoDesc.RTVFormats[0] = GetRender()->GetBackBufferFormat();
-	psoDesc.SampleDesc.Count = GetRender()->Get4xMsaaState() ? 4 : 1;
-	psoDesc.SampleDesc.Quality = GetRender()->Get4xMsaaState() ? (GetRender()->Get4xMsaaQuality() - 1) : 0;
-	psoDesc.DSVFormat = GetRender()->GetDepthStencilFormat();
+	psoDesc.RTVFormats[0] = m_pRender->GetBackBufferFormat();
+	psoDesc.SampleDesc.Count = m_pRender->Get4xMsaaState() ? 4 : 1;
+	psoDesc.SampleDesc.Quality = m_pRender->Get4xMsaaState() ? (m_pRender->Get4xMsaaQuality() - 1) : 0;
+	psoDesc.DSVFormat = m_pRender->GetDepthStencilFormat();
 
 	// Create the graphics pipeline state
-	ThrowIfFailed(GetRender()->Getmd3dDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_PSO)));
+	ThrowIfFailed(m_pRender->Getmd3dDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_PSO)));
 }
 
-//void Shader::Render() {
-//
-//}
+
 
 ID3D12RootSignature* Shader::GetRootSign() {
 	return m_RootSignature;
@@ -142,6 +152,7 @@ ID3D12RootSignature* Shader::GetRootSign() {
 ID3D12PipelineState* Shader::GetPso() {
 	return m_PSO;
 }
+
 
 
 Shader::~Shader()

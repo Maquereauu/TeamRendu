@@ -6,8 +6,8 @@ class Shader;
 class ShaderColor;
 class ShaderTexture;
 class GCMaterial;
-class Graphics;
-class Mesh;
+class GCGraphics;
+class GCMesh;
 
 struct ObjectConstants
 {
@@ -21,7 +21,7 @@ class GCRender
 public:
 	GCRender(){}
 
-	bool Initialize();
+	bool Initialize(GCGraphics* graphicsManager);
 	bool InitDirect3D();
 
 
@@ -43,6 +43,9 @@ public:
 	// Draw Part
 	void FlushCommandQueue();
 	void Update(const Timer& gt);
+
+	void PrepareDraw();
+	void PostDraw();
 	void Draw(const Timer& gt);
 	
 
@@ -133,10 +136,14 @@ private:
 	// Instance (Temporary)
 	ShaderTexture* shad1;
 	ShaderColor* shad2;
-	Graphics* graphicsManager;
+	GCGraphics* graphicsManager;
 	std::unique_ptr<UploadBuffer<ObjectConstants>> m_Buffer;
-	Mesh* mesh1;
+	GCMesh* mesh1;
 
 	GCMaterial* material1;
+
+
+	// 
+	GCGraphics* m_pGraphicsManager;
 };
 
