@@ -1,8 +1,10 @@
 #pragma once
 
 class Window;
+//class GCRender;
+
 void SetWindow(Window* p_Window);
 Window* GetWindow();
-class Render;
-void SetRender(Render* p_Render);
-Render* GetRender();
+
+//void SetRender(GCRender* p_Render);
+//GCRender* GetRender();

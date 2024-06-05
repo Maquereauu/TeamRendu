@@ -1,42 +1,48 @@
 #pragma once
 
-#include "d3dUtil.h"
-
-class Texture2;
-class Mesh;
-class Shader;
-class Render;
+#include <vector>
 
 
+class Window;
+class GCRender;
 
-class Graphics
+class GCMesh;
+class GCShader;
+class GCShaderColor;
+class GCShaderTexture;
+class GCMaterial;
+
+
+
+class GCGraphics
 {
 public:
-	Graphics();
+	GCGraphics();
 
 	void Initialize();
 
-	// Soon Mesh
-	void CreateMesh(int type);
 
 	// Principal Object Creation
-	Shader* CreateShader();
-	Material* CreateMaterial();
-	// Mesh* CreateMesh();
+	GCShader* CreateShader(int type);
+	GCMaterial* CreateMaterial();
+	GCMesh* CreateMesh();
 
 	// Resources Manager
-	std::vector<Shader*> GetAllShader();
-	std::vector<Material*> GetAllMaterial();
+	std::vector<GCShader*> GetShaders();
+	std::vector<GCMaterial*> GetMaterials();
+	std::vector<GCMesh*> GetMeshes();
 	// *
-
+	
 	// Render instance contain Window
-	Render* m_pRender;
+	GCRender* m_pRender;
 
 	//void CreateTexture();
 	//std::vector<Mesh*> GetMeshes();
 private:
-	std::vector<Shader*> m_vShader;
-	std::vector<Material*> m_vMaterial;
-	//	std::vector<Mesh*> m_vMesh;
+	std::vector<GCShader*> m_vShader;
+	std::vector<GCMaterial*> m_vMaterial;
+	std::vector<GCMesh*> m_vMesh;
+
+
 };
 

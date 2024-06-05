@@ -10,7 +10,7 @@ GCMaterial::~GCMaterial() {
 	delete(m_pTexture);
 }
 
-void GCMaterial::Initialize(Texture* pTexture) {
+void GCMaterial::Initialize() {
 
 }
 	
@@ -21,9 +21,12 @@ void GCMaterial::SetColor(DirectX::XMFLOAT4 color) {
 }
 
 
-void GCMaterial::AddTexture(std::string name) {
+void GCMaterial::AddTexture(std::string name, GCRender* pRender) {
 	m_pTexture = new GCTexture();
+	m_pTexture->Initialize(pRender);
 }
+
+
 
 
 

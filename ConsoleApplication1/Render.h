@@ -1,43 +1,59 @@
 #pragma once
 #include "header.h"
 #include "UploadBuffer.h"
+
 class Window;
-class Shader;
-class ShaderColor;
-class ShaderTexture;
+
+#include "Shader.h"
+#include "ShaderColor.h"
+#include "ShaderTexture.h"
 
 
-class Mesh;
+class GCMaterial;
+class GCGraphics;
+class GCMesh;
+
+
+
 struct ObjectConstants
 {
 	DirectX::XMFLOAT4X4 WorldViewProj = MathHelper::Identity4x4();
 };
-class Render
+
+
+
+class GCRender
 {
 public:
-	bool Initialize();
+	GCRender(){}
+
+	bool Initialize(GCGraphics* graphicsManager);
 	bool InitDirect3D();
 
-	// Build
-	void BuildDescriptorHeaps();
-	void BuildConstantBuffers();
-	void BuildRootSignature();
-	void BuildShadersAndInputLayout();
-	void BuildBoxGeometry();
-	void BuildPSO();
+
+	//void BuildConstantBuffers();
 
 	void LogAdapters();
 	void LogAdapterOutputs(IDXGIAdapter* adapter);
 	void LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format);
 
+	void EnableDebugController();
+
 	void CreateCommandObjects();
 	void CreateRtvAndDsvDescriptorHeaps();
+	void CreateCbvSrvUavDescriptorHeaps();
 	void CreateSwapChain();
 
 	// Draw Part
 	void FlushCommandQueue();
 	void Update(const Timer& gt);
+
+	void PrepareDraw();
+	void PostDraw();
 	void Draw(const Timer& gt);
+
+	void DrawOneObject(GCMesh* pMesh, GCShader* pShader);
+
 	
 
 	void OnResize();
@@ -45,13 +61,28 @@ public:
 	// Getter
 	bool Get4xMsaaState();
 	ID3D12Device* Getmd3dDevice();
-	ID3D12Resource* CurrentBackBuffer()const;
+	ID3D12Resource* CurrentBackBuffer() const;
 	D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView() const;
-	D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView() const;
+	D3D12_CPU_DESCRIPTOR_HANDLE GetDepthStencilView() const;
 	UINT Get4xMsaaQuality();
 	DXGI_FORMAT GetBackBufferFormat();
 	DXGI_FORMAT GetDepthStencilFormat();
+
 	ID3D12GraphicsCommandList* GetCommandList();
+
+	// Add getter by william 
+	ID3D12CommandQueue* GetCommandQueue() const { return m_CommandQueue; }
+	ID3D12CommandAllocator* GetCommandAllocator() const { return m_DirectCmdListAlloc; }
+
+	ID3D12Fence* GetFence() { return m_Fence; }
+
+
+	ID3D12DescriptorHeap* GetRtvHeap() { return m_rtvHeap; }
+	ID3D12DescriptorHeap* GetDsvHeap() { return m_dsvHeap; }
+	ID3D12DescriptorHeap* GetCbvSrvUavSrvDescriptorHeap() { return m_cbvSrvUavDescriptorHeap; }
+	UINT GetRtvDescriptorSize() const { return m_rtvDescriptorSize; }
+	UINT GetDsvDescriptorSize() const { return m_dsvDescriptorSize; }
+	UINT GetCbvSrvUavDescriptorSize() const { return m_cbvSrvUavDescriptorSize; }
 
 private:
 	// Swap chain size
@@ -71,19 +102,21 @@ private:
 	ID3D12Fence* m_Fence;
 	UINT64 m_CurrentFence = 0;
 	// Descriptor heaps
-	ID3D12DescriptorHeap* m_RtvHeap;
-	ID3D12DescriptorHeap* m_DsvHeap;
-	ID3D12DescriptorHeap* m_SrvDescriptorHeap;
-	ID3D12DescriptorHeap* m_CbvHeap = nullptr;
+
+
+	ID3D12DescriptorHeap* m_rtvHeap;
+	ID3D12DescriptorHeap* m_dsvHeap;
+	ID3D12DescriptorHeap* m_cbvSrvUavDescriptorHeap;
 
 	// Descriptors size
-	UINT m_RtvDescriptorSize = 0;
-	UINT m_DsvDescriptorSize = 0;
-	UINT m_CbvSrvUavDescriptorSize = 0;
+	UINT m_rtvDescriptorSize = 0;
+	UINT m_dsvDescriptorSize = 0;
+
+	UINT m_cbvSrvUavDescriptorSize = 0;
 
 
 	// State var
-	bool canResize;
+	bool m_canResize;
 	int m_CurrBackBuffer = 0;
 
 	// Format
@@ -108,9 +141,16 @@ private:
 	CD3DX12_STATIC_SAMPLER_DESC staticSample;
 
 	// Instance (Temporary)
-	ShaderTexture* shad1;
-	ShaderColor* shad2;
+	GCShaderTexture* shad1;
+	GCShaderColor* shad2;
+	GCGraphics* graphicsManager;
 	std::unique_ptr<UploadBuffer<ObjectConstants>> m_Buffer;
-	Mesh* mesh1;
+	GCMesh* mesh1;
+
+	GCMaterial* material1;
+
+
+	// 
+	GCGraphics* m_pGraphicsManager;
 };
 

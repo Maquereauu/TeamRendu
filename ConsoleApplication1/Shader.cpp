@@ -2,25 +2,36 @@
 #include "Global.h"
 #include "Render.h"
 #include "Mesh.h"
-ID3DBlob* Shader::GetmvsByteCode()
-{
-	return m_vsByteCode;
-};
 
-ID3DBlob* Shader::GetmpsByteCode()
-{
-	return m_psByteCode;
-};
 
-Shader::Shader() {
+
+
+GCShader::GCShader() {
 
 }
 
-void Shader::CompileShader() {
+
+GCShader::~GCShader()
+{
+
+};
+
+
+
+void GCShader::Render() {
+	m_pRender->GetCommandList()->SetPipelineState(GetPso());
+	m_pRender->GetCommandList()->SetGraphicsRootSignature(GetRootSign());
+}
+
+void GCShader::Initialize(GCRender* pRender) {
+	
+}
+
+void GCShader::CompileShader() {
 
 }
 
-void Shader::RootSign() {
+void GCShader::RootSign() {
 	CD3DX12_ROOT_PARAMETER slotRootParameter[2];
 
 	//int count = 0;
@@ -78,14 +89,14 @@ void Shader::RootSign() {
 		::OutputDebugStringA((char*)errorBlob->GetBufferPointer());
 	}
 	ThrowIfFailed(hr);
-	ThrowIfFailed(GetRender()->Getmd3dDevice()->CreateRootSignature(
+	ThrowIfFailed(m_pRender->Getmd3dDevice()->CreateRootSignature(
 		0,
 		serializedRootSig->GetBufferPointer(),
 		serializedRootSig->GetBufferSize(),
 		IID_PPV_ARGS(&m_RootSignature)));
 }
 
-void Shader::Pso() {
+void GCShader::Pso() {
 	// Initialize the graphics pipeline state description
 	ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
 	psoDesc.InputLayout = { m_InputLayout.data(), (UINT)m_InputLayout.size() };
@@ -122,29 +133,32 @@ void Shader::Pso() {
 	psoDesc.SampleMask = UINT_MAX;
 	psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	psoDesc.NumRenderTargets = 1;
-	psoDesc.RTVFormats[0] = GetRender()->GetBackBufferFormat();
-	psoDesc.SampleDesc.Count = GetRender()->Get4xMsaaState() ? 4 : 1;
-	psoDesc.SampleDesc.Quality = GetRender()->Get4xMsaaState() ? (GetRender()->Get4xMsaaQuality() - 1) : 0;
-	psoDesc.DSVFormat = GetRender()->GetDepthStencilFormat();
+	psoDesc.RTVFormats[0] = m_pRender->GetBackBufferFormat();
+	psoDesc.SampleDesc.Count = m_pRender->Get4xMsaaState() ? 4 : 1;
+	psoDesc.SampleDesc.Quality = m_pRender->Get4xMsaaState() ? (m_pRender->Get4xMsaaQuality() - 1) : 0;
+	psoDesc.DSVFormat = m_pRender->GetDepthStencilFormat();
 
 	// Create the graphics pipeline state
-	ThrowIfFailed(GetRender()->Getmd3dDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_PSO)));
+	ThrowIfFailed(m_pRender->Getmd3dDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_PSO)));
 }
 
-//void Shader::Render() {
-//
-//}
 
-ID3D12RootSignature* Shader::GetRootSign() {
+
+ID3D12RootSignature* GCShader::GetRootSign() {
 	return m_RootSignature;
 }
 
-ID3D12PipelineState* Shader::GetPso() {
+ID3D12PipelineState* GCShader::GetPso() {
 	return m_PSO;
 }
 
 
-Shader::~Shader()
+ID3DBlob* GCShader::GetmvsByteCode()
 {
+	return m_vsByteCode;
+};
 
+ID3DBlob* GCShader::GetmpsByteCode()
+{
+	return m_psByteCode;
 };

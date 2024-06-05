@@ -8,7 +8,8 @@
 #include "Timer.h"
 
 // Link necessary d3d12 libraries.
-class Render;
+class GCRender;
+
 class Window
 {
 
@@ -28,7 +29,7 @@ public:
     bool Get4xMsaaState()const;
     void Set4xMsaaState(bool value);
 
-    int Run();
+    int Run(GCRender* pRender);
 
     virtual bool Initialize();
     virtual LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -67,4 +68,7 @@ private:
     IDXGIFactory4* mdxgiFactory;
     // Derived class should set these in derived constructor to customize starting values.
     std::wstring mMainWndCaption = L"Rendu";
+
+
+    GCRender* m_pRender;
 };
