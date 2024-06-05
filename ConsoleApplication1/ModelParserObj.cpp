@@ -70,17 +70,26 @@ void ModelParserObj::ParseObj()
 
         else if (line[0] == 'f') //face triangles
         {
-			for (int i = 0; i < line.size()-2; i++)
+			std::string templine;
+
+			for (int i = 2; i < line.size(); i++)
 			{
-				line[i] = line[i + 2];
+				templine.push_back(line[i]);
 			}
+
+			line = templine;
 
             std::vector<std::string> strFace = split(line, " ");
 
             std::vector<std::vector<std::string>> strTrianglePoints;
 
 			for (int i = 0; i < strFace.size(); i++)
-				m_ParsedObj.faces.push_back(static_cast<uint16_t>(std::stoi(strFace[i])));
+				m_ParsedObj.faces.push_back(static_cast<uint16_t>(std::stoi(strFace[i])-1));
+		}
+
+		else if (line[0] == 'v' && line[1] == 'n')
+		{
+
 		}
 	}
 	
@@ -94,8 +103,8 @@ Geometry* ModelParserObj::BuildObj()
 	for (int i = 0; i < m_ParsedObj.coords.size(); i++)
 	{
 		objGeometry->vertices.push_back(
-			Vertex({ DirectX::XMFLOAT3(m_ParsedObj.coords[i][0], m_ParsedObj.coords[i][1], m_ParsedObj.coords[i][2]), DirectX::XMFLOAT4(DirectX::Colors::White)})
-		);
+			Vertex({ DirectX::XMFLOAT3(m_ParsedObj.coords[i][0], m_ParsedObj.coords[i][1], m_ParsedObj.coords[i][2]), DirectX::XMFLOAT4((rand() % 255) / 255.0f, rand() % 255 / 255.0f, rand() % 255 / 255.0f, 1.0f)
+				}));
 	}
 
 	objGeometry->indices = m_ParsedObj.faces;
