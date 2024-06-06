@@ -34,52 +34,39 @@
 #include "Texture.h"
 
 bool GCRender::Initialize(GCGraphics* graphicsManager) {
-	InitDirect3D();
-
-	//shad1 = new ShaderTexture();
-	//shad2 = new ShaderColor();
-	//mesh1 = new Mesh();
 	m_pGraphicsManager = graphicsManager;
-	//graphicsManager->CreateTexture();
-	//GCTexture* tex = new GCTexture();
-
-	ThrowIfFailed(m_CommandList->Reset(m_DirectCmdListAlloc, nullptr));
-	//BuildConstantBuffers();
-	
-	graphicsManager->CreateMesh();
-	graphicsManager->CreateShader(STEnum::color,L"color");
-	graphicsManager->CreateShader(STEnum::texture,L"texture");
-	graphicsManager->CreateTexture();
-
-	ThrowIfFailed(m_CommandList->Close());
-	ID3D12CommandList* cmdsLists[] = { m_CommandList };
-	m_CommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
-	ThrowIfFailed(m_CommandList->Reset(m_DirectCmdListAlloc, graphicsManager->GetShaders()[1]->GetPso()));
-	//texture1->TextureCreateFromFile12("Asteroid");
-	//texture2->TextureCreateFromFile12("goku");
-	//texture3->TextureCreateFromFile12("crosshair");
-	//textureGameOver->TextureCreateFromFile12("Game_Over");
-	//texture4->TextureCreateFromFile12("noeil");
-	//texture5->TextureCreateFromFile12("Red_Hit3");
-	//textureLifeBar5->TextureCreateFromFile12("HpBar5");
-	//textureLifeBar4->TextureCreateFromFile12("HpBar4");
-	//textureLifeBar3->TextureCreateFromFile12("HpBar3");
-	//textureLifeBar2->TextureCreateFromFile12("HpBar2");
-	//textureLifeBar1->TextureCreateFromFile12("HpBar1");
-	//textureLifeBar0->TextureCreateFromFile12("HpBar0");
-	//texture6->TextureCreateFromFile12("skybox");
-	for (int i = 0; i < graphicsManager->GetTexturesTemplates().size(); i++)
-		graphicsManager->GetTexturesTemplates()[i]->Initialize(graphicsManager->m_pRender, "ahah");
-	//tex->Initialize(graphicsManager->m_pRender, "ahah");
-
-	ThrowIfFailed(m_CommandList->Close());
-	ID3D12CommandList* cmdsLists2[] = { m_CommandList };
-	m_CommandQueue->ExecuteCommandLists(_countof(cmdsLists2), cmdsLists2);
+	InitDirect3D();
 	OnResize();
-	//Wait until initialization is complete.
-	FlushCommandQueue();
+
+	
+	
+
+
+
+
+	
+
+	
+
+
 	return true;
 }
+
+
+void GCRender::ResetCommandList() {
+	ThrowIfFailed(m_CommandList->Reset(m_DirectCmdListAlloc, nullptr));
+}
+
+void GCRender::ExecuteCommandList() {
+	ID3D12CommandList* cmdsLists[] = { m_CommandList };
+	m_CommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+}
+
+void GCRender::CloseCommandList() {
+	ThrowIfFailed(m_CommandList->Close());
+}
+
+
 
 void GCRender::EnableDebugController() {
 	#if defined(DEBUG) || defined(_DEBUG) 
@@ -143,9 +130,15 @@ bool GCRender::InitDirect3D()
 	CreateSwapChain();
 	CreateRtvAndDsvDescriptorHeaps();
 	CreateCbvSrvUavDescriptorHeaps();
+
+
 	m_canResize = true;
+
+
 	return true;
 }
+
+
 void GCRender::LogAdapters()
 {
 	UINT i = 0;
@@ -296,73 +289,83 @@ void GCRender::CreateRtvAndDsvDescriptorHeaps()
 //
 
 
-
-void GCRender::OnResize()
-{
-	if (m_canResize == false)
-		return;
+// RESIZE
+void GCRender::OnResize() {
+	// Vérification des conditions initiales.
+	if (m_canResize == false) return;
 	assert(m_d3dDevice);
 	assert(m_SwapChain);
 	assert(m_DirectCmdListAlloc);
 
-	// Flush before changing any resources.
+
 	FlushCommandQueue();
 
-	ThrowIfFailed(m_CommandList->Reset(m_DirectCmdListAlloc, nullptr));
+	ResetCommandList();
 
-	// Release the previous resources we will be recreating.
+	ReleasePreviousResources();
+	ResizeSwapChain();
+	CreateRenderTargetViews();
+	CreateDepthStencilBufferAndView();
+
+	CloseCommandList();
+	ExecuteCommandList();
+	FlushCommandQueue();
+
+	UpdateViewport();
+}
+
+
+void GCRender::ReleasePreviousResources() {
 	for (int i = 0; i < SwapChainBufferCount; ++i) {
 		if (m_SwapChainBuffer[i] != nullptr) {
 			m_SwapChainBuffer[i]->Release();
 		}
-
 	}
 	if (m_DepthStencilBuffer != nullptr) {
 		m_DepthStencilBuffer->Release();
 	}
+}
 
-	// Resize the swap chain.
+
+void GCRender::ResizeSwapChain() {
 	ThrowIfFailed(m_SwapChain->ResizeBuffers(
 		SwapChainBufferCount,
 		GetWindow()->GetClientWidth(), GetWindow()->GetClientHeight(),
 		m_BackBufferFormat,
 		DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH));
-
 	m_CurrBackBuffer = 0;
+}
 
+
+void GCRender::CreateRenderTargetViews() {
 	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHeapHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());
-	for (UINT i = 0; i < SwapChainBufferCount; i++)
-	{
+	for (UINT i = 0; i < SwapChainBufferCount; i++) {
 		ThrowIfFailed(m_SwapChain->GetBuffer(i, IID_PPV_ARGS(&m_SwapChainBuffer[i])));
 		m_d3dDevice->CreateRenderTargetView(m_SwapChainBuffer[i], nullptr, rtvHeapHandle);
 		rtvHeapHandle.Offset(1, m_rtvDescriptorSize);
 	}
+}
 
-	// Create the depth/stencil buffer and view.
-	D3D12_RESOURCE_DESC depthStencilDesc;
+
+void GCRender::CreateDepthStencilBufferAndView() {
+	D3D12_RESOURCE_DESC depthStencilDesc = {};
 	depthStencilDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	depthStencilDesc.Alignment = 0;
 	depthStencilDesc.Width = GetWindow()->GetClientWidth();
 	depthStencilDesc.Height = GetWindow()->GetClientHeight();
 	depthStencilDesc.DepthOrArraySize = 1;
 	depthStencilDesc.MipLevels = 1;
-
-	// Correction 11/12/2016: SSAO chapter requires an SRV to the depth buffer to read from 
-	// the depth buffer.  Therefore, because we need to create two views to the same resource:
-	//   1. SRV format: DXGI_FORMAT_R24_UNORM_X8_TYPELESS
-	//   2. DSV Format: DXGI_FORMAT_D24_UNORM_S8_UINT
-	// we need to create the depth buffer resource with a typeless format.  
 	depthStencilDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
-
 	depthStencilDesc.SampleDesc.Count = m_4xMsaaState ? 4 : 1;
 	depthStencilDesc.SampleDesc.Quality = m_4xMsaaState ? (m_4xMsaaQuality - 1) : 0;
 	depthStencilDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 	depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
 
-	D3D12_CLEAR_VALUE optClear;
+	D3D12_CLEAR_VALUE optClear = {};
 	optClear.Format = m_DepthStencilFormat;
 	optClear.DepthStencil.Depth = 1.0f;
 	optClear.DepthStencil.Stencil = 0;
+
 	CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_DEFAULT);
 	ThrowIfFailed(m_d3dDevice->CreateCommittedResource(
 		&heapProps,
@@ -372,8 +375,7 @@ void GCRender::OnResize()
 		&optClear,
 		IID_PPV_ARGS(&m_DepthStencilBuffer)));
 
-	// Create descriptor to mip level 0 of entire resource using the format of the resource.
-	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc;
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
 	dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
 	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
 	dsvDesc.Format = m_DepthStencilFormat;
@@ -382,18 +384,13 @@ void GCRender::OnResize()
 
 	CD3DX12_RESOURCE_BARRIER ResBar(CD3DX12_RESOURCE_BARRIER::Transition(m_DepthStencilBuffer,
 		D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_DEPTH_WRITE));
-	// Transition the resource from its initial state to be used as a depth buffer.
 	m_CommandList->ResourceBarrier(1, &ResBar);
+}
 
-	// Execute the resize commands.
-	ThrowIfFailed(m_CommandList->Close());
-	ID3D12CommandList* cmdsLists[] = { m_CommandList };
-	m_CommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
-	// Wait until resize is complete.
-	FlushCommandQueue();
 
-	// Update the viewport transform to cover the client area.
+
+void GCRender::UpdateViewport() {
 	m_ScreenViewport.TopLeftX = 0;
 	m_ScreenViewport.TopLeftY = 0;
 	m_ScreenViewport.Width = static_cast<float>(GetWindow()->GetClientWidth());
@@ -406,7 +403,7 @@ void GCRender::OnResize()
 	DirectX::XMMATRIX P = DirectX::XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, GetWindow()->AspectRatio(), 1.0f, 1000.0f);
 	XMStoreFloat4x4(&mProj, P);
 }
-
+// RESIZE
 
 void GCRender::Update(const Timer& gt) {
 
@@ -466,64 +463,14 @@ void GCRender::PrepareDraw() {
 void GCRender::Draw(const Timer& gt) {
 	PrepareDraw();
 
-	/*for (int i = entityManager->mEntities.size() - 1; i >= 0; i--)
-	{
-		entityManager->mEntities.at(i)->draw();
-	}*/
-
-	//m_CommandList->SetPipelineState(m_pGraphicsManager->GetShaders()[1]->GetPso());
-	//m_CommandList->SetGraphicsRootSignature(m_pGraphicsManager->GetShaders()[1]->GetRootSign());
-
-	//m_CommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//D3D12_VERTEX_BUFFER_VIEW test = m_pGraphicsManager->GetMeshes()[0]->m_boxGeometryTex->boxGeo->VertexBufferView();
-	//m_CommandList->IASetVertexBuffers(0, 1, &test);
-	//D3D12_INDEX_BUFFER_VIEW test2 = m_pGraphicsManager->GetMeshes()[0]->m_boxGeometryTex->boxGeo->IndexBufferView();
-	//m_CommandList->IASetIndexBuffer(&test2);
-
-	////if (mTexture != nullptr)
-	////{
-	////	//if (mIsCrosshair) {
-	//m_CommandList->SetGraphicsRootDescriptorTable(0, m_pGraphicsManager->GetTextures()[0]->m_HDescriptorGPU);
-	//	//}
-	//	//else {
-		//m_CommandList->SetGraphicsRootDescriptorTable(0,m_pGraphicsManager->GetTextures()[0]->m_HDescriptorGPU);
-	//	//}
-	//}
 	DrawOneObject(m_pGraphicsManager->GetMeshes()[0], m_pGraphicsManager->GetShaders()[1]);
 
 
-
-	//m_Buffer = std::make_unique<UploadBuffer<ObjectConstants>>(Getmd3dDevice(), 1, true);
-	//ObjectConstants objConstants;
-	//XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
-	//m_Buffer->CopyData(0, objConstants);
-	//m_CommandList->SetGraphicsRootConstantBufferView(/*shad1->m_Type ? 1 : 0*/1, m_Buffer->Resource()->GetGPUVirtualAddress());
-
-	//m_CommandList->DrawIndexedInstanced(
-	//	graphicsManager->GetMeshes()[0]->m_boxGeometryTex->boxGeo->DrawArgs["box"].IndexCount,
-	//	1, 0, 0, 0);
 	PostDraw();
 }
 
-void GCRender::PostDraw() {
-	CD3DX12_RESOURCE_BARRIER ResBar2(CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
-		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
-
-	m_CommandList->ResourceBarrier(1, &ResBar2);
-	ThrowIfFailed(m_CommandList->Close());
 
 
-	ID3D12CommandList* cmdsLists[] = { m_CommandList };
-	m_CommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
-
-
-	ThrowIfFailed(m_SwapChain->Present(0, 0));
-	m_CurrBackBuffer = (m_CurrBackBuffer + 1) % SwapChainBufferCount;
-
-
-	FlushCommandQueue();
-}
-// DRAW
 
 
 
@@ -569,6 +516,26 @@ void GCRender::DrawOneObject(GCMesh* pMesh, GCShader* pShader) {
 
 	m_CommandList->DrawIndexedInstanced(m_pGraphicsManager->GetMeshes()[0]->GetBoxGeometry()->boxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
 }
+
+void GCRender::PostDraw() {
+	CD3DX12_RESOURCE_BARRIER ResBar2(CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
+		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
+
+	m_CommandList->ResourceBarrier(1, &ResBar2);
+	ThrowIfFailed(m_CommandList->Close());
+
+
+	ID3D12CommandList* cmdsLists[] = { m_CommandList };
+	m_CommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+
+	ThrowIfFailed(m_SwapChain->Present(0, 0));
+	m_CurrBackBuffer = (m_CurrBackBuffer + 1) % SwapChainBufferCount;
+
+
+	FlushCommandQueue();
+}
+// DRAW
 
 
 

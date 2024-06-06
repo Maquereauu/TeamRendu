@@ -78,6 +78,7 @@ GCShader* GCGraphics::CreateShader(int type, std::wstring hlsl) {
 
 GCMaterial* GCGraphics::CreateMaterial() {
 	GCMaterial* material = new GCMaterial();
+	material->Initialize();
 	m_vMaterial.push_back(material);
 	return material;
 }

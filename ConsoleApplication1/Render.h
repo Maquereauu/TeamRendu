@@ -43,7 +43,23 @@ public:
 	void CreateCbvSrvUavDescriptorHeaps();
 	void CreateSwapChain();
 
+	// Resize 
+
+
+
+	void ReleasePreviousResources();
+	void ResizeSwapChain();
+	void CreateRenderTargetViews();
+	void CreateDepthStencilBufferAndView();
+	void ExecuteResizeCommands();
+	void UpdateViewport();
+
+
 	// Draw Part
+	void ResetCommandList();
+	void ExecuteCommandList();
+	void CloseCommandList();
+
 	void FlushCommandQueue();
 	void Update(const Timer& gt);
 
