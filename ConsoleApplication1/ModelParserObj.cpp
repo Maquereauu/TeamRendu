@@ -134,6 +134,26 @@ void ModelParserObj::ParseObj()
 }
 
 
+GCGEOMETRYTEXTURE* ModelParserObj::BuildObjWithTextures() 
+{
+	GCGEOMETRYTEXTURE* objGeometry = new GCGEOMETRYTEXTURE();
+
+	for (int i = 0; i < m_ParsedObj.facesInfos.size(); i++)
+	{
+		objGeometry->vertices.push_back(
+			GCVERTEXTEXTURE({ 
+				DirectX::XMFLOAT3(m_ParsedObj.coords[m_ParsedObj.facesInfos[i][0]][0], m_ParsedObj.coords[m_ParsedObj .facesInfos[i][0]][1], m_ParsedObj.coords[m_ParsedObj.facesInfos[i][0]][2]),
+				DirectX::XMFLOAT2(m_ParsedObj.uvs[m_ParsedObj.facesInfos[i][1]][0], m_ParsedObj.uvs[m_ParsedObj.facesInfos[i][1]][1])}));
+
+		objGeometry->indices.push_back(i);
+	}
+
+	const UINT vbByteSize = (UINT)objGeometry->vertices.size() * sizeof(GCVERTEXTEXTURE);
+	const UINT ibByteSize = (UINT)objGeometry->indices.size() * sizeof(std::uint16_t);
+	objGeometry->boxGeo = std::make_unique<MeshGeometry>();
+	objGeometry->boxGeo->Name = "boxGeo";
+
+
 GCGeometryColor* ModelParserObj::BuildObjColor() {
 	GCGeometryColor* objGeometry = new GCGeometryColor();
 

@@ -134,7 +134,7 @@ void GCMesh::CreateBoxGeometryTexture()
 void GCMesh::CreateObjGeometryColor()
 {
 	ModelParserObj* objParser = new ModelParserObj();
-	objParser->Initialize(m_pRender, "cubeNoUv.obj");
+	objParser->Initialize(m_pRender, "squareNoUv.obj");
 	objParser->ParseObj();
 	m_pGeometry = objParser->BuildObjColor();
 

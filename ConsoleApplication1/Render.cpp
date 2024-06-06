@@ -68,7 +68,7 @@ bool GCRender::Initialize(GCGraphics* graphicsManager) {
 	//textureLifeBar0->TextureCreateFromFile12("HpBar0");
 	//texture6->TextureCreateFromFile12("skybox");
 
-	tex->Initialize(graphicsManager->m_pRender, "ahah");
+	tex->Initialize(graphicsManager->m_pRender, "texture");
 	ThrowIfFailed(m_CommandList->Close());
 	ID3D12CommandList* cmdsLists2[] = { m_CommandList };
 	m_CommandQueue->ExecuteCommandLists(_countof(cmdsLists2), cmdsLists2);
@@ -546,7 +546,7 @@ void GCRender::DrawOneObject(GCMesh* pMesh, GCShader* pShader) {
 
 	//m_CommandList->SetGraphicsRootDescriptorTable(0, m_pGraphicsManager->GetTextures()[0]->m_HDescriptorGPU);
 	DirectX::XMFLOAT3 pos1 = { 0.f, 0.f, 0.f };
-	DirectX::XMVECTOR pos = DirectX::XMVectorSet(10, 10, 10, 1.0f);
+	DirectX::XMVECTOR pos = DirectX::XMVectorSet(0, -10, 5, 1.0f);
 	DirectX::XMVECTOR target = DirectX::XMVectorZero();
 	DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
