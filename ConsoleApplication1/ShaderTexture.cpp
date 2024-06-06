@@ -1,6 +1,6 @@
 #include "ShaderTexture.h"
 
-void GCShaderTexture::CompileShader() {
+void GCShaderTexture::CompileShader(std::wstring hlsl) {
 	m_vsByteCode = d3dUtil::CompileShader(L"Shaders\\texture.hlsl", nullptr, "VS", "vs_5_0");
 	m_psByteCode = d3dUtil::CompileShader(L"Shaders\\texture.hlsl", nullptr, "PS", "ps_5_0");
 	m_InputLayout =
@@ -11,12 +11,12 @@ void GCShaderTexture::CompileShader() {
 	m_count = 2;
 }
 
-void GCShaderTexture::Initialize(GCRender* pRender) {
+void GCShaderTexture::Initialize(GCRender* pRender, std::wstring hlslName) {
 
 	m_pRender = pRender;
 
 
-	CompileShader();
+	CompileShader(hlslName);
 	RootSign();
 	Pso();
 }

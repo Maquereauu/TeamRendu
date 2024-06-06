@@ -12,7 +12,6 @@
 #include "Texture.h"
 #include "Material.h"
 //#include "Texture2.h"
-
 GCGraphics::GCGraphics() {
 	/*m_pRender = nullptr;*/
 }
@@ -45,18 +44,19 @@ GCMesh* GCGraphics::CreateMesh() {
 
 GCTexture* GCGraphics::CreateTexture() {
 	GCTexture* texture = new GCTexture();
-	m_vTexture.push_back(texture);
+	m_vTextureTemplates.push_back(texture);
 	return texture;
 }
 
 
-GCShader* GCGraphics::CreateShader(int type) {
+GCShader* GCGraphics::CreateShader(int type, std::wstring hlsl) {
 	GCShader* shader;
 	switch (type) {
 	case 0:
 	{
 		shader = new GCShaderColor();
-		shader->Initialize(m_pRender);
+		shader->m_Type = 0;
+		shader->Initialize(m_pRender, hlsl);
 		m_vShader.push_back(shader);
 		return shader;
 		break;
@@ -64,7 +64,8 @@ GCShader* GCGraphics::CreateShader(int type) {
 	case 1:
 	{
 		shader = new GCShaderTexture();
-		shader->Initialize(m_pRender);
+		shader->m_Type = 1;
+		shader->Initialize(m_pRender, hlsl);
 		m_vShader.push_back(shader);
 		return shader;
 		break;
@@ -95,6 +96,14 @@ std::vector<GCMesh*> GCGraphics::GetMeshes() {
 
 std::vector<GCTexture*> GCGraphics::GetTextures() {
 	return m_vTexture;
+}
+
+std::vector<GCTexture*> GCGraphics::GetTexturesTemplates() {
+	return m_vTextureTemplates;
+}
+
+void GCGraphics::AddTex(GCTexture* tex) {
+	m_vTexture.push_back(tex);
 }
 
 

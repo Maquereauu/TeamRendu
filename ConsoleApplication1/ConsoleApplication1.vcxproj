@@ -164,6 +164,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderColor.h" />
     <ClInclude Include="ShaderTexture.h" />
+    <ClInclude Include="ShaderTypeEnum.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="UploadBuffer.h" />

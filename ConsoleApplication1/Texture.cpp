@@ -70,7 +70,7 @@ void GCTexture::Initialize(GCRender* pRender, std::string fileName)
 	m_HDescriptorGPU = CD3DX12_GPU_DESCRIPTOR_HANDLE(pRender->GetCbvSrvUavSrvDescriptorHeap()->GetGPUDescriptorHandleForHeapStart());
 	m_HDescriptorGPU.Offset(pRender->m_pGraphicsManager->GetTextures().size(), m_haepDescSize);
 
-	pRender->m_pGraphicsManager->m_vTexture.push_back(this);
+	pRender->m_pGraphicsManager->AddTex(this);
 }
 
 void GCTexture::Render() {
