@@ -34,9 +34,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, in
 	GCShader* shader1 = graphics->CreateShader(STEnum::color, L"color");
 	GCShader* shader2 = graphics->CreateShader(STEnum::texture, L"texture");
 
-	//graphics->CreateMaterial("ahah");
+	GCMaterial* material1 = graphics->CreateMaterial();
+	material1->AddTexture("ahah", graphics);
 
-	graphics->CreateTexture("ahah");
+	//graphics->CreateTexture("ahah");
 
 
 	graphics->m_pRender->CloseCommandList();

@@ -35,21 +35,27 @@ public:
 	std::vector<GCMaterial*> GetMaterials();
 	std::vector<GCMesh*> GetMeshes();
 	std::vector<GCTexture*> GetTextures();
-	void AddTex(GCTexture* tex);
-	// *
+
 	
 	// Render instance contain Window
 	GCRender* m_pRender;
 
-	//void CreateTexture();
-	//std::vector<Mesh*> GetMeshes();
+
+	int m_meshId = 0;
+	int m_shaderId = 0;
+	int m_materialId = 0;
+	int m_textureId = 0;
+
+	std::vector<GCTexture*> m_vTextures;
+	std::vector<GCShader*> m_vShaders;
+	std::vector<GCMaterial*> m_vMaterials;
+	std::vector<GCMesh*> m_vMeshes;
 
 private:
 
-	std::vector<GCTexture*> m_vTexture;
-	std::vector<GCShader*> m_vShader;
-	std::vector<GCMaterial*> m_vMaterial;
-	std::vector<GCMesh*> m_vMesh;
+
+
+
 
 
 };

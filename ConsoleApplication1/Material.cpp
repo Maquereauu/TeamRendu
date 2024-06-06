@@ -1,5 +1,6 @@
 #include "Material.h"
 #include "Texture.h"
+#include "Graphics.h"
 
 GCMaterial::GCMaterial() {
 	m_pTexture = nullptr;
@@ -21,9 +22,11 @@ void GCMaterial::SetColor(DirectX::XMFLOAT4 color) {
 }
 
 
-void GCMaterial::AddTexture(std::string name, GCRender* pRender) {
+void GCMaterial::AddTexture(std::string name, GCGraphics* pGraphics) {
 	m_pTexture = new GCTexture();
-	m_pTexture->Initialize(pRender,name);
+	m_pTexture->Initialize(name, pGraphics);
+	pGraphics->m_vTextures.push_back(m_pTexture);
+	pGraphics->m_textureId++;
 }
 
 

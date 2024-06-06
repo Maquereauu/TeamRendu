@@ -38,73 +38,83 @@ void GCGraphics::Initialize() {
 GCMesh* GCGraphics::CreateMesh() {
 	GCMesh* mesh = new GCMesh();
 	mesh->Initialize(m_pRender);
-	m_vMesh.push_back(mesh);
+	m_vMeshes.push_back(mesh);
+	//m_meshId++;
 	return mesh;
 }
 
-GCTexture* GCGraphics::CreateTexture(std::string fileName) {
-	GCTexture* texture = new GCTexture();
-	texture->Initialize(m_pRender, fileName);
-	m_vTexture.push_back(texture);
-	return texture;
-}
+//GCTexture* GCGraphics::CreateTexture(std::string fileName) {
+//	GCTexture* texture = new GCTexture();
+//	texture->Initialize(fileName, m_pRender);
+//	m_vTexture.push_back(texture);
+//	return texture;
+//}
 
 
 GCShader* GCGraphics::CreateShader(int type, std::wstring hlsl) {
-	GCShader* shader;
-	switch (type) {
-	case 0:
-	{
-		shader = new GCShaderColor();
-		shader->m_Type = 0;
-		shader->Initialize(m_pRender, hlsl);
-		m_vShader.push_back(shader);
-		return shader;
-		break;
-	}
-	case 1:
-	{
-		shader = new GCShaderTexture();
-		shader->m_Type = 1;
-		shader->Initialize(m_pRender, hlsl);
-		m_vShader.push_back(shader);
-		return shader;
-		break;
-	}
-	}
-	shader = new GCShader();
-	m_vShader.push_back(shader);
-	return shader;
+    GCShader* shader = nullptr; // Initialisation de la variable shader à nullptr
+
+    switch (type) {
+    case 0:
+    {
+        shader = new GCShaderColor();
+        shader->m_Type = 0;
+        shader->Initialize(m_pRender, hlsl);
+        m_vShaders.push_back(shader);
+        m_shaderId++;
+        return shader;
+        break;
+    }
+    case 1:
+    {
+        shader = new GCShaderTexture();
+        shader->m_Type = 1;
+        shader->Initialize(m_pRender, hlsl);
+        m_vShaders.push_back(shader);
+        m_shaderId++;
+        return shader;
+        break;
+    }
+    }
+
+    GCShader* parentShader = dynamic_cast<GCShader*>(shader);
+    if (parentShader != nullptr) {
+        return parentShader;
+    }
+    else {
+        return nullptr;
+    }
 }
 
 GCMaterial* GCGraphics::CreateMaterial() {
 	GCMaterial* material = new GCMaterial();
 	material->Initialize();
-	m_vMaterial.push_back(material);
+	m_vMaterials.push_back(material);
+	m_materialId++;
 	return material;
 }
 
 std::vector<GCShader*> GCGraphics::GetShaders() {
-	return m_vShader;
+	return m_vShaders;
 }
 
 std::vector<GCMaterial*> GCGraphics::GetMaterials() {
-	return m_vMaterial;
+	return m_vMaterials;
 }
 
 std::vector<GCMesh*> GCGraphics::GetMeshes() {
-	return m_vMesh;
+	return m_vMeshes;
 }
 
 std::vector<GCTexture*> GCGraphics::GetTextures() {
-	return m_vTexture;
+	return m_vTextures;
 }
 
 
-void GCGraphics::AddTex(GCTexture* tex) {
-	m_vTexture.push_back(tex);
-}
-
+//void GCGraphics::AddTex(GCTexture* tex) {
+//	m_vTexture.push_back(tex);
+//}
+//
 
 //void Graphics::CreateTexture() {
 //	mTextures.push_back(new Texture2());

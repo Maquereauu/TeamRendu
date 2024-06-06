@@ -4,6 +4,8 @@
 
 class GCTexture;
 class GCRender;
+class GCGraphics;
+
 
 class GCMaterial
 {
@@ -13,7 +15,9 @@ public:
 	void Initialize();
 
 	void SetColor(DirectX::XMFLOAT4 color);
-	void AddTexture(std::string name, GCRender* pRender);
+
+	void AddTexture(std::string name, GCGraphics* pGraphics);
+	inline GCTexture* GetTexture() { return m_pTexture; }
 
 
 

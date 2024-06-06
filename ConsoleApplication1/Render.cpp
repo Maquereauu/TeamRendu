@@ -495,7 +495,7 @@ void GCRender::DrawOneObject(GCMesh* pMesh, GCShader* pShader) {
 	m_CommandList->IASetIndexBuffer(&indexBufferView);
 	if(pShader->m_Type == STEnum::texture)
 	{
-		m_CommandList->SetGraphicsRootDescriptorTable(0, m_pGraphicsManager->GetTextures()[0]->m_HDescriptorGPU);
+		m_CommandList->SetGraphicsRootDescriptorTable(0, m_pGraphicsManager->GetMaterials()[0]->GetTexture()->m_HDescriptorGPU);
 	}
 	DirectX::XMFLOAT3 pos1 = { 0.f, 0.f, 0.f };
 	DirectX::XMVECTOR pos = DirectX::XMVectorSet(0, -10, 5, 1.0f);

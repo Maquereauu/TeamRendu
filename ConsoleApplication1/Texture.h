@@ -10,7 +10,7 @@ public:
 	GCTexture();
 	~GCTexture();
 
-	void Initialize(GCRender* pRender, std::string fileName);
+	void Initialize(std::string fileName, GCGraphics* pGraphics);
 
 	void Render();
 	CD3DX12_GPU_DESCRIPTOR_HANDLE m_HDescriptorGPU;
