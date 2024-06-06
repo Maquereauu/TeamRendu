@@ -3,7 +3,13 @@
 #include "PrimitiveFactory.h"
 #include "Render.h"
 
-struct GCGEOMETRYTEXTURE;
+class GCMesh;
+class GCGeometry;
+class GCGeometryColor;
+class GCGeometryTexture;
+
+struct GCVERTEX;
+struct GCVERTEXTEXTURE;
 
 struct ObjInfo {
 	std::vector<std::vector<float>> coords;
@@ -18,8 +24,10 @@ public:
 	~ModelParserObj();
 	void Initialize(GCRender* pRender, std::string fileName);
 	void ParseObj();
-	GCGEOMETRYTEXTURE* BuildObjWithTextures();
-	GCGEOMETRY* BuildObj();
+
+	GCGeometryColor* BuildObjColor();
+	GCGeometryTexture* BuildObjTexture();
+
 
 private:
 	ObjInfo m_ParsedObj;

@@ -1,6 +1,8 @@
 #include "ModelParserObj.h"
 #include "Global.h"
 
+#include "Mesh.h"
+
 std::vector<std::string> split(std::string str, std::string delimiter)
 {
     std::vector<std::string> v;
@@ -131,99 +133,43 @@ void ModelParserObj::ParseObj()
 
 }
 
-GCGEOMETRYTEXTURE* ModelParserObj::BuildObjWithTextures() 
+
+GCGeometryTexture* ModelParserObj::BuildObjTexture()
 {
-	GCGEOMETRYTEXTURE* objGeometry = new GCGEOMETRYTEXTURE();
+	GCGeometryTexture* objGeometry = new GCGeometryTexture();
 
 	for (int i = 0; i < m_ParsedObj.facesInfos.size(); i++)
 	{
 		objGeometry->vertices.push_back(
-			GCVERTEXTEXTURE({ 
+			GCVERTEXTEXTURE({
 				DirectX::XMFLOAT3(m_ParsedObj.coords[m_ParsedObj.facesInfos[i][0]][0], m_ParsedObj.coords[m_ParsedObj.facesInfos[i][0]][1], m_ParsedObj.coords[m_ParsedObj.facesInfos[i][0]][2]),
-				DirectX::XMFLOAT2(m_ParsedObj.uvs[m_ParsedObj.facesInfos[i][1]][0], m_ParsedObj.uvs[m_ParsedObj.facesInfos[i][1]][1])}));
+				DirectX::XMFLOAT2(m_ParsedObj.uvs[m_ParsedObj.facesInfos[i][1]][0], m_ParsedObj.uvs[m_ParsedObj.facesInfos[i][1]][1]) }));
 
-		objGeometry->indices.push_back(m_ParsedObj.facesInfos[i][0]);
+		objGeometry->indices.push_back(i);
 	}
-
-	const UINT vbByteSize = (UINT)objGeometry->vertices.size() * sizeof(GCVERTEXTEXTURE);
-	const UINT ibByteSize = (UINT)objGeometry->indices.size() * sizeof(std::uint16_t);
-	objGeometry->boxGeo = std::make_unique<MeshGeometry>();
-	objGeometry->boxGeo->Name = "boxGeo";
-
-	ThrowIfFailed(D3DCreateBlob(vbByteSize, &objGeometry->boxGeo->VertexBufferCPU));
-	CopyMemory(objGeometry->boxGeo->VertexBufferCPU->GetBufferPointer(), objGeometry->vertices.data(), vbByteSize);
-
-	ThrowIfFailed(D3DCreateBlob(ibByteSize, &objGeometry->boxGeo->IndexBufferCPU));
-	CopyMemory(objGeometry->boxGeo->IndexBufferCPU->GetBufferPointer(), objGeometry->indices.data(), ibByteSize);
-
-	objGeometry->boxGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(m_pRender->Getmd3dDevice(),
-		m_pRender->GetCommandList(), objGeometry->vertices.data(), vbByteSize, objGeometry->boxGeo->VertexBufferUploader);
-
-	objGeometry->boxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(m_pRender->Getmd3dDevice(),
-		m_pRender->GetCommandList(), objGeometry->indices.data(), ibByteSize, objGeometry->boxGeo->IndexBufferUploader);
-
-	objGeometry->boxGeo->VertexByteStride = sizeof(GCVERTEXTEXTURE);
-	objGeometry->boxGeo->VertexBufferByteSize = vbByteSize;
-	objGeometry->boxGeo->IndexFormat = DXGI_FORMAT_R16_UINT;
-	objGeometry->boxGeo->IndexBufferByteSize = ibByteSize;
-
-	SubmeshGeometry submesh;
-	submesh.IndexCount = (UINT)objGeometry->indices.size();
-	submesh.StartIndexLocation = 0;
-	submesh.BaseVertexLocation = 0;
-
-	objGeometry->submesh = submesh;
 
 	return objGeometry;
 }
 
-GCGEOMETRY* ModelParserObj::BuildObj()
-{
-	GCGEOMETRY* objGeometry = new GCGEOMETRY();
 
-	for (int i = 0; i < m_ParsedObj.coords.size(); i++)
-	{
+GCGeometryColor* ModelParserObj::BuildObjColor() {
+	GCGeometryColor* objGeometry = new GCGeometryColor();
+
+	for (int i = 0; i < m_ParsedObj.coords.size(); i++) {
 		objGeometry->vertices.push_back(
 			GCVERTEX({
-				DirectX::XMFLOAT3(m_ParsedObj.coords[i][0],m_ParsedObj.coords[i][1],m_ParsedObj.coords[i][2]),
-				DirectX::XMFLOAT4(DirectX::Colors::White) }));
-
+				DirectX::XMFLOAT3(m_ParsedObj.coords[i][0], m_ParsedObj.coords[i][1], m_ParsedObj.coords[i][2]),
+				DirectX::XMFLOAT4(DirectX::Colors::White)
+				})
+		);
 	}
-	
-	for (int i = 0; i < m_ParsedObj.facesInfos.size(); i++)
-	{
+
+	for (int i = 0; i < m_ParsedObj.facesInfos.size(); i++) {
 		objGeometry->indices.push_back(m_ParsedObj.facesInfos[i][0]);
 	}
-		
+	
 
-	const UINT vbByteSize = (UINT)objGeometry->vertices.size() * sizeof(GCVERTEX);
-	const UINT ibByteSize = (UINT)objGeometry->indices.size() * sizeof(std::uint16_t);
-	objGeometry->boxGeo = std::make_unique<MeshGeometry>();
-	objGeometry->boxGeo->Name = "boxGeo";
-
-	ThrowIfFailed(D3DCreateBlob(vbByteSize, &objGeometry->boxGeo->VertexBufferCPU));
-	CopyMemory(objGeometry->boxGeo->VertexBufferCPU->GetBufferPointer(), objGeometry->vertices.data(), vbByteSize);
-
-	ThrowIfFailed(D3DCreateBlob(ibByteSize, &objGeometry->boxGeo->IndexBufferCPU));
-	CopyMemory(objGeometry->boxGeo->IndexBufferCPU->GetBufferPointer(), objGeometry->indices.data(), ibByteSize);
-
-	objGeometry->boxGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(m_pRender->Getmd3dDevice(),
-		m_pRender->GetCommandList(), objGeometry->vertices.data(), vbByteSize, objGeometry->boxGeo->VertexBufferUploader);
-
-	objGeometry->boxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(m_pRender->Getmd3dDevice(),
-		m_pRender->GetCommandList(), objGeometry->indices.data(), ibByteSize, objGeometry->boxGeo->IndexBufferUploader);
-
-	objGeometry->boxGeo->VertexByteStride = sizeof(GCVERTEX);
-	objGeometry->boxGeo->VertexBufferByteSize = vbByteSize;
-	objGeometry->boxGeo->IndexFormat = DXGI_FORMAT_R16_UINT;
-	objGeometry->boxGeo->IndexBufferByteSize = ibByteSize;
-
-	SubmeshGeometry submesh;
-	submesh.IndexCount = (UINT)objGeometry->indices.size();
-	submesh.StartIndexLocation = 0;
-	submesh.BaseVertexLocation = 0;
-
-	objGeometry->submesh = submesh;
 
 	return objGeometry;
 }
+

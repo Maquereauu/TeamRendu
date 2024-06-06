@@ -71,6 +71,7 @@ bool GCRender::Initialize(GCGraphics* graphicsManager) {
 	for (int i = 0; i < graphicsManager->GetTexturesTemplates().size(); i++)
 		graphicsManager->GetTexturesTemplates()[i]->Initialize(graphicsManager->m_pRender, "ahah");
 	//tex->Initialize(graphicsManager->m_pRender, "ahah");
+
 	ThrowIfFailed(m_CommandList->Close());
 	ID3D12CommandList* cmdsLists2[] = { m_CommandList };
 	m_CommandQueue->ExecuteCommandLists(_countof(cmdsLists2), cmdsLists2);
@@ -226,13 +227,6 @@ void GCRender::CreateCommandObjects()
 
 
 
-
-void GCRender::BuildBoxGeometry()
-{
-	for (int i = 0; i < m_pGraphicsManager->GetMeshes().size(); i++)
-		m_pGraphicsManager->GetMeshes()[i]->CreateBoxGeometryTex();
-	//mesh1->CreateBoxGeometry();
-}
 
 
 
@@ -548,16 +542,16 @@ void GCRender::DrawOneObject(GCMesh* pMesh, GCShader* pShader) {
 
 
 	m_CommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = pMesh->GetGeometryTexture()->boxGeo->VertexBufferView();
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = pMesh->GetBoxGeometry()->boxGeo->VertexBufferView();
 	m_CommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
-	D3D12_INDEX_BUFFER_VIEW indexBufferView = pMesh->GetGeometryTexture()->boxGeo->IndexBufferView();
+	D3D12_INDEX_BUFFER_VIEW indexBufferView = pMesh->GetBoxGeometry()->boxGeo->IndexBufferView();
 	m_CommandList->IASetIndexBuffer(&indexBufferView);
 	if(pShader->m_Type == STEnum::texture)
 	{
 		m_CommandList->SetGraphicsRootDescriptorTable(0, m_pGraphicsManager->GetTextures()[0]->m_HDescriptorGPU);
 	}
 	DirectX::XMFLOAT3 pos1 = { 0.f, 0.f, 0.f };
-	DirectX::XMVECTOR pos = DirectX::XMVectorSet(10, 10, 10, 1.0f);
+	DirectX::XMVECTOR pos = DirectX::XMVectorSet(0, -10, 5, 1.0f);
 	DirectX::XMVECTOR target = DirectX::XMVectorZero();
 	DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
@@ -573,7 +567,7 @@ void GCRender::DrawOneObject(GCMesh* pMesh, GCShader* pShader) {
 	m_Buffer->CopyData(0, objConstants);
 	m_CommandList->SetGraphicsRootConstantBufferView(pShader->m_Type == STEnum::texture ? 1:0, m_Buffer->Resource()->GetGPUVirtualAddress());
 
-	m_CommandList->DrawIndexedInstanced(m_pGraphicsManager->GetMeshes()[0]->GetGeometryTexture()->boxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
+	m_CommandList->DrawIndexedInstanced(m_pGraphicsManager->GetMeshes()[0]->GetBoxGeometry()->boxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
 }
 
 
