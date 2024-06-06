@@ -139,10 +139,10 @@ GCGEOMETRYTEXTURE* ModelParserObj::BuildObjWithTextures()
 	{
 		objGeometry->vertices.push_back(
 			GCVERTEXTEXTURE({ 
-				DirectX::XMFLOAT3(m_ParsedObj.coords[m_ParsedObj.facesInfos[i][0]][0], m_ParsedObj.coords[m_ParsedObj.facesInfos[i][0]][1], m_ParsedObj.coords[m_ParsedObj.facesInfos[i][0]][2]),
+				DirectX::XMFLOAT3(m_ParsedObj.coords[m_ParsedObj.facesInfos[i][0]][0], m_ParsedObj.coords[m_ParsedObj .facesInfos[i][0]][1], m_ParsedObj.coords[m_ParsedObj.facesInfos[i][0]][2]),
 				DirectX::XMFLOAT2(m_ParsedObj.uvs[m_ParsedObj.facesInfos[i][1]][0], m_ParsedObj.uvs[m_ParsedObj.facesInfos[i][1]][1])}));
 
-		objGeometry->indices.push_back(m_ParsedObj.facesInfos[i][0]);
+		objGeometry->indices.push_back(i);
 	}
 
 	const UINT vbByteSize = (UINT)objGeometry->vertices.size() * sizeof(GCVERTEXTEXTURE);

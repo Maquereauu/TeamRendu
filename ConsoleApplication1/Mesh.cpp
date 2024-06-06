@@ -27,7 +27,7 @@ void GCMesh::CreateBoxGeometry()
 void GCMesh::CreateObjGeometryWithTextures()
 {
 	ModelParserObj* objParser = new ModelParserObj();
-	objParser->Initialize(m_pRender, "cube.obj");
+	objParser->Initialize(m_pRender, "monkeyUv.obj");
 	objParser->ParseObj();
 	m_boxGeometryTex = objParser->BuildObjWithTextures();
 	m_boxGeometryTex->boxGeo->DrawArgs["box"] = m_boxGeometryTex->submesh;
@@ -36,7 +36,7 @@ void GCMesh::CreateObjGeometryWithTextures()
 void GCMesh::CreateObjGeometry()
 {
 	ModelParserObj* objParser = new ModelParserObj();
-	objParser->Initialize(m_pRender, "cubeNoUv.obj");
+	objParser->Initialize(m_pRender, "squareNoUv.obj");
 	objParser->ParseObj();
 	m_boxGeometry = objParser->BuildObj();
 	m_boxGeometry->boxGeo->DrawArgs["box"] = m_boxGeometry->submesh;
