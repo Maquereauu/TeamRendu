@@ -35,7 +35,8 @@ bool GCRender::Initialize() {
 	graphicsManager->CreateMesh();
 	graphicsManager->CreateShader(0);
 	graphicsManager->CreateShader(1);
-	graphicsManager->CreateTexture();
+	//graphicsManager->CreateTexture();
+	GCTexture* tex = new GCTexture();
 	ThrowIfFailed(m_CommandList->Reset(m_DirectCmdListAlloc, nullptr));
 	CreateCbvSrvUavDescriptorHeaps();
 	//BuildConstantBuffers();
@@ -63,7 +64,7 @@ bool GCRender::Initialize() {
 	//textureLifeBar1->TextureCreateFromFile12("HpBar1");
 	//textureLifeBar0->TextureCreateFromFile12("HpBar0");
 	//texture6->TextureCreateFromFile12("skybox");
-	graphicsManager->GetTextures()[0]->Initialize(this, "gojo");
+	tex->Initialize(this, "ahah");
 	ThrowIfFailed(m_CommandList->Close());
 	ID3D12CommandList* cmdsLists2[] = { m_CommandList };
 	m_CommandQueue->ExecuteCommandLists(_countof(cmdsLists2), cmdsLists2);

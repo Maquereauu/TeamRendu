@@ -39,10 +39,10 @@ public:
 
 	//void CreateTexture();
 	//std::vector<Mesh*> GetMeshes();
+	std::vector<GCTexture*> m_vTexture;
 private:
 	std::vector<Shader*> m_vShader;
 	std::vector<GCMaterial*> m_vMaterial;
 	std::vector<Mesh*> m_vMesh;
-	std::vector<GCTexture*> m_vTexture;
 };
 
