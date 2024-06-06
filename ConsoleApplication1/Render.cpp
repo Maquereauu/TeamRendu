@@ -18,6 +18,20 @@
 
 
 
+//#include "Mesh.h"
+//bool GCRender::Initialize() {
+//
+//	InitDirect3D();
+//	shad1 = new ShaderTexture();
+//	shad2 = new ShaderColor();
+//	mesh1 = new Mesh();
+//
+//	material1 = new GCMaterial();
+//	material1->Initialize();
+//	material1->AddTexture("texture", this);
+#include "Graphics.h"
+#include "Mesh.h"
+#include "Texture.h"
 
 bool GCRender::Initialize(GCGraphics* graphicsManager) {
 	InitDirect3D();
@@ -25,15 +39,13 @@ bool GCRender::Initialize(GCGraphics* graphicsManager) {
 	//shad1 = new ShaderTexture();
 	//shad2 = new ShaderColor();
 	//mesh1 = new Mesh();
-
-	m_pGraphicsManager = graphicsManager;
-
+	graphicsManager->CreateMesh();
+	graphicsManager->CreateShader(0);
+	graphicsManager->CreateShader(1);
+	//graphicsManager->CreateTexture();
+	GCTexture* tex = new GCTexture();
 	ThrowIfFailed(m_CommandList->Reset(m_DirectCmdListAlloc, nullptr));
-
-	m_pGraphicsManager->CreateMesh();
-	m_pGraphicsManager->CreateShader(0);
-	m_pGraphicsManager->CreateShader(1);
-
+	CreateCbvSrvUavDescriptorHeaps();
 	//BuildConstantBuffers();
 	
 
@@ -41,8 +53,24 @@ bool GCRender::Initialize(GCGraphics* graphicsManager) {
 	ThrowIfFailed(m_CommandList->Close());
 	ID3D12CommandList* cmdsLists[] = { m_CommandList };
 	m_CommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
-
-
+	ThrowIfFailed(m_CommandList->Reset(m_DirectCmdListAlloc, graphicsManager->GetShaders()[1]->GetPso()));
+	//texture1->TextureCreateFromFile12("Asteroid");
+	//texture2->TextureCreateFromFile12("goku");
+	//texture3->TextureCreateFromFile12("crosshair");
+	//textureGameOver->TextureCreateFromFile12("Game_Over");
+	//texture4->TextureCreateFromFile12("noeil");
+	//texture5->TextureCreateFromFile12("Red_Hit3");
+	//textureLifeBar5->TextureCreateFromFile12("HpBar5");
+	//textureLifeBar4->TextureCreateFromFile12("HpBar4");
+	//textureLifeBar3->TextureCreateFromFile12("HpBar3");
+	//textureLifeBar2->TextureCreateFromFile12("HpBar2");
+	//textureLifeBar1->TextureCreateFromFile12("HpBar1");
+	//textureLifeBar0->TextureCreateFromFile12("HpBar0");
+	//texture6->TextureCreateFromFile12("skybox");
+	tex->Initialize(this, "ahah");
+	ThrowIfFailed(m_CommandList->Close());
+	ID3D12CommandList* cmdsLists2[] = { m_CommandList };
+	m_CommandQueue->ExecuteCommandLists(_countof(cmdsLists2), cmdsLists2);
 	OnResize();
 	//Wait until initialization is complete.
 	FlushCommandQueue();
@@ -110,7 +138,58 @@ bool GCRender::InitDirect3D()
 	CreateCommandObjects();
 	CreateSwapChain();
 	CreateRtvAndDsvDescriptorHeaps();
-	CreateCbvSrvUavDescriptorHeaps();
+	m_canResize = true;
+	return true;
+}
+void GCRender::LogAdapters()
+{
+	UINT i = 0;
+	IDXGIAdapter* adapter = nullptr;
+	std::vector<IDXGIAdapter*> adapterList;
+	while (m_dxgiFactory->EnumAdapters(i, &adapter) != DXGI_ERROR_NOT_FOUND)
+	{
+		DXGI_ADAPTER_DESC desc;
+		adapter->GetDesc(&desc);
+
+		std::wstring text = L"***Adapter: ";
+		text += desc.Description;
+		text += L"\n";
+
+		OutputDebugString(text.c_str());
+
+		adapterList.push_back(adapter);
+
+		++i;
+	}
+
+	for (size_t i = 0; i < adapterList.size(); ++i)
+	{
+		LogAdapterOutputs(adapterList[i]);
+		ReleaseCom(adapterList[i]);
+	}
+}
+
+void GCRender::LogAdapterOutputs(IDXGIAdapter* adapter)
+{
+	UINT i = 0;
+	IDXGIOutput* output = nullptr;
+	while (adapter->EnumOutputs(i, &output) != DXGI_ERROR_NOT_FOUND)
+	{
+		DXGI_OUTPUT_DESC desc;
+		output->GetDesc(&desc);
+
+		std::wstring text = L"***Output: ";
+		text += desc.DeviceName;
+		text += L"\n";
+		OutputDebugString(text.c_str());
+
+		LogOutputDisplayModes(output, m_BackBufferFormat);
+
+		ReleaseCom(output);
+
+		++i;
+	}
+}
 
 	m_canResize = true;
 
@@ -143,6 +222,14 @@ void GCRender::CreateCommandObjects()
 
 
 
+
+
+void GCRender::BuildBoxGeometry()
+{
+	for (int i = 0; i < graphicsManager->GetMeshes().size(); i++)
+		graphicsManager->GetMeshes()[i]->CreateBoxGeometryTex();
+	//mesh1->CreateBoxGeometry();
+}
 
 
 
@@ -186,11 +273,10 @@ void GCRender::CreateCbvSrvUavDescriptorHeaps() {
 	cbvHeapDesc.NumDescriptors = 100;
 	cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	cbvHeapDesc.NodeMask = 0;
+	ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_cbvSrvUavDescriptorHeap)));
 
-	HRESULT hr = m_d3dDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_cbvSrvUavDescriptorHeap));
-	ASSERT_FAILED(hr);
-
-	m_cbvSrvUavDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	//m_cbvSrvUavDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
 void GCRender::CreateRtvAndDsvDescriptorHeaps()
@@ -383,14 +469,27 @@ void GCRender::PrepareDraw() {
 void GCRender::Draw(const Timer& gt) {
 	PrepareDraw();
 
+	/*for (int i = entityManager->mEntities.size() - 1; i >= 0; i--)
+	{
+		entityManager->mEntities.at(i)->draw();
+	}*/
+
+	m_CommandList->SetPipelineState(graphicsManager->GetShaders()[1]->GetPso());
+	m_CommandList->SetGraphicsRootSignature(graphicsManager->GetShaders()[1]->GetRootSign());
+
+	m_CommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	D3D12_VERTEX_BUFFER_VIEW test = graphicsManager->GetMeshes()[0]->m_boxGeometryTex->boxGeo->VertexBufferView();
+	m_CommandList->IASetVertexBuffers(0, 1, &test);
+	D3D12_INDEX_BUFFER_VIEW test2 = graphicsManager->GetMeshes()[0]->m_boxGeometryTex->boxGeo->IndexBufferView();
+	m_CommandList->IASetIndexBuffer(&test2);
 
 	//if (mTexture != nullptr)
 	//{
 	//	//if (mIsCrosshair) {
-	//	m_CommandList->SetGraphicsRootDescriptorTable(0, mTexture->mHDescriptorGPU);
+		m_CommandList->SetGraphicsRootDescriptorTable(0, graphicsManager->GetTextures()[0]->m_HDescriptorGPU);
 	//	//}
 	//	//else {
-	//	//GetEngine()->mCommandList->SetGraphicsRootDescriptorTable(0, GetEngine()->graphicManager->mTextures[0]->mHDescriptorGPU);
+		//m_CommandList->SetGraphicsRootDescriptorTable(0,graphicsManager->GetTextures()[0]->m_HDescriptorGPU);
 	//	//}
 	//}
 	DrawOneObject(m_pGraphicsManager->GetMeshes()[0], m_pGraphicsManager->GetShaders()[0]);
@@ -398,6 +497,15 @@ void GCRender::Draw(const Timer& gt) {
 	PostDraw();
 }
 
+	m_Buffer = std::make_unique<UploadBuffer<ObjectConstants>>(Getmd3dDevice(), 1, true);
+	ObjectConstants objConstants;
+	XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
+	m_Buffer->CopyData(0, objConstants);
+	m_CommandList->SetGraphicsRootConstantBufferView(/*shad1->m_Type ? 1 : 0*/1, m_Buffer->Resource()->GetGPUVirtualAddress());
+
+	m_CommandList->DrawIndexedInstanced(
+		graphicsManager->GetMeshes()[0]->m_boxGeometryTex->boxGeo->DrawArgs["box"].IndexCount,
+		1, 0, 0, 0);
 
 
 void GCRender::PostDraw() {

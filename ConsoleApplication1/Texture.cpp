@@ -2,7 +2,7 @@
 #include "Macros.h"
 #include "DDSTextureLoader.h"
 #include "Render.h"
-
+#include "Graphics.h"
 GCTexture::GCTexture() 
 {
     GCRender r;
@@ -32,54 +32,45 @@ GCTexture::~GCTexture()
 }
 
 
-void GCTexture::Initialize(GCRender* pRender)
+void GCTexture::Initialize(GCRender* pRender, std::string fileName)
 {
-    HRESULT hr;
+	//GetEngine()->mCommandList->Reset(GetEngine()->mDirectCmdListAlloc, GetEngine()->graphicManager->mShaders[1]->mPSO);
+		//to do for gianni mcommandelist
+	m_haepDescSize = pRender->Getmd3dDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	m_CbvSrvUavDescriptorSize = pRender->Getmd3dDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	// Texture resource
+	std::string Name = "ahah";
+	std::wstring wideFileName(fileName.begin(), fileName.end());
 
-    SrvHeapIndex = 0;
+	// Create the final filename
+	std::wstringstream ss;
+	ss << L"Textures/" << wideFileName << L".dds";
+	std::wstring Filename = ss.str();
 
-    // Reset Alloc / List
-    hr = pRender->GetCommandAllocator()->Reset();
-    ASSERT_FAILED(hr);
-    hr = pRender->GetCommandList()->Reset(pRender->GetCommandAllocator(), nullptr);
-    ASSERT_FAILED(hr);
+	DirectX::CreateDDSTextureFromFile12(pRender->Getmd3dDevice(), pRender->GetCommandList(), Filename.c_str(), m_resource, m_uploadHeap);
+	//if (Resource == nullptr)
+	//	return false;
 
-    std::wstring texturePath = L"Textures/texture.dds";
+	// Heap
+	CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor(pRender->GetCbvSrvUavSrvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart());
+	hDescriptor.Offset(pRender->graphicsManager->GetMaterials().size(), m_haepDescSize);
 
-    // Create / Upload Ressource With Command List
-    hr = DirectX::CreateDDSTextureFromFile12(pRender->Getmd3dDevice(),
-        pRender->GetCommandList(),
-        texturePath.c_str(),
-        m_textureBuffer,
-        m_uploadTexture,
-        0,
-        nullptr
-    );
-    ASSERT_FAILED(hr);
+	// Desc texture
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.Format = m_resource->GetDesc().Format;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	srvDesc.Texture2D.MipLevels = m_resource->GetDesc().MipLevels;
+	srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
+	pRender->Getmd3dDevice()->CreateShaderResourceView(m_resource.Get(), &srvDesc, hDescriptor);
+	//getGPU pour les dessiner	
+	// Manager
 
-    // Create S R V
-    D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-    srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-    srvDesc.Format = m_textureBuffer->GetDesc().Format;
-    srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-    srvDesc.Texture2D.MipLevels = m_textureBuffer->GetDesc().MipLevels;
+	m_HDescriptorGPU = CD3DX12_GPU_DESCRIPTOR_HANDLE(pRender->GetCbvSrvUavSrvDescriptorHeap()->GetGPUDescriptorHandleForHeapStart());
+	m_HDescriptorGPU.Offset(pRender->graphicsManager->GetTextures().size(), m_haepDescSize);
 
-    CD3DX12_CPU_DESCRIPTOR_HANDLE srvHandle(pRender->GetCbvSrvUavSrvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart());
-
-    srvHandle.Offset(0, pRender->GetCbvSrvUavDescriptorSize());
-
-    hr = pRender->GetCommandList()->Close();
-    ASSERT_FAILED(hr);
-
-    ID3D12CommandList* ppCommandLists[] = { pRender->GetCommandList() };
-    pRender->GetCommandQueue()->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
-
-    pRender->FlushCommandQueue();
-
-    pRender->Getmd3dDevice()->CreateShaderResourceView(m_textureBuffer.Get(), &srvDesc, srvHandle);
-
-    m_textureAdress = CD3DX12_GPU_DESCRIPTOR_HANDLE(pRender->GetCbvSrvUavSrvDescriptorHeap()->GetGPUDescriptorHandleForHeapStart());
-    m_textureAdress.Offset(0, pRender->GetCbvSrvUavDescriptorSize());
+	pRender->graphicsManager->m_vTexture.push_back(this);
 }
 
 void GCTexture::Render() {

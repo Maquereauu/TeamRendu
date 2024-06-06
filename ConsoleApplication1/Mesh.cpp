@@ -92,3 +92,13 @@ void GCMesh::Render() {
 }
 
 
+void Mesh::CreateBoxGeometryTex()
+{
+	PrimitiveFactory* factory = new PrimitiveFactory();
+	factory->Initialize(0);
+	m_boxGeometryTex = factory->GetGeometryTexture();
+	m_boxGeometryTex->boxGeo->DrawArgs["box"] = m_boxGeometryTex->submesh;
+
+
+}
+

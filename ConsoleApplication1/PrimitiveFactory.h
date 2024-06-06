@@ -35,7 +35,17 @@ struct GCGEOMETRYTEXTURE
 	std::vector<std::uint16_t> indices;
 	SubmeshGeometry submesh;
 	std::unique_ptr<MeshGeometry> boxGeo;
+	//modif les structs
+};
 
+struct GCGEOMETRYTEXTURE
+{
+	std::string name;
+	std::vector<GCVERTEXTEXTURE> vertices;
+	std::vector<std::uint16_t> indices;
+	SubmeshGeometry submesh;
+	std::unique_ptr<MeshGeometry> boxGeo;
+	//a suppr
 };
 
 class Render;
@@ -49,9 +59,9 @@ public :
 	void Initialize(int type, GCRender* pRender);
 	GCGEOMETRY* BuildBoxGeometry();
 	GCGEOMETRY* GetGeometry();
-	GCGEOMETRY* BuildBoxGeometryTexture();
+	GCGEOMETRYTEXTURE* GetGeometryTexture();
+	GCGEOMETRYTEXTURE* BuildBoxGeometryTexture();
 	//void BuildSphereGeometry();
-
 protected:
 
 	int m_Type;

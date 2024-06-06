@@ -9,7 +9,9 @@
 #include "Shader.h"
 #include "ShaderColor.h"
 #include "ShaderTexture.h"
+#include "Texture.h"
 #include "Material.h"
+//#include "Texture2.h"
 
 GCGraphics::GCGraphics() {
 	/*m_pRender = nullptr;*/
@@ -40,6 +42,12 @@ GCMesh* GCGraphics::CreateMesh() {
 	mesh->Initialize(m_pRender);
 	m_vMesh.push_back(mesh);
 	return mesh;
+}
+
+GCTexture* Graphics::CreateTexture() {
+	GCTexture* texture = new GCTexture();
+	m_vTexture.push_back(texture);
+	return texture;
 }
 
 
@@ -84,6 +92,10 @@ std::vector<GCMaterial*> GCGraphics::GetMaterials() {
 
 std::vector<GCMesh*> GCGraphics::GetMeshes() {
 	return m_vMesh;
+}
+
+std::vector<GCTexture*> Graphics::GetTextures() {
+	return m_vTexture;
 }
 
 

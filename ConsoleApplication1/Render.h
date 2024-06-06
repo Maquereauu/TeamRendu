@@ -12,8 +12,7 @@ class Window;
 class GCMaterial;
 class GCGraphics;
 class GCMesh;
-
-
+class GCTexture;
 
 struct ObjectConstants
 {
@@ -83,7 +82,7 @@ public:
 	UINT GetRtvDescriptorSize() const { return m_rtvDescriptorSize; }
 	UINT GetDsvDescriptorSize() const { return m_dsvDescriptorSize; }
 	UINT GetCbvSrvUavDescriptorSize() const { return m_cbvSrvUavDescriptorSize; }
-
+	Graphics* graphicsManager;
 private:
 	// Swap chain size
 	static const int SwapChainBufferCount = 2;
@@ -144,6 +143,7 @@ private:
 	GCShaderTexture* shad1;
 	GCShaderColor* shad2;
 	GCGraphics* graphicsManager;
+
 	std::unique_ptr<UploadBuffer<ObjectConstants>> m_Buffer;
 	GCMesh* mesh1;
 
