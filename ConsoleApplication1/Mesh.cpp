@@ -1,7 +1,7 @@
 #include "Mesh.h"
 #include "Render.h"
 #include "d3dUtil.h"
-
+#include "PrimitiveId.h"
 
 
 GCMesh::GCMesh() {
@@ -14,9 +14,39 @@ GCMesh::~GCMesh() {
 void GCMesh::Initialize(GCRender* pRender) {
 	m_pRender = pRender;
 	//CreateBoxGeometryColor();
-    CreateBoxGeometryTexture();
+    //CreateBoxGeometryTexture();
     //CreateObjGeometryTexture();
     //CreateObjGeometryColor();
+}
+
+void GCMesh::CreatePrimitiveGeometry(int id) {
+    switch (id) {
+        case PIEnum::BoxColor: {
+            CreateBoxGeometryColor(id);
+            break;
+        }
+
+        case PIEnum::BoxTexture: {
+            CreateBoxGeometryTexture(id);
+            break;
+        }
+        
+        case PIEnum::PlaneTexture: {
+            CreateBoxGeometryTexture(id);
+            break;
+        }
+    }
+}
+
+void GCMesh::CreateObjGeometry(std::wstring obj, bool isTextured)
+{
+    if (isTextured)
+    {
+        CreateObjGeometryTexture(obj);
+    }
+    else {
+        CreateObjGeometryColor(obj);
+    }
 }
 
 void GCMesh::UploadGeometryDataColor() {
@@ -108,23 +138,23 @@ void GCMesh::UploadGeometryDataTexture() {
 }
 
 
-void GCMesh::CreateBoxGeometryColor()
+void GCMesh::CreateBoxGeometryColor(int id)
 {
     PrimitiveFactory* factory = new PrimitiveFactory();
-    factory->Initialize(0, m_pRender);
-    m_pGeometry = factory->BuildBoxGeometryColor();
+    factory->Initialize(id, m_pRender);
+    m_pGeometry = factory->BuildGeometryColor();
 
     UploadGeometryDataColor();
 
     m_pGeometry->boxGeo->DrawArgs["box"] = m_pGeometry->submesh;
 }
 
-void GCMesh::CreateBoxGeometryTexture()
+void GCMesh::CreateBoxGeometryTexture(int id)
 {
 	PrimitiveFactory* factory = new PrimitiveFactory();
-	factory->Initialize(0, m_pRender);
+	factory->Initialize(id, m_pRender);
 
-	m_pGeometry = factory->BuildBoxGeometryTexture();
+	m_pGeometry = factory->BuildGeometryTexture();
 
     UploadGeometryDataTexture();
 
@@ -133,10 +163,10 @@ void GCMesh::CreateBoxGeometryTexture()
 
 }
 //
-void GCMesh::CreateObjGeometryColor()
+void GCMesh::CreateObjGeometryColor(std::wstring obj)
 {
 	ModelParserObj* objParser = new ModelParserObj();
-	objParser->Initialize(m_pRender, "cubeNoUv.obj");
+	objParser->Initialize(m_pRender, obj);
 	objParser->ParseObj();
 	m_pGeometry = objParser->BuildObjColor();
 
@@ -144,13 +174,12 @@ void GCMesh::CreateObjGeometryColor()
 
     m_pGeometry->boxGeo->DrawArgs["box"] = m_pGeometry->submesh;
 
-
 }
 
-void GCMesh::CreateObjGeometryTexture()
+void GCMesh::CreateObjGeometryTexture(std::wstring obj)
 {
 	ModelParserObj* objParser = new ModelParserObj();
-	objParser->Initialize(m_pRender, "cube.obj");
+	objParser->Initialize(m_pRender, obj);
 	objParser->ParseObj();
     m_pGeometry = objParser->BuildObjTexture();
 

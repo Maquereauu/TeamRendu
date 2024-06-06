@@ -160,6 +160,7 @@
     <ClInclude Include="ModelParser.h" />
     <ClInclude Include="ModelParserObj.h" />
     <ClInclude Include="PrimitiveFactory.h" />
+    <ClInclude Include="PrimitiveId.h" />
     <ClInclude Include="Render.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderColor.h" />

@@ -47,6 +47,7 @@ bool GCRender::Initialize(GCGraphics* graphicsManager) {
 	//BuildConstantBuffers();
 	
 	graphicsManager->CreateMesh();
+	graphicsManager->GetMeshes()[0]->CreateObjGeometryTexture(L"monkey.obj");
 	graphicsManager->CreateShader(STEnum::color,L"color");
 	graphicsManager->CreateShader(STEnum::texture,L"texture");
 	graphicsManager->CreateTexture();
@@ -69,7 +70,7 @@ bool GCRender::Initialize(GCGraphics* graphicsManager) {
 	//textureLifeBar0->TextureCreateFromFile12("HpBar0");
 	//texture6->TextureCreateFromFile12("skybox");
 	for (int i = 0; i < graphicsManager->GetTexturesTemplates().size(); i++)
-		graphicsManager->GetTexturesTemplates()[i]->Initialize(graphicsManager->m_pRender, "ahah");
+		graphicsManager->GetTexturesTemplates()[i]->Initialize(graphicsManager->m_pRender, "texture");
 	//tex->Initialize(graphicsManager->m_pRender, "ahah");
 
 	ThrowIfFailed(m_CommandList->Close());
@@ -551,7 +552,7 @@ void GCRender::DrawOneObject(GCMesh* pMesh, GCShader* pShader) {
 		m_CommandList->SetGraphicsRootDescriptorTable(0, m_pGraphicsManager->GetTextures()[0]->m_HDescriptorGPU);
 	}
 	DirectX::XMFLOAT3 pos1 = { 0.f, 0.f, 0.f };
-	DirectX::XMVECTOR pos = DirectX::XMVectorSet(0, -10, 5, 1.0f);
+	DirectX::XMVECTOR pos = DirectX::XMVectorSet(10, 10, 10, 1.0f);
 	DirectX::XMVECTOR target = DirectX::XMVectorZero();
 	DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 

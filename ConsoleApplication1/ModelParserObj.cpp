@@ -45,7 +45,7 @@ ModelParserObj::ModelParserObj() {
 ModelParserObj::~ModelParserObj() {
 }
 
-void ModelParserObj::Initialize(GCRender* pRender, std::string fileName)
+void ModelParserObj::Initialize(GCRender* pRender, std::wstring fileName)
 {
 	m_pRender = pRender;
 	m_fileName = fileName;

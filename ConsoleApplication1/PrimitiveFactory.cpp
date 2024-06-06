@@ -2,6 +2,7 @@
 #include "Global.h"
 #include "Render.h"
 #include "Mesh.h"
+#include "PrimitiveId.h"
 
 PrimitiveFactory::PrimitiveFactory() {
 }
@@ -9,9 +10,35 @@ PrimitiveFactory::PrimitiveFactory() {
 PrimitiveFactory::~PrimitiveFactory() {
 }
 
-void PrimitiveFactory::Initialize(int type, GCRender* pRender)
+void PrimitiveFactory::Initialize(int id, GCRender* pRender)
 {
+	m_Id = id;
 	m_pRender = pRender;
+}
+
+GCGeometryColor* PrimitiveFactory::BuildGeometryColor() {
+	switch (m_Id) {
+
+	case PIEnum::BoxColor: {
+		return BuildBoxGeometryColor();
+		break;
+	}
+
+	}
+}
+
+GCGeometryTexture* PrimitiveFactory::BuildGeometryTexture() {
+	switch (m_Id) {
+
+	case PIEnum::BoxTexture: {
+		return BuildBoxGeometryTexture();
+	}
+	
+	case PIEnum::PlaneTexture: {
+		return BuildPlaneGeometryTexture();
+	}
+
+	}
 }
 
 GCGeometryColor* PrimitiveFactory::BuildBoxGeometryColor()
@@ -121,3 +148,24 @@ GCGeometryTexture* PrimitiveFactory::BuildBoxGeometryTexture()
 	return boxGeometry;
 }
 
+GCGeometryTexture* PrimitiveFactory::BuildPlaneGeometryTexture()
+{
+	GCGeometryTexture* boxGeometry = new GCGeometryTexture();
+
+	boxGeometry->vertices = {
+		GCVERTEXTEXTURE({ DirectX::XMFLOAT3(-1.0f, -1.0f, -1.0f),DirectX::XMFLOAT2(0, 1) }), // Bottom-left
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(-1.0f, +1.0f, -1.0f),DirectX::XMFLOAT2(0, 0) }), // Top-left
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, +1.0f, -1.0f),DirectX::XMFLOAT2(1, 0) }), // Top-right
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, -1.0f, -1.0f),DirectX::XMFLOAT2(1, 1) }), // Bottom-right
+
+	};
+
+	boxGeometry->indices =
+	{
+		// Front face
+		0, 1, 2,
+		0, 2, 3,
+	};
+
+	return boxGeometry;
+}

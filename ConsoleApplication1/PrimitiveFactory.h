@@ -56,16 +56,20 @@ public :
 
 	PrimitiveFactory();
 	~PrimitiveFactory();
-	void Initialize(int type, GCRender* pRender);
+	void Initialize(int id, GCRender* pRender);
+
+	GCGeometryColor* BuildGeometryColor();
+	GCGeometryTexture* BuildGeometryTexture();
 
 	GCGeometryColor* BuildBoxGeometryColor();
 	GCGeometryTexture* BuildBoxGeometryTexture();
+	GCGeometryTexture* BuildPlaneGeometryTexture();
 
 	// 
 	//void BuildSphereGeometry();
 protected:
 
-	//int m_Type;
+	int m_Id;
 	//GCGEOMETRY m_BoxGeometry;
 	//Geometry m_SphereGeometry;
 

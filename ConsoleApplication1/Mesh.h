@@ -65,6 +65,8 @@ public:
 	void UploadGeometryDataColor();
 	void UploadGeometryDataTexture();
 
+	void CreatePrimitiveGeometry(int id);
+	void CreateObjGeometry(std::wstring obj, bool isTextured = false);
 
 	//DirectX::XMFLOAT4X4 mWorld = MathHelper::Identity4x4();
 	//DirectX::XMFLOAT4X4 mView = MathHelper::Identity4x4();
@@ -72,11 +74,11 @@ public:
 	//std::unique_ptr<UploadBuffer<ObjectConstants>> m_Buffer;
 
 	// Primitive
-	void CreateBoxGeometryColor();
-	void CreateBoxGeometryTexture();
+	void CreateBoxGeometryColor(int id);
+	void CreateBoxGeometryTexture(int id);
 	//// Parse
-	void CreateObjGeometryColor();
-	void CreateObjGeometryTexture();
+	void CreateObjGeometryColor(std::wstring obj);
+	void CreateObjGeometryTexture(std::wstring obj);
 
 	GCGeometry* GetBoxGeometry();
 	//GCGeometry* GetGeometryTexture();

@@ -22,7 +22,7 @@ class ModelParserObj
 public:
 	ModelParserObj();
 	~ModelParserObj();
-	void Initialize(GCRender* pRender, std::string fileName);
+	void Initialize(GCRender* pRender, std::wstring fileName);
 	void ParseObj();
 
 	GCGeometryColor* BuildObjColor();
@@ -32,6 +32,6 @@ public:
 private:
 	ObjInfo m_ParsedObj;
 	GCRender* m_pRender;
-	std::string m_fileName;
+	std::wstring m_fileName;
 };
 
