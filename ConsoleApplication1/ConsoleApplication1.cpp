@@ -5,6 +5,7 @@
 #include "Graphics.h"
 #include "Mesh.h"
 #include "Texture.h"
+#include "Material.h"
 
 //void DebugOutput(const std::string& message)
 //{
@@ -29,15 +30,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, in
 
 	graphics->m_pRender->ResetCommandList();
 
-	graphics->CreateMesh();
-	graphics->CreateShader(STEnum::color, L"color");
-	graphics->CreateShader(STEnum::texture, L"texture");
-	graphics->CreateTexture();
+	GCMesh* mesh = graphics->CreateMesh();
+	GCShader* shader1 = graphics->CreateShader(STEnum::color, L"color");
+	GCShader* shader2 = graphics->CreateShader(STEnum::texture, L"texture");
 
+	//graphics->CreateMaterial("ahah");
 
-	for (int i = 0; i < graphics->GetTexturesTemplates().size(); i++)
-		graphics->GetTexturesTemplates()[i]->Initialize(graphics->m_pRender, "ahah");
-	//tex->Initialize(graphicsManager->m_pRender, "ahah");
+	graphics->CreateTexture("ahah");
+
 
 	graphics->m_pRender->CloseCommandList();
 	graphics->m_pRender->ExecuteCommandList();

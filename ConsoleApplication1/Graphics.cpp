@@ -42,9 +42,10 @@ GCMesh* GCGraphics::CreateMesh() {
 	return mesh;
 }
 
-GCTexture* GCGraphics::CreateTexture() {
+GCTexture* GCGraphics::CreateTexture(std::string fileName) {
 	GCTexture* texture = new GCTexture();
-	m_vTextureTemplates.push_back(texture);
+	texture->Initialize(m_pRender, fileName);
+	m_vTexture.push_back(texture);
 	return texture;
 }
 
@@ -99,9 +100,6 @@ std::vector<GCTexture*> GCGraphics::GetTextures() {
 	return m_vTexture;
 }
 
-std::vector<GCTexture*> GCGraphics::GetTexturesTemplates() {
-	return m_vTextureTemplates;
-}
 
 void GCGraphics::AddTex(GCTexture* tex) {
 	m_vTexture.push_back(tex);
