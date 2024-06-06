@@ -51,16 +51,43 @@ GCGeometryTexture* PrimitiveFactory::BuildBoxGeometryTexture()
 {
 	GCGeometryTexture* boxGeometry = new GCGeometryTexture();
 
-    boxGeometry->vertices = {
-        { DirectX::XMFLOAT3(-1.0f, -1.0f, -1.0f), DirectX::XMFLOAT2(0.0f, 1.0f) },
-        { DirectX::XMFLOAT3(-1.0f, +1.0f, -1.0f), DirectX::XMFLOAT2(0.0f, 0.0f) },
-        { DirectX::XMFLOAT3(+1.0f, +1.0f, -1.0f), DirectX::XMFLOAT2(1.0f, 0.0f) },
-        { DirectX::XMFLOAT3(+1.0f, -1.0f, -1.0f), DirectX::XMFLOAT2(1.0f, 1.0f) },
-        { DirectX::XMFLOAT3(-1.0f, -1.0f, +1.0f), DirectX::XMFLOAT2(0.0f, 1.0f) },
-        { DirectX::XMFLOAT3(-1.0f, +1.0f, +1.0f), DirectX::XMFLOAT2(0.0f, 0.0f) },
-        { DirectX::XMFLOAT3(+1.0f, +1.0f, +1.0f), DirectX::XMFLOAT2(1.0f, 0.0f) },
-        { DirectX::XMFLOAT3(+1.0f, -1.0f, +1.0f), DirectX::XMFLOAT2(1.0f, 1.0f) },
-    };
+	boxGeometry->vertices = {
+		GCVERTEXTEXTURE({ DirectX::XMFLOAT3(-1.0f, -1.0f, -1.0f),DirectX::XMFLOAT2(0, 1) }), // Bottom-left
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(-1.0f, +1.0f, -1.0f),DirectX::XMFLOAT2(0, 0) }), // Top-left
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, +1.0f, -1.0f),DirectX::XMFLOAT2(1, 0) }), // Top-right
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, -1.0f, -1.0f),DirectX::XMFLOAT2(1, 1) }), // Bottom-right
+
+		// Back face
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(-1.0f, -1.0f, +1.0f),DirectX::XMFLOAT2(0, 1) }), // Bottom-left
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(-1.0f, +1.0f, +1.0f),DirectX::XMFLOAT2(0, 0) }), // Top-left
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, +1.0f, +1.0f),DirectX::XMFLOAT2(1, 0) }), // Top-right
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, -1.0f, +1.0f),DirectX::XMFLOAT2(1, 1) }), // Bottom-right
+
+		// Left face
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(-1.0f, -1.0f, -1.0f),DirectX::XMFLOAT2(0, 1) }), // Bottom-front
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(-1.0f, +1.0f, -1.0f),DirectX::XMFLOAT2(0, 0) }), // Top-front
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(-1.0f, +1.0f, +1.0f),DirectX::XMFLOAT2(1, 0) }), // Top-back
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(-1.0f, -1.0f, +1.0f),DirectX::XMFLOAT2(1, 1) }), // Bottom-back
+
+		// Right face
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, -1.0f, -1.0f),DirectX::XMFLOAT2(0, 1) }), // Bottom-front
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, +1.0f, -1.0f),DirectX::XMFLOAT2(0, 0) }), // Top-front
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, +1.0f, +1.0f),DirectX::XMFLOAT2(1, 0) }), // Top-back
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, -1.0f, +1.0f),DirectX::XMFLOAT2(1, 1) }), // Bottom-back
+
+		// Top face
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(-1.0f, +1.0f, -1.0f),DirectX::XMFLOAT2(0, 1) }), // Bottom-left
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(-1.0f, +1.0f, +1.0f),DirectX::XMFLOAT2(0, 0) }), // Top-left
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, +1.0f, +1.0f),DirectX::XMFLOAT2(1, 0) }), // Top-right
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, +1.0f, -1.0f),DirectX::XMFLOAT2(1, 1) }), // Bottom-right
+
+		// Bottom face
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(-1.0f, -1.0f, -1.0f),DirectX::XMFLOAT2(0, 1) }), // Bottom-left
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(-1.0f, -1.0f, +1.0f),DirectX::XMFLOAT2(0, 0) }), // Top-left
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, -1.0f, +1.0f),DirectX::XMFLOAT2(1, 0) }), // Top-right
+		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, -1.0f, -1.0f),DirectX::XMFLOAT2(1, 1) })  // Bottom-right
+	};
+
 
 	boxGeometry->indices =
 	{

@@ -486,7 +486,7 @@ void GCRender::Draw(const Timer& gt) {
 		//m_CommandList->SetGraphicsRootDescriptorTable(0,m_pGraphicsManager->GetTextures()[0]->m_HDescriptorGPU);
 	//	//}
 	//}
-	DrawOneObject(m_pGraphicsManager->GetMeshes()[0], m_pGraphicsManager->GetShaders()[0]);
+	DrawOneObject(m_pGraphicsManager->GetMeshes()[0], m_pGraphicsManager->GetShaders()[1]);
 
 
 
@@ -544,7 +544,7 @@ void GCRender::DrawOneObject(GCMesh* pMesh, GCShader* pShader) {
 	D3D12_INDEX_BUFFER_VIEW indexBufferView = pMesh->GetBoxGeometry()->boxGeo->IndexBufferView();
 	m_CommandList->IASetIndexBuffer(&indexBufferView);
 
-	//m_CommandList->SetGraphicsRootDescriptorTable(0, m_pGraphicsManager->GetTextures()[0]->m_HDescriptorGPU);
+	m_CommandList->SetGraphicsRootDescriptorTable(0, m_pGraphicsManager->GetTextures()[0]->m_HDescriptorGPU);
 	DirectX::XMFLOAT3 pos1 = { 0.f, 0.f, 0.f };
 	DirectX::XMVECTOR pos = DirectX::XMVectorSet(0, -10, 5, 1.0f);
 	DirectX::XMVECTOR target = DirectX::XMVectorZero();
@@ -560,7 +560,7 @@ void GCRender::DrawOneObject(GCMesh* pMesh, GCShader* pShader) {
 	ObjectConstants objConstants;
 	XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
 	m_Buffer->CopyData(0, objConstants);
-	m_CommandList->SetGraphicsRootConstantBufferView(0, m_Buffer->Resource()->GetGPUVirtualAddress());
+	m_CommandList->SetGraphicsRootConstantBufferView(1, m_Buffer->Resource()->GetGPUVirtualAddress());
 
 	m_CommandList->DrawIndexedInstanced(m_pGraphicsManager->GetMeshes()[0]->GetBoxGeometry()->boxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
 }

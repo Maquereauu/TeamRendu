@@ -26,7 +26,7 @@ public:
 	void ParseObj();
 
 	GCGeometryColor* BuildObjColor();
-	//GCGeometryTexture* BuildObjWithTextures();
+	GCGeometryTexture* BuildObjTexture();
 
 
 private:

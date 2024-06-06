@@ -14,7 +14,9 @@ GCMesh::~GCMesh() {
 void GCMesh::Initialize(GCRender* pRender) {
 	m_pRender = pRender;
 	//CreateBoxGeometryColor();
-    CreateObjGeometryColor();
+    CreateBoxGeometryTexture();
+    //CreateObjGeometryTexture();
+    //CreateObjGeometryColor();
 }
 
 void GCMesh::UploadGeometryDataColor() {
@@ -70,7 +72,7 @@ void GCMesh::UploadGeometryDataTexture() {
 
     const auto& vertices = boxGeometryColor->vertices;
 
-    const UINT vbByteSize = static_cast<UINT>(vertices.size() * sizeof(GCVERTEX));
+    const UINT vbByteSize = static_cast<UINT>(vertices.size() * sizeof(GCVERTEXTEXTURE));
     const UINT ibByteSize = static_cast<UINT>(m_pGeometry->indices.size() * sizeof(std::uint16_t));
 
     boxGeometryColor->boxGeo = std::make_unique<MeshGeometry>();
@@ -90,7 +92,7 @@ void GCMesh::UploadGeometryDataTexture() {
     boxGeometryColor->boxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(m_pRender->Getmd3dDevice(),
         m_pRender->GetCommandList(), m_pGeometry->indices.data(), ibByteSize, boxGeometryColor->boxGeo->IndexBufferUploader);
 
-    boxGeometryColor->boxGeo->VertexByteStride = sizeof(GCVERTEX);
+    boxGeometryColor->boxGeo->VertexByteStride = sizeof(GCVERTEXTEXTURE);
     boxGeometryColor->boxGeo->VertexBufferByteSize = vbByteSize;
     boxGeometryColor->boxGeo->IndexFormat = DXGI_FORMAT_R16_UINT;
     boxGeometryColor->boxGeo->IndexBufferByteSize = ibByteSize;
@@ -134,7 +136,7 @@ void GCMesh::CreateBoxGeometryTexture()
 void GCMesh::CreateObjGeometryColor()
 {
 	ModelParserObj* objParser = new ModelParserObj();
-	objParser->Initialize(m_pRender, "squareNoUv.obj");
+	objParser->Initialize(m_pRender, "cubeNoUv.obj");
 	objParser->ParseObj();
 	m_pGeometry = objParser->BuildObjColor();
 
@@ -145,14 +147,17 @@ void GCMesh::CreateObjGeometryColor()
 
 }
 
-//void GCMesh::CreateObjGeometryTexture()
-//{
-//	ModelParserObj* objParser = new ModelParserObj();
-//	objParser->Initialize(m_pRender, "cube.obj");
-//	objParser->ParseObj();
-//    m_pGeometry = objParser->BuildObjTexture();
-//    m_pGeometry->boxGeo->DrawArgs["box"] = m_pGeometry->submesh;
-//}
+void GCMesh::CreateObjGeometryTexture()
+{
+	ModelParserObj* objParser = new ModelParserObj();
+	objParser->Initialize(m_pRender, "cube.obj");
+	objParser->ParseObj();
+    m_pGeometry = objParser->BuildObjTexture();
+
+    UploadGeometryDataTexture();
+
+    m_pGeometry->boxGeo->DrawArgs["box"] = m_pGeometry->submesh;
+}
 
 
 
