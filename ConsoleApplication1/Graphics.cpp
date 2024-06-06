@@ -18,7 +18,6 @@ GCGraphics::GCGraphics() {
 }
 
 void GCGraphics::Initialize() {
-
 	m_pRender = new GCRender();
 	m_pRender->Initialize(this);
 }

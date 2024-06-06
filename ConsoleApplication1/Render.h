@@ -82,7 +82,8 @@ public:
 	UINT GetRtvDescriptorSize() const { return m_rtvDescriptorSize; }
 	UINT GetDsvDescriptorSize() const { return m_dsvDescriptorSize; }
 	UINT GetCbvSrvUavDescriptorSize() const { return m_cbvSrvUavDescriptorSize; }
-	GCGraphics* graphicsManager;
+	//GCGraphics* graphicsManager;
+	GCGraphics* m_pGraphicsManager;
 private:
 	// Swap chain size
 	static const int SwapChainBufferCount = 2;
@@ -150,6 +151,5 @@ private:
 
 
 	// 
-	GCGraphics* m_pGraphicsManager;
 };
 

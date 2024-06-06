@@ -24,7 +24,7 @@ void GCShader::Render() {
 }
 
 void GCShader::Initialize(GCRender* pRender) {
-	
+
 }
 
 void GCShader::CompileShader() {

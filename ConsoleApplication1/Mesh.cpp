@@ -13,7 +13,7 @@ GCMesh::~GCMesh() {
 
 void GCMesh::Initialize(GCRender* pRender) {
 	m_pRender = pRender;
-	CreateObjGeometry();
+	CreateObjGeometryWithTextures();
 }
 
 void GCMesh::CreateBoxGeometry() 
