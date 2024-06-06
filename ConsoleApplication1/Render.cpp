@@ -225,13 +225,6 @@ void GCRender::CreateCommandObjects()
 
 
 
-void GCRender::BuildBoxGeometry()
-{
-	for (int i = 0; i < m_pGraphicsManager->GetMeshes().size(); i++)
-		m_pGraphicsManager->GetMeshes()[i]->CreateBoxGeometryTex();
-	//mesh1->CreateBoxGeometry();
-}
-
 
 
 void GCRender::CreateSwapChain()
@@ -493,7 +486,7 @@ void GCRender::Draw(const Timer& gt) {
 		//m_CommandList->SetGraphicsRootDescriptorTable(0,m_pGraphicsManager->GetTextures()[0]->m_HDescriptorGPU);
 	//	//}
 	//}
-	DrawOneObject(m_pGraphicsManager->GetMeshes()[0], m_pGraphicsManager->GetShaders()[1]);
+	DrawOneObject(m_pGraphicsManager->GetMeshes()[0], m_pGraphicsManager->GetShaders()[0]);
 
 
 
@@ -546,12 +539,12 @@ void GCRender::DrawOneObject(GCMesh* pMesh, GCShader* pShader) {
 
 
 	m_CommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = pMesh->GetGeometryTexture()->boxGeo->VertexBufferView();
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView = pMesh->GetBoxGeometry()->boxGeo->VertexBufferView();
 	m_CommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
-	D3D12_INDEX_BUFFER_VIEW indexBufferView = pMesh->GetGeometryTexture()->boxGeo->IndexBufferView();
+	D3D12_INDEX_BUFFER_VIEW indexBufferView = pMesh->GetBoxGeometry()->boxGeo->IndexBufferView();
 	m_CommandList->IASetIndexBuffer(&indexBufferView);
 
-	m_CommandList->SetGraphicsRootDescriptorTable(0, m_pGraphicsManager->GetTextures()[0]->m_HDescriptorGPU);
+	//m_CommandList->SetGraphicsRootDescriptorTable(0, m_pGraphicsManager->GetTextures()[0]->m_HDescriptorGPU);
 	DirectX::XMFLOAT3 pos1 = { 0.f, 0.f, 0.f };
 	DirectX::XMVECTOR pos = DirectX::XMVectorSet(0, -10, 5, 1.0f);
 	DirectX::XMVECTOR target = DirectX::XMVectorZero();
@@ -567,9 +560,9 @@ void GCRender::DrawOneObject(GCMesh* pMesh, GCShader* pShader) {
 	ObjectConstants objConstants;
 	XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
 	m_Buffer->CopyData(0, objConstants);
-	m_CommandList->SetGraphicsRootConstantBufferView(pShader->m_Type == 1 ? 0:1, m_Buffer->Resource()->GetGPUVirtualAddress());
+	m_CommandList->SetGraphicsRootConstantBufferView(0, m_Buffer->Resource()->GetGPUVirtualAddress());
 
-	m_CommandList->DrawIndexedInstanced(m_pGraphicsManager->GetMeshes()[0]->GetGeometryTexture()->boxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
+	m_CommandList->DrawIndexedInstanced(m_pGraphicsManager->GetMeshes()[0]->GetBoxGeometry()->boxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
 }
 
 
