@@ -1,6 +1,7 @@
 #include "PrimitiveFactory.h"
 #include "Global.h"
 #include "Render.h"
+#include "Mesh.h"
 
 PrimitiveFactory::PrimitiveFactory() {
 }
@@ -10,127 +11,56 @@ PrimitiveFactory::~PrimitiveFactory() {
 
 void PrimitiveFactory::Initialize(int type, GCRender* pRender)
 {
-	m_Type = type;
 	m_pRender = pRender;
 }
 
-GCGEOMETRY* PrimitiveFactory::BuildBoxGeometry()
+GCGeometryColor* PrimitiveFactory::BuildBoxGeometryColor()
 {
-	GCGEOMETRY* boxGeometry = new GCGEOMETRY();
+    GCGeometryColor* boxGeometry = new GCGeometryColor();
 
-	boxGeometry->vertices = {
-		GCVERTEX({ DirectX::XMFLOAT3(-1.0f, -1.0f, -1.0f), DirectX::XMFLOAT4(DirectX::Colors::White) }),
-		GCVERTEX({ DirectX::XMFLOAT3(-1.0f, +1.0f, -1.0f), DirectX::XMFLOAT4(DirectX::Colors::Black) }),
-		GCVERTEX({ DirectX::XMFLOAT3(+1.0f, +1.0f, -1.0f), DirectX::XMFLOAT4(DirectX::Colors::Red) }),
-		GCVERTEX({ DirectX::XMFLOAT3(+1.0f, -1.0f, -1.0f), DirectX::XMFLOAT4(DirectX::Colors::Green) }),
-		GCVERTEX({ DirectX::XMFLOAT3(-1.0f, -1.0f, +1.0f), DirectX::XMFLOAT4(DirectX::Colors::Blue) }),
-		GCVERTEX({ DirectX::XMFLOAT3(-1.0f, +1.0f, +1.0f), DirectX::XMFLOAT4(DirectX::Colors::Yellow) }),
-		GCVERTEX({ DirectX::XMFLOAT3(+1.0f, +1.0f, +1.0f), DirectX::XMFLOAT4(DirectX::Colors::Cyan) }),
-		GCVERTEX({ DirectX::XMFLOAT3(+1.0f, -1.0f, +1.0f), DirectX::XMFLOAT4(DirectX::Colors::Magenta) }),
-	};
+    boxGeometry->vertices = {
+        { DirectX::XMFLOAT3(-1.0f, -1.0f, -1.0f), DirectX::XMFLOAT4(DirectX::Colors::White) },
+        { DirectX::XMFLOAT3(-1.0f, +1.0f, -1.0f), DirectX::XMFLOAT4(DirectX::Colors::Black) },
+        { DirectX::XMFLOAT3(+1.0f, +1.0f, -1.0f), DirectX::XMFLOAT4(DirectX::Colors::Red) },
+        { DirectX::XMFLOAT3(+1.0f, -1.0f, -1.0f), DirectX::XMFLOAT4(DirectX::Colors::Green) },
+        { DirectX::XMFLOAT3(-1.0f, -1.0f, +1.0f), DirectX::XMFLOAT4(DirectX::Colors::Blue) },
+        { DirectX::XMFLOAT3(-1.0f, +1.0f, +1.0f), DirectX::XMFLOAT4(DirectX::Colors::Yellow) },
+        { DirectX::XMFLOAT3(+1.0f, +1.0f, +1.0f), DirectX::XMFLOAT4(DirectX::Colors::Cyan) },
+        { DirectX::XMFLOAT3(+1.0f, -1.0f, +1.0f), DirectX::XMFLOAT4(DirectX::Colors::Magenta) },
+    };
 
+    boxGeometry->indices = {
+        0, 1, 2, 0, 2, 3,
+        4, 6, 5, 4, 7, 6,
+        4, 5, 1, 4, 1, 0,
+        3, 2, 6, 3, 6, 7,
+        1, 5, 6, 1, 6, 2,
+        4, 0, 3, 4, 3, 7,
+    };
 
-	boxGeometry->indices =
+    boxGeometry->vertexNumber = boxGeometry->vertices.size();
+    boxGeometry->indiceNumber = boxGeometry->indices.size();
+
     
-	{
-		//front face
-		0, 1, 2,
-		0, 2, 3,
 
-		//back face
-		4, 6, 5,
-		4, 7, 6,
-
-		//left face
-		4, 5, 1,
-		4, 1, 0,
-
-		//right face
-		3, 2, 6,
-		3, 6, 7,
-
-		//top face
-		1, 5, 6,
-		1, 6, 2,
-
-		//bottom face
-		4, 0, 3,
-		4, 3, 7,
-	};
-
-	const UINT vbByteSize = (UINT)boxGeometry->vertices.size() * sizeof(GCVERTEX);
-	const UINT ibByteSize = (UINT)boxGeometry->indices.size() * sizeof(std::uint16_t);
-	boxGeometry->boxGeo = std::make_unique<MeshGeometry>();
-	boxGeometry->boxGeo->Name = "boxGeo";
-
-	ThrowIfFailed(D3DCreateBlob(vbByteSize, &boxGeometry->boxGeo->VertexBufferCPU));
-	CopyMemory(boxGeometry->boxGeo->VertexBufferCPU->GetBufferPointer(), boxGeometry->vertices.data(), vbByteSize);
-
-	ThrowIfFailed(D3DCreateBlob(ibByteSize, &boxGeometry->boxGeo->IndexBufferCPU));
-	CopyMemory(boxGeometry->boxGeo->IndexBufferCPU->GetBufferPointer(), boxGeometry->indices.data(), ibByteSize);
-
-	boxGeometry->boxGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(m_pRender->Getmd3dDevice(),
-		m_pRender->GetCommandList(), boxGeometry->vertices.data(), vbByteSize, boxGeometry->boxGeo->VertexBufferUploader);
-
-	boxGeometry->boxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(m_pRender->Getmd3dDevice(),
-		m_pRender->GetCommandList(), boxGeometry->indices.data(), ibByteSize, boxGeometry->boxGeo->IndexBufferUploader);
-
-	boxGeometry->boxGeo->VertexByteStride = sizeof(GCVERTEX);
-	boxGeometry->boxGeo->VertexBufferByteSize = vbByteSize;
-	boxGeometry->boxGeo->IndexFormat = DXGI_FORMAT_R16_UINT;
-	boxGeometry->boxGeo->IndexBufferByteSize = ibByteSize;
-
-	SubmeshGeometry submesh;
-	submesh.IndexCount = (UINT)boxGeometry->indices.size();
-	submesh.StartIndexLocation = 0;
-	submesh.BaseVertexLocation = 0;
-
-	boxGeometry->submesh = submesh;
-
-	return boxGeometry;
+    return boxGeometry;
 }
 
-GCGEOMETRYTEXTURE* PrimitiveFactory::BuildBoxGeometryTexture()
+
+GCGeometryTexture* PrimitiveFactory::BuildBoxGeometryTexture()
 {
-	GCGEOMETRYTEXTURE* boxGeometry = new GCGEOMETRYTEXTURE();
+	GCGeometryTexture* boxGeometry = new GCGeometryTexture();
 
-	boxGeometry->vertices = {
-		GCVERTEXTEXTURE({ DirectX::XMFLOAT3(-1.0f, -1.0f, -1.0f),DirectX::XMFLOAT2(0, 1) }), // Bottom-left
-		GCVERTEXTEXTURE({DirectX::XMFLOAT3(-1.0f, +1.0f, -1.0f),DirectX::XMFLOAT2(0, 0) }), // Top-left
-		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, +1.0f, -1.0f),DirectX::XMFLOAT2(1, 0) }), // Top-right
-		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, -1.0f, -1.0f),DirectX::XMFLOAT2(1, 1) }), // Bottom-right
-
-		// Back face
-		GCVERTEXTEXTURE({DirectX::XMFLOAT3(-1.0f, -1.0f, +1.0f),DirectX::XMFLOAT2(0, 1) }), // Bottom-left
-		GCVERTEXTEXTURE({DirectX::XMFLOAT3(-1.0f, +1.0f, +1.0f),DirectX::XMFLOAT2(0, 0) }), // Top-left
-		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, +1.0f, +1.0f),DirectX::XMFLOAT2(1, 0) }), // Top-right
-		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, -1.0f, +1.0f),DirectX::XMFLOAT2(1, 1) }), // Bottom-right
-
-		// Left face
-		GCVERTEXTEXTURE({DirectX::XMFLOAT3(-1.0f, -1.0f, -1.0f),DirectX::XMFLOAT2(0, 1) }), // Bottom-front
-		GCVERTEXTEXTURE({DirectX::XMFLOAT3(-1.0f, +1.0f, -1.0f),DirectX::XMFLOAT2(0, 0) }), // Top-front
-		GCVERTEXTEXTURE({DirectX::XMFLOAT3(-1.0f, +1.0f, +1.0f),DirectX::XMFLOAT2(1, 0) }), // Top-back
-		GCVERTEXTEXTURE({DirectX::XMFLOAT3(-1.0f, -1.0f, +1.0f),DirectX::XMFLOAT2(1, 1) }), // Bottom-back
-
-		// Right face
-		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, -1.0f, -1.0f),DirectX::XMFLOAT2(0, 1) }), // Bottom-front
-		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, +1.0f, -1.0f),DirectX::XMFLOAT2(0, 0) }), // Top-front
-		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, +1.0f, +1.0f),DirectX::XMFLOAT2(1, 0) }), // Top-back
-		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, -1.0f, +1.0f),DirectX::XMFLOAT2(1, 1) }), // Bottom-back
-
-		// Top face
-		GCVERTEXTEXTURE({DirectX::XMFLOAT3(-1.0f, +1.0f, -1.0f),DirectX::XMFLOAT2(0, 1) }), // Bottom-left
-		GCVERTEXTEXTURE({DirectX::XMFLOAT3(-1.0f, +1.0f, +1.0f),DirectX::XMFLOAT2(0, 0) }), // Top-left
-		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, +1.0f, +1.0f),DirectX::XMFLOAT2(1, 0) }), // Top-right
-		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, +1.0f, -1.0f),DirectX::XMFLOAT2(1, 1) }), // Bottom-right
-
-		// Bottom face
-		GCVERTEXTEXTURE({DirectX::XMFLOAT3(-1.0f, -1.0f, -1.0f),DirectX::XMFLOAT2(0, 1) }), // Bottom-left
-		GCVERTEXTEXTURE({DirectX::XMFLOAT3(-1.0f, -1.0f, +1.0f),DirectX::XMFLOAT2(0, 0) }), // Top-left
-		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, -1.0f, +1.0f),DirectX::XMFLOAT2(1, 0) }), // Top-right
-		GCVERTEXTEXTURE({DirectX::XMFLOAT3(+1.0f, -1.0f, -1.0f),DirectX::XMFLOAT2(1, 1) })  // Bottom-right
-	};
-
+    boxGeometry->vertices = {
+        { DirectX::XMFLOAT3(-1.0f, -1.0f, -1.0f), DirectX::XMFLOAT2(0.0f, 1.0f) },
+        { DirectX::XMFLOAT3(-1.0f, +1.0f, -1.0f), DirectX::XMFLOAT2(0.0f, 0.0f) },
+        { DirectX::XMFLOAT3(+1.0f, +1.0f, -1.0f), DirectX::XMFLOAT2(1.0f, 0.0f) },
+        { DirectX::XMFLOAT3(+1.0f, -1.0f, -1.0f), DirectX::XMFLOAT2(1.0f, 1.0f) },
+        { DirectX::XMFLOAT3(-1.0f, -1.0f, +1.0f), DirectX::XMFLOAT2(0.0f, 1.0f) },
+        { DirectX::XMFLOAT3(-1.0f, +1.0f, +1.0f), DirectX::XMFLOAT2(0.0f, 0.0f) },
+        { DirectX::XMFLOAT3(+1.0f, +1.0f, +1.0f), DirectX::XMFLOAT2(1.0f, 0.0f) },
+        { DirectX::XMFLOAT3(+1.0f, -1.0f, +1.0f), DirectX::XMFLOAT2(1.0f, 1.0f) },
+    };
 
 	boxGeometry->indices =
 	{
@@ -159,50 +89,8 @@ GCGEOMETRYTEXTURE* PrimitiveFactory::BuildBoxGeometryTexture()
 		20, 23, 22
 	};
 
-	const UINT vbByteSize = (UINT)boxGeometry->vertices.size() * sizeof(GCVERTEXTEXTURE);
-	const UINT ibByteSize = (UINT)boxGeometry->indices.size() * sizeof(std::uint16_t);
-	boxGeometry->boxGeo = std::make_unique<MeshGeometry>();
-	boxGeometry->boxGeo->Name = "boxGeo";
-
-	ThrowIfFailed(D3DCreateBlob(vbByteSize, &boxGeometry->boxGeo->VertexBufferCPU));
-	CopyMemory(boxGeometry->boxGeo->VertexBufferCPU->GetBufferPointer(), boxGeometry->vertices.data(), vbByteSize);
-
-	ThrowIfFailed(D3DCreateBlob(ibByteSize, &boxGeometry->boxGeo->IndexBufferCPU));
-	CopyMemory(boxGeometry->boxGeo->IndexBufferCPU->GetBufferPointer(), boxGeometry->indices.data(), ibByteSize);
-
-	boxGeometry->boxGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(m_pRender->Getmd3dDevice(),
-		m_pRender->GetCommandList(), boxGeometry->vertices.data(), vbByteSize, boxGeometry->boxGeo->VertexBufferUploader);
-
-	boxGeometry->boxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(m_pRender->Getmd3dDevice(),
-		m_pRender->GetCommandList(), boxGeometry->indices.data(), ibByteSize, boxGeometry->boxGeo->IndexBufferUploader);
-
-	boxGeometry->boxGeo->VertexByteStride = sizeof(GCVERTEXTEXTURE);
-	boxGeometry->boxGeo->VertexBufferByteSize = vbByteSize;
-	boxGeometry->boxGeo->IndexFormat = DXGI_FORMAT_R16_UINT;
-	boxGeometry->boxGeo->IndexBufferByteSize = ibByteSize;
-
-	SubmeshGeometry submesh;
-	submesh.IndexCount = (UINT)boxGeometry->indices.size();
-	submesh.StartIndexLocation = 0;
-	submesh.BaseVertexLocation = 0;
-
-	boxGeometry->submesh = submesh;
+	
 
 	return boxGeometry;
 }
 
-GCGEOMETRY* PrimitiveFactory::GetGeometry()
-{
-	switch (m_Type) {
-		case 0:
-			GCGEOMETRY * primitiveGeometry = BuildBoxGeometry();
-			return primitiveGeometry;
-			break;
-	}
-
-}
-
-GCGEOMETRYTEXTURE* PrimitiveFactory::GetGeometryTexture() {
-	GCGEOMETRYTEXTURE * primitiveGeometry2 = BuildBoxGeometryTexture();
-	return primitiveGeometry2;
-}
