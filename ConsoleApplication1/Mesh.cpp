@@ -29,8 +29,8 @@ void GCMesh::CreateObjGeometryWithTextures()
 	ModelParserObj* objParser = new ModelParserObj();
 	objParser->Initialize(m_pRender, "cube.obj");
 	objParser->ParseObj();
-	m_GeoTextures = objParser->BuildObjWithTextures();
-	m_GeoTextures->boxGeo->DrawArgs["box"] = m_GeoTextures->submesh;
+	m_boxGeometryTex = objParser->BuildObjWithTextures();
+	m_boxGeometryTex->boxGeo->DrawArgs["box"] = m_boxGeometryTex->submesh;
 }
 
 void GCMesh::CreateObjGeometry()
@@ -49,7 +49,7 @@ GCGEOMETRY* GCMesh::GetBoxGeometry()
 
 GCGEOMETRYTEXTURE* GCMesh::GetGeometryTexture()
 {
-	return m_GeoTextures;
+	return m_boxGeometryTex;
 }
 
 
@@ -92,10 +92,10 @@ void GCMesh::Render() {
 }
 
 
-void Mesh::CreateBoxGeometryTex()
+void GCMesh::CreateBoxGeometryTex()
 {
 	PrimitiveFactory* factory = new PrimitiveFactory();
-	factory->Initialize(0);
+	factory->Initialize(0,m_pRender);
 	m_boxGeometryTex = factory->GetGeometryTexture();
 	m_boxGeometryTex->boxGeo->DrawArgs["box"] = m_boxGeometryTex->submesh;
 

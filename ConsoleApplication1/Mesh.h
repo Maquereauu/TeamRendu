@@ -37,15 +37,12 @@ public:
 	void CreateObjGeometryWithTextures();
 	GCGEOMETRY* GetBoxGeometry();
 	GCGEOMETRYTEXTURE* GetGeometryTexture();
+	void CreateBoxGeometryTex();
+	GCGEOMETRYTEXTURE* m_boxGeometryTex;
 
 private:
 
-	GCGEOMETRYTEXTURE* m_GeoTextures;
-	GCGEOMETRY* m_boxGeometry;
-
 	GCRender* m_pRender;
-	void CreateBoxGeometryTex();
 	GCGEOMETRY* m_boxGeometry;
-	GCGEOMETRYTEXTURE* m_boxGeometryTex;
 };
 

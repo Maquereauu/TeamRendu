@@ -44,7 +44,7 @@ GCMesh* GCGraphics::CreateMesh() {
 	return mesh;
 }
 
-GCTexture* Graphics::CreateTexture() {
+GCTexture* GCGraphics::CreateTexture() {
 	GCTexture* texture = new GCTexture();
 	m_vTexture.push_back(texture);
 	return texture;
@@ -94,7 +94,7 @@ std::vector<GCMesh*> GCGraphics::GetMeshes() {
 	return m_vMesh;
 }
 
-std::vector<GCTexture*> Graphics::GetTextures() {
+std::vector<GCTexture*> GCGraphics::GetTextures() {
 	return m_vTexture;
 }
 

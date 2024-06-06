@@ -189,11 +189,10 @@ void GCRender::LogAdapterOutputs(IDXGIAdapter* adapter)
 
 		++i;
 	}
-}
 
 	m_canResize = true;
 
-	return true;
+	//return true;
 }
 
 void GCRender::CreateCommandObjects()
@@ -486,7 +485,7 @@ void GCRender::Draw(const Timer& gt) {
 	//if (mTexture != nullptr)
 	//{
 	//	//if (mIsCrosshair) {
-		m_CommandList->SetGraphicsRootDescriptorTable(0, graphicsManager->GetTextures()[0]->m_HDescriptorGPU);
+	m_CommandList->SetGraphicsRootDescriptorTable(0, graphicsManager->GetTextures()[0]->m_HDescriptorGPU);
 	//	//}
 	//	//else {
 		//m_CommandList->SetGraphicsRootDescriptorTable(0,graphicsManager->GetTextures()[0]->m_HDescriptorGPU);
@@ -494,19 +493,19 @@ void GCRender::Draw(const Timer& gt) {
 	//}
 	DrawOneObject(m_pGraphicsManager->GetMeshes()[0], m_pGraphicsManager->GetShaders()[0]);
 
+
+
+	//m_Buffer = std::make_unique<UploadBuffer<ObjectConstants>>(Getmd3dDevice(), 1, true);
+	//ObjectConstants objConstants;
+	//XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
+	//m_Buffer->CopyData(0, objConstants);
+	//m_CommandList->SetGraphicsRootConstantBufferView(/*shad1->m_Type ? 1 : 0*/1, m_Buffer->Resource()->GetGPUVirtualAddress());
+
+	//m_CommandList->DrawIndexedInstanced(
+	//	graphicsManager->GetMeshes()[0]->m_boxGeometryTex->boxGeo->DrawArgs["box"].IndexCount,
+	//	1, 0, 0, 0);
 	PostDraw();
 }
-
-	m_Buffer = std::make_unique<UploadBuffer<ObjectConstants>>(Getmd3dDevice(), 1, true);
-	ObjectConstants objConstants;
-	XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
-	m_Buffer->CopyData(0, objConstants);
-	m_CommandList->SetGraphicsRootConstantBufferView(/*shad1->m_Type ? 1 : 0*/1, m_Buffer->Resource()->GetGPUVirtualAddress());
-
-	m_CommandList->DrawIndexedInstanced(
-		graphicsManager->GetMeshes()[0]->m_boxGeometryTex->boxGeo->DrawArgs["box"].IndexCount,
-		1, 0, 0, 0);
-
 
 void GCRender::PostDraw() {
 	CD3DX12_RESOURCE_BARRIER ResBar2(CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
@@ -621,55 +620,55 @@ ID3D12Device* GCRender::Getmd3dDevice()
 
 // LOG 
 
-void GCRender::LogAdapters()
-{
-	UINT i = 0;
-	IDXGIAdapter* adapter = nullptr;
-	std::vector<IDXGIAdapter*> adapterList;
-	while (m_dxgiFactory->EnumAdapters(i, &adapter) != DXGI_ERROR_NOT_FOUND)
-	{
-		DXGI_ADAPTER_DESC desc;
-		adapter->GetDesc(&desc);
-
-		std::wstring text = L"***Adapter: ";
-		text += desc.Description;
-		text += L"\n";
-
-		OutputDebugString(text.c_str());
-
-		adapterList.push_back(adapter);
-
-		++i;
-	}
-
-	for (size_t i = 0; i < adapterList.size(); ++i)
-	{
-		LogAdapterOutputs(adapterList[i]);
-		ReleaseCom(adapterList[i]);
-	}
-}
-
-void GCRender::LogAdapterOutputs(IDXGIAdapter* adapter)
-{
-	UINT i = 0;
-	IDXGIOutput* output = nullptr;
-	while (adapter->EnumOutputs(i, &output) != DXGI_ERROR_NOT_FOUND)
-	{
-		DXGI_OUTPUT_DESC desc;
-		output->GetDesc(&desc);
-
-		std::wstring text = L"***Output: ";
-		text += desc.DeviceName;
-		text += L"\n";
-		OutputDebugString(text.c_str());
-
-		LogOutputDisplayModes(output, m_BackBufferFormat);
-
-		ReleaseCom(output);
-
-		++i;
-	}
-}
+//void GCRender::LogAdapters()
+//{
+//	UINT i = 0;
+//	IDXGIAdapter* adapter = nullptr;
+//	std::vector<IDXGIAdapter*> adapterList;
+//	while (m_dxgiFactory->EnumAdapters(i, &adapter) != DXGI_ERROR_NOT_FOUND)
+//	{
+//		DXGI_ADAPTER_DESC desc;
+//		adapter->GetDesc(&desc);
+//
+//		std::wstring text = L"***Adapter: ";
+//		text += desc.Description;
+//		text += L"\n";
+//
+//		OutputDebugString(text.c_str());
+//
+//		adapterList.push_back(adapter);
+//
+//		++i;
+//	}
+//
+//	for (size_t i = 0; i < adapterList.size(); ++i)
+//	{
+//		LogAdapterOutputs(adapterList[i]);
+//		ReleaseCom(adapterList[i]);
+//	}
+//}
+//
+//void GCRender::LogAdapterOutputs(IDXGIAdapter* adapter)
+//{
+//	UINT i = 0;
+//	IDXGIOutput* output = nullptr;
+//	while (adapter->EnumOutputs(i, &output) != DXGI_ERROR_NOT_FOUND)
+//	{
+//		DXGI_OUTPUT_DESC desc;
+//		output->GetDesc(&desc);
+//
+//		std::wstring text = L"***Output: ";
+//		text += desc.DeviceName;
+//		text += L"\n";
+//		OutputDebugString(text.c_str());
+//
+//		LogOutputDisplayModes(output, m_BackBufferFormat);
+//
+//		ReleaseCom(output);
+//
+//		++i;
+//	}
+//}
 
 void GCRender::LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format)
 {

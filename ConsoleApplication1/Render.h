@@ -52,7 +52,7 @@ public:
 	void Draw(const Timer& gt);
 
 	void DrawOneObject(GCMesh* pMesh, GCShader* pShader);
-
+	void BuildBoxGeometry();
 	
 
 	void OnResize();
@@ -82,7 +82,7 @@ public:
 	UINT GetRtvDescriptorSize() const { return m_rtvDescriptorSize; }
 	UINT GetDsvDescriptorSize() const { return m_dsvDescriptorSize; }
 	UINT GetCbvSrvUavDescriptorSize() const { return m_cbvSrvUavDescriptorSize; }
-	Graphics* graphicsManager;
+	GCGraphics* graphicsManager;
 private:
 	// Swap chain size
 	static const int SwapChainBufferCount = 2;
@@ -142,7 +142,6 @@ private:
 	// Instance (Temporary)
 	GCShaderTexture* shad1;
 	GCShaderColor* shad2;
-	GCGraphics* graphicsManager;
 
 	std::unique_ptr<UploadBuffer<ObjectConstants>> m_Buffer;
 	GCMesh* mesh1;

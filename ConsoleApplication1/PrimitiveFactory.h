@@ -38,16 +38,6 @@ struct GCGEOMETRYTEXTURE
 	//modif les structs
 };
 
-struct GCGEOMETRYTEXTURE
-{
-	std::string name;
-	std::vector<GCVERTEXTEXTURE> vertices;
-	std::vector<std::uint16_t> indices;
-	SubmeshGeometry submesh;
-	std::unique_ptr<MeshGeometry> boxGeo;
-	//a suppr
-};
-
 class Render;
 
 class PrimitiveFactory
