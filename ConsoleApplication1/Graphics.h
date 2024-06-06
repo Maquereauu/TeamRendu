@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-
+#include <string>
 
 class Window;
 class GCRender;
@@ -26,7 +26,7 @@ public:
 
 
 	// Principal Object Creation
-	GCShader* CreateShader(int type);
+	GCShader* CreateShader(int type, std::wstring hlsl);
 	GCMaterial* CreateMaterial();
 	GCMesh* CreateMesh();
 	GCTexture* CreateTexture();
@@ -35,6 +35,8 @@ public:
 	std::vector<GCMaterial*> GetMaterials();
 	std::vector<GCMesh*> GetMeshes();
 	std::vector<GCTexture*> GetTextures();
+	std::vector<GCTexture*> GetTexturesTemplates();
+	void AddTex(GCTexture* tex);
 	// *
 	
 	// Render instance contain Window
@@ -42,8 +44,11 @@ public:
 
 	//void CreateTexture();
 	//std::vector<Mesh*> GetMeshes();
-	std::vector<GCTexture*> m_vTexture;
+
 private:
+
+	std::vector<GCTexture*> m_vTextureTemplates;
+	std::vector<GCTexture*> m_vTexture;
 	std::vector<GCShader*> m_vShader;
 	std::vector<GCMaterial*> m_vMaterial;
 	std::vector<GCMesh*> m_vMesh;

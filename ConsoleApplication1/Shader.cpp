@@ -23,11 +23,11 @@ void GCShader::Render() {
 	m_pRender->GetCommandList()->SetGraphicsRootSignature(GetRootSign());
 }
 
-void GCShader::Initialize(GCRender* pRender) {
+void GCShader::Initialize(GCRender* pRender, std::wstring hlslName) {
 
 }
 
-void GCShader::CompileShader() {
+void GCShader::CompileShader(std::wstring hlsl) {
 
 }
 

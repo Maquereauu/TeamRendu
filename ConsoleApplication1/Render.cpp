@@ -41,14 +41,15 @@ bool GCRender::Initialize(GCGraphics* graphicsManager) {
 	//mesh1 = new Mesh();
 	m_pGraphicsManager = graphicsManager;
 	//graphicsManager->CreateTexture();
-	GCTexture* tex = new GCTexture();
+	//GCTexture* tex = new GCTexture();
+
 	ThrowIfFailed(m_CommandList->Reset(m_DirectCmdListAlloc, nullptr));
 	//BuildConstantBuffers();
 	
 	graphicsManager->CreateMesh();
-	graphicsManager->CreateShader(0);
-	graphicsManager->CreateShader(1);
-
+	graphicsManager->CreateShader(STEnum::color,L"color");
+	graphicsManager->CreateShader(STEnum::texture,L"texture");
+	graphicsManager->CreateTexture();
 
 	ThrowIfFailed(m_CommandList->Close());
 	ID3D12CommandList* cmdsLists[] = { m_CommandList };
@@ -67,8 +68,9 @@ bool GCRender::Initialize(GCGraphics* graphicsManager) {
 	//textureLifeBar1->TextureCreateFromFile12("HpBar1");
 	//textureLifeBar0->TextureCreateFromFile12("HpBar0");
 	//texture6->TextureCreateFromFile12("skybox");
-
-	tex->Initialize(graphicsManager->m_pRender, "ahah");
+	for (int i = 0; i < graphicsManager->GetTexturesTemplates().size(); i++)
+		graphicsManager->GetTexturesTemplates()[i]->Initialize(graphicsManager->m_pRender, "ahah");
+	//tex->Initialize(graphicsManager->m_pRender, "ahah");
 	ThrowIfFailed(m_CommandList->Close());
 	ID3D12CommandList* cmdsLists2[] = { m_CommandList };
 	m_CommandQueue->ExecuteCommandLists(_countof(cmdsLists2), cmdsLists2);
@@ -550,8 +552,10 @@ void GCRender::DrawOneObject(GCMesh* pMesh, GCShader* pShader) {
 	m_CommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 	D3D12_INDEX_BUFFER_VIEW indexBufferView = pMesh->GetGeometryTexture()->boxGeo->IndexBufferView();
 	m_CommandList->IASetIndexBuffer(&indexBufferView);
-
-	m_CommandList->SetGraphicsRootDescriptorTable(0, m_pGraphicsManager->GetTextures()[0]->m_HDescriptorGPU);
+	if(pShader->m_Type == STEnum::texture)
+	{
+		m_CommandList->SetGraphicsRootDescriptorTable(0, m_pGraphicsManager->GetTextures()[0]->m_HDescriptorGPU);
+	}
 	DirectX::XMFLOAT3 pos1 = { 0.f, 0.f, 0.f };
 	DirectX::XMVECTOR pos = DirectX::XMVectorSet(10, 10, 10, 1.0f);
 	DirectX::XMVECTOR target = DirectX::XMVectorZero();
@@ -567,7 +571,7 @@ void GCRender::DrawOneObject(GCMesh* pMesh, GCShader* pShader) {
 	ObjectConstants objConstants;
 	XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
 	m_Buffer->CopyData(0, objConstants);
-	m_CommandList->SetGraphicsRootConstantBufferView(pShader->m_Type == 1 ? 0:1, m_Buffer->Resource()->GetGPUVirtualAddress());
+	m_CommandList->SetGraphicsRootConstantBufferView(pShader->m_Type == STEnum::texture ? 1:0, m_Buffer->Resource()->GetGPUVirtualAddress());
 
 	m_CommandList->DrawIndexedInstanced(m_pGraphicsManager->GetMeshes()[0]->GetGeometryTexture()->boxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
 }

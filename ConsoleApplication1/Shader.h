@@ -1,6 +1,6 @@
 #pragma once
 #include "d3dUtil.h"
-
+#include "ShaderTypeEnum.h"
 class GCRender;
 
 class GCShader
@@ -9,7 +9,7 @@ public:
 	GCShader();
 	~GCShader();
 
-	virtual void CompileShader();
+	virtual void CompileShader(std::wstring hlsl);
 
 	ID3DBlob* GetmvsByteCode();
 	ID3DBlob* GetmpsByteCode();
@@ -20,7 +20,7 @@ public:
 	ID3D12RootSignature* GetRootSign();
 	ID3D12PipelineState* GetPso();
 
-	virtual void Initialize(GCRender* pRender);
+	virtual void Initialize(GCRender* pRender, std::wstring hlslName);
 	void Render();
 
 	//void Render(Mesh* mesh, Material* material, matrix);
