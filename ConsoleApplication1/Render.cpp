@@ -47,7 +47,7 @@ bool GCRender::Initialize(GCGraphics* graphicsManager) {
 	//BuildConstantBuffers();
 	
 	graphicsManager->CreateMesh();
-	graphicsManager->GetMeshes()[0]->CreateObjGeometryTexture(L"monkey.obj");
+	graphicsManager->GetMeshes()[0]->CreateObjGeometry(L"monkey.obj", true);
 	graphicsManager->CreateShader(STEnum::color,L"color");
 	graphicsManager->CreateShader(STEnum::texture,L"texture");
 	graphicsManager->CreateTexture();

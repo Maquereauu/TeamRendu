@@ -73,12 +73,7 @@ public:
 	//DirectX::XMFLOAT4X4 mProj = MathHelper::Identity4x4();
 	//std::unique_ptr<UploadBuffer<ObjectConstants>> m_Buffer;
 
-	// Primitive
-	void CreateBoxGeometryColor(int id);
-	void CreateBoxGeometryTexture(int id);
-	//// Parse
-	void CreateObjGeometryColor(std::wstring obj);
-	void CreateObjGeometryTexture(std::wstring obj);
+	
 
 	GCGeometry* GetBoxGeometry();
 	//GCGeometry* GetGeometryTexture();
@@ -86,6 +81,12 @@ public:
 
 
 private:
+	// Primitive
+	void CreateBoxGeometryColor(int id);
+	void CreateBoxGeometryTexture(int id);
+	//// Parse
+	void CreateObjGeometryColor(std::wstring obj);
+	void CreateObjGeometryTexture(std::wstring obj);
 
 	GCRender* m_pRender;
 
