@@ -4,6 +4,8 @@
 #include "Shader.h"
 #include "ShaderColor.h"
 #include "ShaderTexture.h"
+#include "Texture.h"
+#include "Material.h"
 //#include "Texture2.h"
 
 
@@ -33,6 +35,12 @@ Mesh* Graphics::CreateMesh() {
 	return mesh;
 }
 
+GCTexture* Graphics::CreateTexture() {
+	GCTexture* texture = new GCTexture();
+	m_vTexture.push_back(texture);
+	return texture;
+}
+
 
 Shader* Graphics::CreateShader(int type) {
 	Shader* shader;
@@ -57,8 +65,8 @@ Shader* Graphics::CreateShader(int type) {
 	return shader;
 }
 
-Material* Graphics::CreateMaterial() {
-	Material* material = new Material();
+GCMaterial* Graphics::CreateMaterial() {
+	GCMaterial* material = new GCMaterial();
 	m_vMaterial.push_back(material);
 	return material;
 }
@@ -67,12 +75,16 @@ std::vector<Shader*> Graphics::GetShaders() {
 	return m_vShader;
 }
 
-std::vector<Material*> Graphics::GetMaterials() {
+std::vector<GCMaterial*> Graphics::GetMaterials() {
 	return m_vMaterial;
 }
 
 std::vector<Mesh*> Graphics::GetMeshes() {
 	return m_vMesh;
+}
+
+std::vector<GCTexture*> Graphics::GetTextures() {
+	return m_vTexture;
 }
 
 

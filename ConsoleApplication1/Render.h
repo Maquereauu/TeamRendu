@@ -8,6 +8,7 @@ class ShaderTexture;
 class GCMaterial;
 class Graphics;
 class Mesh;
+class GCTexture;
 
 struct ObjectConstants
 {
@@ -73,7 +74,7 @@ public:
 	UINT GetRtvDescriptorSize() const { return m_rtvDescriptorSize; }
 	UINT GetDsvDescriptorSize() const { return m_dsvDescriptorSize; }
 	UINT GetCbvSrvUavDescriptorSize() const { return m_cbvSrvUavDescriptorSize; }
-
+	Graphics* graphicsManager;
 private:
 	// Swap chain size
 	static const int SwapChainBufferCount = 2;
@@ -133,7 +134,6 @@ private:
 	// Instance (Temporary)
 	ShaderTexture* shad1;
 	ShaderColor* shad2;
-	Graphics* graphicsManager;
 	std::unique_ptr<UploadBuffer<ObjectConstants>> m_Buffer;
 	Mesh* mesh1;
 
