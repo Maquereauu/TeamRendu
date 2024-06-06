@@ -503,18 +503,42 @@ void GCRender::DrawOneObject(GCMesh* pMesh, GCShader* pShader) {
 	DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
 	DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(pos, target, up);
-	DirectX::XMFLOAT4X4 MId = MathHelper::Identity4x4();
-	DirectX::XMMATRIX world = DirectX::XMLoadFloat4x4(&MId);
-	DirectX::XMMATRIX proj = DirectX::XMLoadFloat4x4(&mProj);
-	DirectX::XMMATRIX worldViewProj = world * view * proj;
 
-	m_Buffer = std::make_unique<UploadBuffer<ObjectConstants>>(Getmd3dDevice(), 1, true);
-	ObjectConstants objConstants;
-	XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
-	m_Buffer->CopyData(0, objConstants);
-	m_CommandList->SetGraphicsRootConstantBufferView(pShader->m_Type == STEnum::texture ? 1:0, m_Buffer->Resource()->GetGPUVirtualAddress());
 
-	m_CommandList->DrawIndexedInstanced(m_pGraphicsManager->GetMeshes()[0]->GetBoxGeometry()->boxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
+	for(int i = 0;i< m_pGraphicsManager->GetMeshes().size();i++)
+	{
+		if (i == 0) {
+			DirectX::XMFLOAT4X4 MId = MathHelper::Identity4x4();
+			DirectX::XMMATRIX world = DirectX::XMLoadFloat4x4(&MId);
+			m_pGraphicsManager->GetMeshes()[0]->SetWorldMatrix(world);
+			DirectX::XMMATRIX proj = DirectX::XMLoadFloat4x4(&mProj);
+			DirectX::XMMATRIX worldViewProj = m_pGraphicsManager->GetMeshes()[0]->m_World * view * proj;
+			ObjectConstants objConstants;
+			XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
+			m_pGraphicsManager->GetMeshes()[0]->m_Buffer->CopyData(0, objConstants);
+		}
+		else {
+			DirectX::XMFLOAT4X4 MId = MathHelper::Identity4x4();
+			DirectX::XMFLOAT4X4 I(
+				2.0f, 0.0f, 0.0f, 1.0f,
+				0.0f, 2.0f, 0.0f, 0.0f,
+				0.0f, 0.0f, 2.0f, 0.0f,
+				1.0f, 0.0f, 0.0f, 2.0f);
+			MId = I;
+			DirectX::XMMATRIX world = DirectX::XMLoadFloat4x4(&MId);
+			DirectX::XMMATRIX proj = DirectX::XMLoadFloat4x4(&mProj);
+			m_pGraphicsManager->GetMeshes()[i]->SetWorldMatrix(world);
+			DirectX::XMMATRIX worldViewProj = m_pGraphicsManager->GetMeshes()[i]->m_World * view * proj;
+			ObjectConstants objConstants;
+			XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
+			m_pGraphicsManager->GetMeshes()[i]->m_Buffer->CopyData(0, objConstants);
+		}
+
+
+		m_CommandList->SetGraphicsRootConstantBufferView(pShader->m_Type == STEnum::texture ? 1 : 0, m_pGraphicsManager->GetMeshes()[i]->m_Buffer->Resource()->GetGPUVirtualAddress());
+
+		m_CommandList->DrawIndexedInstanced(m_pGraphicsManager->GetMeshes()[i]->GetBoxGeometry()->boxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
+	}
 }
 
 void GCRender::PostDraw() {

@@ -160,7 +160,6 @@ private:
 	GCShaderTexture* shad1;
 	GCShaderColor* shad2;
 
-	std::unique_ptr<UploadBuffer<ObjectConstants>> m_Buffer;
 	GCMesh* mesh1;
 
 	GCMaterial* material1;

@@ -3,7 +3,6 @@
 #include "d3dUtil.h"
 
 
-
 GCMesh::GCMesh() {
 }
 
@@ -13,6 +12,7 @@ GCMesh::~GCMesh() {
 
 void GCMesh::Initialize(GCRender* pRender) {
 	m_pRender = pRender;
+    m_Buffer = std::make_unique<UploadBuffer<ObjectConstants>>(m_pRender->Getmd3dDevice(), 1, true);
 	//CreateBoxGeometryColor();
     CreateBoxGeometryTexture();
     //CreateObjGeometryTexture();
@@ -164,6 +164,10 @@ void GCMesh::CreateObjGeometryTexture()
 GCGeometry* GCMesh::GetBoxGeometry()
 {
 	return m_pGeometry;
+}
+
+void GCMesh::SetWorldMatrix(DirectX::XMMATRIX world) {
+    m_World = world;
 }
 
 //GCGEOMETRYTEXTURE* GCMesh::GetGeometryTexture()

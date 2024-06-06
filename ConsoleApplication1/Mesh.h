@@ -77,16 +77,17 @@ public:
 	//// Parse
 	void CreateObjGeometryColor();
 	void CreateObjGeometryTexture();
-
+	void SetWorldMatrix(DirectX::XMMATRIX world);
 	GCGeometry* GetBoxGeometry();
 	//GCGeometry* GetGeometryTexture();
+	std::unique_ptr<UploadBuffer<ObjectConstants>> m_Buffer;
+	DirectX::XMMATRIX m_World;
 
 
 
 private:
 
 	GCRender* m_pRender;
-
 	GCGeometry* m_pGeometry;
 };
 

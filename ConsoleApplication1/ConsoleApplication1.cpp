@@ -31,6 +31,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, in
 	graphics->m_pRender->ResetCommandList();
 
 	GCMesh* mesh = graphics->CreateMesh();
+	GCMesh* mesh2 = graphics->CreateMesh();
 	GCShader* shader1 = graphics->CreateShader(STEnum::color, L"color");
 	GCShader* shader2 = graphics->CreateShader(STEnum::texture, L"texture");
 
