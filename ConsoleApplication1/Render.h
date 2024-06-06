@@ -1,13 +1,17 @@
 #pragma once
 #include "header.h"
 #include "UploadBuffer.h"
+
 class Window;
-class Shader;
-class ShaderColor;
-class ShaderTexture;
+
+#include "Shader.h"
+#include "ShaderColor.h"
+#include "ShaderTexture.h"
+
+
 class GCMaterial;
-class Graphics;
-class Mesh;
+class GCGraphics;
+class GCMesh;
 class GCTexture;
 
 struct ObjectConstants
@@ -22,19 +26,17 @@ class GCRender
 public:
 	GCRender(){}
 
-	bool Initialize();
+	bool Initialize(GCGraphics* graphicsManager);
 	bool InitDirect3D();
 
 
 	//void BuildConstantBuffers();
-	void BuildRootSignature();
-	void BuildShadersAndInputLayout();
-	void BuildBoxGeometry();
-	void BuildPSO();
 
 	void LogAdapters();
 	void LogAdapterOutputs(IDXGIAdapter* adapter);
 	void LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format);
+
+	void EnableDebugController();
 
 	void CreateCommandObjects();
 	void CreateRtvAndDsvDescriptorHeaps();
@@ -44,7 +46,13 @@ public:
 	// Draw Part
 	void FlushCommandQueue();
 	void Update(const Timer& gt);
+
+	void PrepareDraw();
+	void PostDraw();
 	void Draw(const Timer& gt);
+
+	void DrawOneObject(GCMesh* pMesh, GCShader* pShader);
+
 	
 
 	void OnResize();
@@ -54,7 +62,7 @@ public:
 	ID3D12Device* Getmd3dDevice();
 	ID3D12Resource* CurrentBackBuffer() const;
 	D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView() const;
-	D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView() const;
+	D3D12_CPU_DESCRIPTOR_HANDLE GetDepthStencilView() const;
 	UINT Get4xMsaaQuality();
 	DXGI_FORMAT GetBackBufferFormat();
 	DXGI_FORMAT GetDepthStencilFormat();
@@ -132,11 +140,17 @@ private:
 	CD3DX12_STATIC_SAMPLER_DESC staticSample;
 
 	// Instance (Temporary)
-	ShaderTexture* shad1;
-	ShaderColor* shad2;
+	GCShaderTexture* shad1;
+	GCShaderColor* shad2;
+	GCGraphics* graphicsManager;
+
 	std::unique_ptr<UploadBuffer<ObjectConstants>> m_Buffer;
-	Mesh* mesh1;
+	GCMesh* mesh1;
 
 	GCMaterial* material1;
+
+
+	// 
+	GCGraphics* m_pGraphicsManager;
 };
 

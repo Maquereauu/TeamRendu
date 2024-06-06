@@ -2,7 +2,7 @@
 #include "Window.h"
 #include "Render.h"
 #include "Global.h"
-
+#include "Graphics.h"
 
 //void DebugOutput(const std::string& message)
 //{
@@ -17,12 +17,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, in
 
 	/*DebugOutput("App started");*/
 	Window* window = new Window(hInstance);
-	SetWindow(window);
 	window->Initialize();
-	GCRender* render = new GCRender();
-	SetRender(render);
-	render->Initialize();
-	window->Run();
+	SetWindow(window);
+
+
+	GCGraphics* graphics = new GCGraphics();
+	graphics->Initialize();
+
+	//GCRender* render = new GCRender();
+	////SetRender(render);
+	//render->Initialize();
+
+	window->Run(graphics->m_pRender);
 
 }
 

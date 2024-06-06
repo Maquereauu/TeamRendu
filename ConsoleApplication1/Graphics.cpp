@@ -1,6 +1,11 @@
 #include "Graphics.h"
 //#include "Global.h"
 #include "Mesh.h"
+
+//#include "Texture2.h"
+#include "Render.h"
+
+
 #include "Shader.h"
 #include "ShaderColor.h"
 #include "ShaderTexture.h"
@@ -8,11 +13,14 @@
 #include "Material.h"
 //#include "Texture2.h"
 
-
-
-
-Graphics::Graphics() {
+GCGraphics::GCGraphics() {
 	/*m_pRender = nullptr;*/
+}
+
+void GCGraphics::Initialize() {
+
+	m_pRender = new GCRender();
+	m_pRender->Initialize(this);
 }
 
 //void Graphics::Initialize() {
@@ -29,8 +37,9 @@ Graphics::Graphics() {
 //
 //}
 
-Mesh* Graphics::CreateMesh() {
-	Mesh* mesh = new Mesh();
+GCMesh* GCGraphics::CreateMesh() {
+	GCMesh* mesh = new GCMesh();
+	mesh->Initialize(m_pRender);
 	m_vMesh.push_back(mesh);
 	return mesh;
 }
@@ -42,44 +51,46 @@ GCTexture* Graphics::CreateTexture() {
 }
 
 
-Shader* Graphics::CreateShader(int type) {
-	Shader* shader;
+GCShader* GCGraphics::CreateShader(int type) {
+	GCShader* shader;
 	switch (type) {
 	case 0:
 	{
-		shader = new ShaderColor();
+		shader = new GCShaderColor();
+		shader->Initialize(m_pRender);
 		m_vShader.push_back(shader);
 		return shader;
 		break;
 	}
 	case 1:
 	{
-		shader = new ShaderTexture();
+		shader = new GCShaderTexture();
+		shader->Initialize(m_pRender);
 		m_vShader.push_back(shader);
 		return shader;
 		break;
 	}
 	}
-	shader = new Shader();
+	shader = new GCShader();
 	m_vShader.push_back(shader);
 	return shader;
 }
 
-GCMaterial* Graphics::CreateMaterial() {
+GCMaterial* GCGraphics::CreateMaterial() {
 	GCMaterial* material = new GCMaterial();
 	m_vMaterial.push_back(material);
 	return material;
 }
 
-std::vector<Shader*> Graphics::GetShaders() {
+std::vector<GCShader*> GCGraphics::GetShaders() {
 	return m_vShader;
 }
 
-std::vector<GCMaterial*> Graphics::GetMaterials() {
+std::vector<GCMaterial*> GCGraphics::GetMaterials() {
 	return m_vMaterial;
 }
 
-std::vector<Mesh*> Graphics::GetMeshes() {
+std::vector<GCMesh*> GCGraphics::GetMeshes() {
 	return m_vMesh;
 }
 

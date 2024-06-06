@@ -8,9 +8,10 @@ PrimitiveFactory::PrimitiveFactory() {
 PrimitiveFactory::~PrimitiveFactory() {
 }
 
-void PrimitiveFactory::Initialize(int type)
+void PrimitiveFactory::Initialize(int type, GCRender* pRender)
 {
 	m_Type = type;
+	m_pRender = pRender;
 }
 
 GCGEOMETRY* PrimitiveFactory::BuildBoxGeometry()
@@ -30,6 +31,7 @@ GCGEOMETRY* PrimitiveFactory::BuildBoxGeometry()
 
 
 	boxGeometry->indices =
+    
 	{
 		//front face
 		0, 1, 2,
@@ -67,11 +69,11 @@ GCGEOMETRY* PrimitiveFactory::BuildBoxGeometry()
 	ThrowIfFailed(D3DCreateBlob(ibByteSize, &boxGeometry->boxGeo->IndexBufferCPU));
 	CopyMemory(boxGeometry->boxGeo->IndexBufferCPU->GetBufferPointer(), boxGeometry->indices.data(), ibByteSize);
 
-	boxGeometry->boxGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(GetRender()->Getmd3dDevice(),
-		GetRender()->GetCommandList(), boxGeometry->vertices.data(), vbByteSize, boxGeometry->boxGeo->VertexBufferUploader);
+	boxGeometry->boxGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(m_pRender->Getmd3dDevice(),
+		m_pRender->GetCommandList(), boxGeometry->vertices.data(), vbByteSize, boxGeometry->boxGeo->VertexBufferUploader);
 
-	boxGeometry->boxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(GetRender()->Getmd3dDevice(),
-		GetRender()->GetCommandList(), boxGeometry->indices.data(), ibByteSize, boxGeometry->boxGeo->IndexBufferUploader);
+	boxGeometry->boxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(m_pRender->Getmd3dDevice(),
+		m_pRender->GetCommandList(), boxGeometry->indices.data(), ibByteSize, boxGeometry->boxGeo->IndexBufferUploader);
 
 	boxGeometry->boxGeo->VertexByteStride = sizeof(GCVERTEX);
 	boxGeometry->boxGeo->VertexBufferByteSize = vbByteSize;
@@ -168,11 +170,11 @@ GCGEOMETRYTEXTURE* PrimitiveFactory::BuildBoxGeometryTexture()
 	ThrowIfFailed(D3DCreateBlob(ibByteSize, &boxGeometry->boxGeo->IndexBufferCPU));
 	CopyMemory(boxGeometry->boxGeo->IndexBufferCPU->GetBufferPointer(), boxGeometry->indices.data(), ibByteSize);
 
-	boxGeometry->boxGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(GetRender()->Getmd3dDevice(),
-		GetRender()->GetCommandList(), boxGeometry->vertices.data(), vbByteSize, boxGeometry->boxGeo->VertexBufferUploader);
+	boxGeometry->boxGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(m_pRender->Getmd3dDevice(),
+		m_pRender->GetCommandList(), boxGeometry->vertices.data(), vbByteSize, boxGeometry->boxGeo->VertexBufferUploader);
 
-	boxGeometry->boxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(GetRender()->Getmd3dDevice(),
-		GetRender()->GetCommandList(), boxGeometry->indices.data(), ibByteSize, boxGeometry->boxGeo->IndexBufferUploader);
+	boxGeometry->boxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(m_pRender->Getmd3dDevice(),
+		m_pRender->GetCommandList(), boxGeometry->indices.data(), ibByteSize, boxGeometry->boxGeo->IndexBufferUploader);
 
 	boxGeometry->boxGeo->VertexByteStride = sizeof(GCVERTEXTEXTURE);
 	boxGeometry->boxGeo->VertexBufferByteSize = vbByteSize;

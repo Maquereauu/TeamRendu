@@ -1,6 +1,6 @@
 #include "ShaderColor.h"
 
-void ShaderColor::CompileShader() {
+void GCShaderColor::CompileShader() {
 	m_vsByteCode = d3dUtil::CompileShader(L"Shaders\\color.hlsl", nullptr, "VS", "vs_5_0");
 	m_psByteCode = d3dUtil::CompileShader(L"Shaders\\color.hlsl", nullptr, "PS", "ps_5_0");
 	m_InputLayout =
@@ -10,3 +10,14 @@ void ShaderColor::CompileShader() {
 	};
 	m_count = 1;
 }
+
+void GCShaderColor::Initialize(GCRender* pRender) {
+
+	m_pRender = pRender;
+
+
+	CompileShader();
+	RootSign();
+	Pso();
+}
+

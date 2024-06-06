@@ -12,14 +12,14 @@ Window* GetWindow()
 	return g_pWindow;
 }
 
-GCRender* g_pRender = nullptr;
-
-void SetRender(GCRender* pRender)
-{
-	g_pRender = pRender;
-}
-
-GCRender* GetRender()
-{
-	return g_pRender;
-}
+//GCRender* g_pRender = nullptr;
+//
+//void SetRender(GCRender* pRender)
+//{
+//	g_pRender = pRender;
+//}
+//
+//GCRender* GetRender()
+//{
+//	return g_pRender;
+//}

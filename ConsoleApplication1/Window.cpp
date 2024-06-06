@@ -61,7 +61,7 @@ void Window::Set4xMsaaState(bool value)
 	}
 }
 
-int Window::Run()
+int Window::Run(GCRender* pRender)
 {
 	MSG msg = { 0 };
 
@@ -82,7 +82,7 @@ int Window::Run()
 			//if (!mAppPaused)
 			{
 				CalculateFrameStats();
-				GetRender()->Draw(mTimer);
+				pRender->Draw(mTimer);
 				//Update(mTimer);
 				//Draw(mTimer);
 			}
@@ -98,6 +98,7 @@ int Window::Run()
 
 bool Window::Initialize()
 {
+	//m_pRender = pRender;
 	if (!InitMainWindow())
 		return false;
 	// Do the initial resize code.
