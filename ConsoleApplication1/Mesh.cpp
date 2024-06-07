@@ -13,8 +13,8 @@ GCMesh::~GCMesh() {
 
 void GCMesh::Initialize(GCRender* pRender) {
 	m_pRender = pRender;
-	//CreateBoxGeometryColor();
-    CreateBoxGeometryTexture();
+	CreateBoxGeometryColor();
+    //CreateBoxGeometryTexture();
     //CreateObjGeometryTexture();
     //CreateObjGeometryColor();
 }

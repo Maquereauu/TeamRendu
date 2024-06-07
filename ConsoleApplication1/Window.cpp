@@ -1,6 +1,11 @@
 #include "Window.h"
 #include "Global.h"
 #include "Render.h"
+#include "Graphics.h"
+#include "Material.h"
+#include "Shader.h"
+#include "Mesh.h"
+
 using Microsoft::WRL::ComPtr;
 using namespace std;
 using namespace DirectX;
@@ -61,8 +66,29 @@ void Window::Set4xMsaaState(bool value)
 	}
 }
 
-int Window::Run(GCRender* pRender)
+int Window::Run()
 {
+
+	GCGraphics* graphics = new GCGraphics();
+	graphics->Initialize();
+
+
+	graphics->m_pRender->ResetCommandList();
+
+	GCMesh* mesh = graphics->CreateMesh();
+	GCShader* shader1 = graphics->CreateShader(STEnum::color, L"color");
+	GCShader* shader2 = graphics->CreateShader(STEnum::texture, L"texture");
+
+	GCMaterial* material1 = graphics->CreateMaterial();
+	material1->AddTexture("ahah", graphics);
+
+	//graphics->CreateTexture("ahah");
+
+
+	graphics->m_pRender->CloseCommandList();
+	graphics->m_pRender->ExecuteCommandList();
+
+
 	MSG msg = { 0 };
 
 	mTimer.Reset();
@@ -82,7 +108,28 @@ int Window::Run(GCRender* pRender)
 			//if (!mAppPaused)
 			{
 				CalculateFrameStats();
-				pRender->Draw(mTimer);
+				graphics->m_pRender->PrepareDraw();
+
+				DirectX::XMFLOAT4X4 mWorld = MathHelper::Identity4x4();
+				DirectX::XMFLOAT4X4 mView = MathHelper::Identity4x4();
+				DirectX::XMFLOAT4X4 mProj = MathHelper::Identity4x4();
+
+				DirectX::XMMATRIX P = DirectX::XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, GetWindow()->AspectRatio(), 1.0f, 1000.0f);
+				XMStoreFloat4x4(&mProj, P);
+
+				// Configuration de la matrice de transformation du monde
+				DirectX::XMVECTOR pos = DirectX::XMVectorSet(0, -10, 5, 1.0f); // Position de la caméra
+				DirectX::XMVECTOR target = DirectX::XMVectorZero(); // Cible de la caméra
+				DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f); // Vecteur vers le haut
+				DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(pos, target, up); // Matrice de vue
+				DirectX::XMMATRIX world = DirectX::XMMatrixIdentity(); // Matrice identité pour le monde
+				DirectX::XMMATRIX proj = DirectX::XMLoadFloat4x4(&mProj); // Matrice de projection
+				DirectX::XMMATRIX worldViewProj = world * view * proj; // Composition des matrices
+
+				graphics->m_pRender->DrawOneObject(mesh, worldViewProj, shader1);
+
+
+				graphics->m_pRender->PostDraw();
 				//Update(mTimer);
 				//Draw(mTimer);
 			}

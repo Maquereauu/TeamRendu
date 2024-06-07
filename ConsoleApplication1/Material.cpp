@@ -16,12 +16,6 @@ void GCMaterial::Initialize() {
 }
 	
 
-
-void GCMaterial::SetColor(DirectX::XMFLOAT4 color) {
-	m_color = color;
-}
-
-
 void GCMaterial::AddTexture(std::string name, GCGraphics* pGraphics) {
 	m_pTexture = new GCTexture();
 	m_pTexture->Initialize(name, pGraphics);
